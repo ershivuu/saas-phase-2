@@ -1,0 +1,57 @@
+.contact-forms {
+  max-width: 1000px;
+  margin: auto;
+  margin-top: 5%;
+  margin-bottom: 5%;
+  box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+  padding: 35px 50px 35px 50px;
+  border-radius: 20px;
+  margin-top: 200px !important;
+}
+
+.css-z7uhs0-MuiStepConnector-line {
+  display: block;
+  border-color: #bdbdbd64 !important;
+  border-top-style: solid;
+  border-top-width: 4px !important;
+  border-radius: 20px;
+}
+.css-m5vj9m-MuiStepper-root {
+  padding-bottom: 15px;
+}
+.css-1u4zpwo-MuiSvgIcon-root-MuiStepIcon-root.Mui-active {
+  color: rgba(128, 128, 128, 0.385) !important;
+}
+.css-1u4zpwo-MuiSvgIcon-root-MuiStepIcon-root.Mui-completed {
+  color: rgb(128 128 128 / 81%) !important;
+}
+.prev-btn {
+  color: black !important;
+  border: 1px solid black !important;
+  border-radius: 50px !important;
+  padding-left: 15px !important;
+  padding-right: 15px !important;
+  font-family: "Open Sans", sans-serif !important;
+}
+.next-btn {
+  color: black !important;
+  border: 1px solid rgba(211, 211, 211, 0.558) !important;
+  border-radius: 50px !important;
+  padding-left: 15px !important;
+  padding-right: 15px !important;
+  font-weight: bold !important;
+  background-color: rgba(211, 211, 211, 0.558) !important;
+  font-family: "Open Sans", sans-serif !important;
+}
+.hidden Box {
+  display: none;
+}
+@media only screen and (max-width: 767px) {
+  .contact-forms {
+    padding: 35px 20px 35px 20px;
+    margin: 5% 10% 5% 10%;
+  }
+}
+.hidden {
+  display: none;
+}

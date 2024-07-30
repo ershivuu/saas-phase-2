@@ -1,0 +1,19 @@
+.sidebar {
+  flex-shrink: 0;
+  text-align: left;
+  overflow-y: auto;
+  overflow-x: hidden;
+  height: 100%;
+  box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+  margin-right: 50px;
+}
+
+.edit-form-outlet::-webkit-scrollbar {
+  width: 0px;
+}
+@media only screen and (max-width: 767px) {
+  .sidebar {
+    box-shadow: none;
+    margin-right: 0px;
+  }
+}

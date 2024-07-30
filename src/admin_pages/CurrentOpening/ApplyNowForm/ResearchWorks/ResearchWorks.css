@@ -1,0 +1,14 @@
+.plus-buttons {
+  padding: 2px 7px 2px 7px;
+  float: right;
+  border: none;
+  background-color: transparent;
+}
+.plus-buttons img {
+  width: 20px;
+  height: 20px;
+}
+
+.field-heading {
+  margin-bottom: -20px;
+}

@@ -1,0 +1,638 @@
+/* :root {
+  --card1-bg: url("../../assets/images/slider2.JPG");
+  --card2-bg: url("../../assets/images/slider1.JPG");
+  --card3-bg: url("../../assets/images/ChinmayArondekar.jpg");
+  --card4-bg: url("../../assets/images/Mohsin\ Ali.jpg");
+} */
+.loading-message {
+  font-size: 30px;
+  font-weight: bold;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+.home-page {
+  -webkit-box-pack: center;
+  -ms-flex-pack: center;
+  justify-content: center;
+  background: -o-radial-gradient(
+      1.39% 60.37%,
+      98.61% 311.66%,
+      #040404 0.1%,
+      rgba(4, 4, 4, 0.6) 43.85%,
+      rgba(255, 255, 255, 0) 100%,
+      rgba(255, 255, 255, 0) 100%
+    ),
+    url("../../assets/images/institute.jpg");
+  background: radial-gradient(
+      98.61% 311.66% at 1.39% 60.37%,
+      #040404 0.1%,
+      rgba(4, 4, 4, 0.6) 43.85%,
+      rgba(255, 255, 255, 0) 100%,
+      rgba(255, 255, 255, 0) 100%
+    ),
+    url("../../assets/images/institute.jpg");
+  font-family: "Playfair Display", serif;
+  line-height: 1;
+  color: white;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+
+  padding-top: 250px;
+  padding-bottom: 310px;
+  padding-left: 10%;
+}
+
+.home-page p:nth-child(2) {
+  font-family: "Open Sans", sans-serif;
+  letter-spacing: 3px;
+}
+
+#uni-name {
+  font-size: 4vw;
+  letter-spacing: 1px;
+}
+
+#join-medi-btn {
+  border: 2px solid white;
+  background-color: transparent;
+  padding: 10px;
+  width: 180px;
+  font-family: "Open Sans", sans-serif;
+  border-radius: 5px;
+}
+
+#join-medi-btn a {
+  text-decoration: none;
+  letter-spacing: 1px;
+  font-weight: 500;
+  color: white;
+}
+
+.subs {
+  margin-top: 50px;
+  text-align: center;
+  font-family: "Playfair Display", serif;
+}
+
+.subs p {
+  font-size: 2vw;
+  letter-spacing: 2px;
+  line-height: 1;
+}
+
+.subs p:nth-child(2) {
+  font-weight: 600;
+}
+
+.cards {
+  max-width: 1500px;
+  margin: auto;
+  margin-top: 25px;
+  margin-bottom: 50px;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -ms-flex-wrap: wrap;
+  flex-wrap: wrap;
+  -webkit-box-pack: space-evenly;
+  -ms-flex-pack: space-evenly;
+  justify-content: space-evenly;
+}
+
+.card {
+  border-radius: 20px !important;
+  width: 234px !important;
+  height: 240px !important;
+  -webkit-box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px !important;
+  box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px !important;
+  text-align: center !important;
+  margin: auto;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  padding-top: 60px;
+  border: 1px solid rgba(0, 0, 0, 0.082);
+}
+
+.card img {
+  width: 40px;
+  height: 40px;
+  margin-bottom: 10px;
+}
+
+.card a {
+  text-decoration: none;
+  color: black;
+  border: 2px solid maroon;
+  font-size: 15px;
+  max-width: -webkit-fit-content;
+  max-width: -moz-fit-content;
+  max-width: fit-content;
+  padding: 5px 10px 5px 10px;
+  border-radius: 10px;
+  margin-top: 25px;
+}
+
+.card p {
+  font-family: "Open Sans", sans-serif;
+  font-weight: 600;
+  font-size: 20px;
+}
+
+.card p:nth-child(3) {
+  font-size: 10px !important;
+  margin-top: -10px;
+  margin-bottom: -9px;
+}
+
+.card:hover {
+  -webkit-transform: translateY(-20px);
+  -ms-transform: translateY(-20px);
+  transform: translateY(-20px);
+  color: maroon;
+  -webkit-transition: 0.4s ease;
+  -o-transition: 0.4s ease;
+  transition: 0.4s ease;
+}
+
+.perks-heading p {
+  padding-top: 1px;
+  font-size: 40px;
+  color: white;
+  letter-spacing: 2px;
+  pointer-events: none;
+}
+.perks-heading {
+  max-width: 400px;
+}
+.perks span {
+  font-size: 50px;
+  font-family: "Playfair Display", serif;
+  font-weight: 600 !important;
+}
+
+.perks {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -ms-flex-wrap: wrap;
+  flex-wrap: wrap;
+  -webkit-box-pack: space-evenly;
+  -ms-flex-pack: space-evenly;
+  justify-content: space-evenly;
+
+  background-position: center !important;
+  background-size: cover !important;
+  padding-top: 50px !important;
+  padding-bottom: 50px !important;
+}
+
+#disktype {
+  width: 15px !important;
+  height: 15px !important;
+  margin-right: 10px !important;
+}
+.perks-list {
+  padding-inline: 20px;
+}
+
+.perks-list ul li {
+  font-family: "Open Sans", sans-serif;
+  font-size: 16px;
+  list-style: none;
+  background-color: white !important;
+  font-weight: normal !important;
+  margin: 20px;
+  padding: 12px !important;
+  border-top-right-radius: 10px !important;
+  border-bottom-right-radius: 10px !important;
+  border-bottom-left-radius: 40px !important;
+  padding-left: 5% !important;
+  text-align: justify !important;
+  line-height: 1.5;
+  max-width: 800px;
+}
+
+.side-left {
+  margin-left: 20% !important;
+}
+
+.staff-heading {
+  font-size: 25px;
+  text-align: center;
+  font-family: "Open Sans", sans-serif;
+}
+.staff-heading span {
+  font-size: 30px;
+  letter-spacing: 2px;
+  font-weight: 500;
+  font-family: "Playfair Display", serif;
+}
+
+.purpose {
+  max-width: 1500px;
+  margin: auto;
+  margin-block: 50px;
+}
+.hr-corner-sub-container {
+  max-width: 1500px;
+  margin: auto;
+}
+.purpose-headings {
+  text-align: center;
+  margin-bottom: 25px;
+  line-height: 1;
+}
+
+.purpose-headings p:nth-child(1) {
+  font-family: "Playfair Display", serif;
+  font-size: 3vw;
+  letter-spacing: 2px;
+}
+
+.purpose-headings p:nth-child(2) {
+  font-size: 20px;
+  color: rgba(128, 128, 128, 0.9);
+}
+
+.purpose-data {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -ms-flex-wrap: wrap;
+  flex-wrap: wrap;
+  -webkit-box-pack: center;
+  -ms-flex-pack: center;
+  justify-content: center;
+  gap: 3px;
+}
+.purpose-data div {
+  width: 19%;
+  height: 295px;
+  background-color: #d9d9d9;
+  display: -ms-grid;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+}
+
+.big-img {
+  width: 37% !important;
+}
+.big-img img {
+  -o-object-fit: cover;
+  object-fit: cover;
+  width: 100%;
+  height: 100%;
+}
+
+.purpose-quotes {
+  font-family: "Playfair Display", serif;
+  font-size: 25px;
+  text-align: center;
+  display: -ms-grid;
+  display: grid;
+  place-items: center;
+  padding: 4.2% 2% 4.2% 2%;
+  font-weight: 500;
+  letter-spacing: 1px;
+  color: black;
+  background-position: center;
+  background-size: cover;
+}
+
+.quote-small {
+  padding-top: 8%;
+  padding-bottom: 6%;
+}
+
+.women img {
+  -o-object-fit: cover;
+  object-fit: cover;
+  width: 100%;
+  height: 100%;
+}
+
+.mask3 img {
+  width: 100%;
+  height: 100%;
+}
+
+.circular-logo img {
+  -o-object-fit: contain;
+  object-fit: contain;
+  width: 90%;
+  height: 90%;
+}
+
+.remove-bg {
+  background-color: transparent !important;
+  user-select: none;
+}
+
+.staff-section {
+  margin-top: 50px;
+}
+
+.medi-heading {
+  text-align: center;
+  font-size: 30px;
+  letter-spacing: 3px;
+  font-family: "Open Sans", sans-serif;
+  line-height: 1;
+  margin-bottom: 50px;
+}
+.medi-heading span {
+  letter-spacing: 3px !important;
+  font-family: "Playfair Display", serif;
+  font-weight: 600;
+  letter-spacing: 2px;
+  font-size: 40px;
+}
+
+/* ....................................MEDICAPS STAFF SECTION............................... */
+.hr-corner {
+  background-size: cover !important;
+  background-repeat: no-repeat !important;
+  background-position: center !important;
+  padding-top: 2%;
+  padding-bottom: 2%;
+  margin-top: 6%;
+}
+
+.hr-conrer-heading {
+  color: white;
+  margin-left: 55%;
+}
+.hr-conrer-heading button {
+  background-color: transparent;
+  border: none;
+  font-size: 50px;
+  color: white;
+  margin-right: 20px;
+  margin-top: -50px;
+}
+
+.buttons {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  margin-left: 55%;
+}
+.buttons button {
+  background-color: transparent;
+  border: none;
+  font-size: 50px;
+  color: white;
+  margin-right: 20px;
+  margin-top: -50px;
+}
+
+.hr-conrer-heading p:nth-child(1) {
+  font-size: 20px;
+  letter-spacing: 2px;
+  font-family: "Open Sans", sans-serif;
+}
+
+.hr-conrer-heading p:nth-child(2) {
+  margin-top: -15px;
+  font-size: 40px;
+  font-family: "Playfair Display", serif;
+  letter-spacing: 2px;
+  font-weight: 600;
+}
+
+.slider-imgs {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -ms-flex-wrap: wrap;
+  flex-wrap: wrap;
+  -webkit-box-pack: space-evenly;
+  -ms-flex-pack: space-evenly;
+  justify-content: space-evenly;
+}
+.slider-imgs div {
+  width: 293px;
+  height: 290px;
+  border-radius: 35px;
+  overflow: hidden;
+}
+.slider-imgs div p {
+  font-size: 17px;
+  color: rgba(255, 255, 255, 0.76);
+  padding-left: 20px;
+  width: 250px;
+  letter-spacing: 2px;
+  font-family: "Open Sans", sans-serif;
+  margin-top: 80%;
+}
+
+.card1,
+.card2,
+.card3,
+.card4 {
+  cursor: pointer;
+  background-size: cover !important;
+  overflow: hidden;
+  text-align: center;
+}
+
+.active-card {
+  margin-top: -100px;
+  height: 400px !important;
+  background-size: cover;
+  background-position: center;
+}
+.active-card p {
+  margin-top: 115% !important;
+}
+.staff-design {
+  margin-block: 100px;
+}
+@media only screen and (max-width: 767px) {
+  .subs {
+    margin-top: 50px;
+  }
+
+  #join-medi-btn a {
+    font-size: 15px;
+  }
+
+  .medi-home-heading {
+    margin-top: -20px;
+    text-align: center;
+  }
+
+  #uni-name {
+    font-size: 30px;
+    font-weight: 600;
+  }
+
+  .medi-home-heading p:nth-child(2) {
+    font-size: 15px;
+  }
+
+  .subs p:nth-child(1) {
+    font-size: 15px;
+  }
+
+  .subs p:nth-child(2) {
+    margin-top: -8px;
+    font-size: 15px;
+    font-family: "Open Sans", sans-serif;
+  }
+
+  .subs p:nth-child(3) {
+    margin-top: -8px;
+    font-size: 15px;
+  }
+
+  .perks-heading {
+    text-align: center;
+  }
+  .perks-heading p {
+    font-size: 20px;
+    letter-spacing: 3px;
+  }
+  .perks-heading p span {
+    font-size: 35px;
+    letter-spacing: 3px;
+  }
+
+  .perks-list {
+    margin-left: -8%;
+  }
+
+  .purpose-data {
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -ms-flex-wrap: wrap;
+    flex-wrap: wrap;
+    -webkit-box-pack: center;
+    -ms-flex-pack: center;
+    justify-content: center;
+    gap: 2px;
+  }
+  .purpose-data div {
+    width: 30%;
+    height: 155px;
+    background-color: #d9d9d9;
+    display: -ms-grid;
+    display: grid;
+    place-items: center;
+    overflow: hidden;
+  }
+
+  .side-left {
+    margin-left: 5% !important;
+    margin-right: 5% !important;
+  }
+
+  .purpose-headings p:nth-child(1) {
+    font-size: 20px;
+  }
+
+  .purpose-headings p:nth-child(2) {
+    font-size: 10px;
+  }
+
+  .purpose-data div:nth-child(15) {
+    width: 60.5% !important;
+  }
+
+  .big-img {
+    width: 60.5% !important;
+  }
+
+  .circular-logo img {
+    width: 90%;
+    height: 90%;
+  }
+
+  .big-img img {
+    width: 100%;
+    height: 100%;
+  }
+
+  .women img {
+    width: 100%;
+    height: 100%;
+  }
+
+  .mask3 img {
+    width: 100%;
+    height: 100%;
+  }
+
+  .purpose-quotes p {
+    font-size: 15px;
+  }
+
+  .hr-conrer-heading {
+    width: auto;
+    margin-left: 0%;
+    text-align: center;
+  }
+  .hr-conrer-heading p {
+    font-size: 20px !important;
+  }
+
+  .buttons {
+    margin-left: 0;
+    margin-left: 17px;
+    -webkit-box-pack: center;
+    -ms-flex-pack: center;
+    justify-content: center;
+  }
+
+  .slider-imgs {
+    margin-top: 100px;
+  }
+}
+
+@media only screen and (min-device-width: 768px) and (max-device-width: 1024px) and (orientation: landscape) {
+  .hr-conrer-heading {
+    text-align: center !important;
+    margin: auto;
+  }
+
+  .buttons {
+    margin: auto;
+    -webkit-box-pack: center;
+    -ms-flex-pack: center;
+    justify-content: center;
+  }
+
+  .slider-imgs {
+    margin-top: 15%;
+  }
+  .medi-heading {
+    margin-bottom: 100px;
+  }
+}
+
+@media only screen and (min-device-width: 768px) and (max-device-width: 1024px) and (orientation: portrait) {
+  .hr-conrer-heading {
+    text-align: center !important;
+    margin: auto;
+  }
+
+  .buttons {
+    margin: auto;
+    -webkit-box-pack: center;
+    -ms-flex-pack: center;
+    justify-content: center;
+  }
+
+  .slider-imgs {
+    margin-top: 15%;
+  }
+  .perks-heading {
+    text-align: center;
+  }
+}

@@ -1,0 +1,181 @@
+.fixed-header {
+  position: fixed;
+  top: 0;
+  width: 100%;
+  z-index: 999999;
+}
+.marquee {
+  color: white;
+  letter-spacing: 2px;
+  font-weight: 700;
+  padding: 15px;
+  font-size: 15px;
+  padding-bottom: 20px;
+  -webkit-box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
+  box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
+}
+.my-header {
+  -webkit-box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
+  box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
+}
+
+.University-Logo {
+  width: 200px;
+  height: 60px;
+  object-fit: contain;
+}
+
+.bg-light {
+  background-color: white !important;
+}
+
+.navbar-light {
+  padding-left: 3%;
+}
+
+.nav-link {
+  color: rgba(128, 128, 128, 0.766) !important;
+  margin-left: 50px;
+  font-size: 15px !important;
+  font-weight: bold !important;
+}
+
+/* ................................................................. */
+.navbar-nav {
+  position: absolute !important;
+  right: 0;
+  margin-right: 30px;
+}
+
+/* ................................................................. */
+.dropdown-menu[data-bs-popper] {
+  top: 0 !important;
+  margin-top: -0.5rem;
+  margin-left: 2.5rem;
+}
+
+.dropdown:hover > .dropdown-menu {
+  display: block;
+}
+
+.dropdown-toggle::after {
+  display: none;
+}
+
+.navbar-toggler-icon:focus {
+  outline: none;
+}
+
+.navbar-toggler-icon:focus:active {
+  outline: none;
+}
+
+.navbar-toggler-icon {
+  display: inline-block;
+  width: 30px;
+  height: 22px;
+  vertical-align: middle;
+  background-image: var(--bs-navbar-toggler-icon-bg);
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 100%;
+}
+
+.navbar-collapse,
+.collapse {
+  margin-left: 16%;
+}
+
+#userlogo {
+  width: 20px;
+  height: 20px;
+}
+
+@media only screen and (max-width: 767px) {
+  .navbar-nav {
+    position: relative !important;
+    margin-right: 0px;
+  }
+
+  .University-Logo {
+    width: 165px;
+    height: 45px;
+    margin-left: -13px;
+  }
+
+  .nav-link {
+    margin-left: 140px !important;
+    text-align: end;
+    margin-right: 10px;
+  }
+
+  .nav-link:focus {
+    background-color: transparent;
+    color: black !important;
+  }
+
+  .user-link:focus {
+    background-color: transparent;
+    -webkit-box-shadow: none;
+    box-shadow: none;
+  }
+
+  .dropdown-menu {
+    width: 150px;
+    float: right;
+  }
+}
+
+@media only screen and (min-device-width: 768px) and (max-device-width: 1024px) and (orientation: landscape) {
+  .nav-link {
+    text-align: end;
+    margin-right: 10px;
+  }
+
+  .navbar-nav {
+    position: relative !important;
+    margin-right: 0px;
+  }
+}
+
+@media only screen and (min-device-width: 768px) and (max-device-width: 1024px) and (orientation: portrait) {
+  .nav-link {
+    text-align: end;
+    margin-right: 10px;
+  }
+
+  .navbar-nav {
+    position: relative !important;
+    margin-right: 0px;
+  }
+}
+
+@media only screen and (min-device-width: 1024px) and (max-device-width: 1366px) and (orientation: landscape) {
+  .nav-link {
+    color: grey !important;
+    margin-left: -1px !important;
+    font-size: 12px !important;
+    font-weight: bold !important;
+  }
+
+  /* .navbar-nav{
+    position: relative !important;
+    margin-right: 0px;
+  } */
+}
+
+@media only screen and (min-device-width: 1024px) and (max-device-width: 1366px) and (orientation: portrait) {
+  .nav-link {
+    color: grey !important;
+    margin-left: -1px !important;
+    font-size: 12px !important;
+    font-weight: bold !important;
+  }
+
+  /* .navbar-nav{
+    position: relative !important;
+    margin-right: 0px;
+  } */
+}
+
+/* line 144 to 147  */

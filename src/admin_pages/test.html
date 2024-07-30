@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>File Upload Test</title>
+</head>
+<body>
+
+    <h1>File Upload Test</h1>
+
+    <form action="http://192.168.1.15:8090/v1/api/candidates/drop_cv" method="post" enctype="multipart/form-data">
+        <label for="fileInput">Choose a file:</label>
+        <input type="file" id="fileInput" name="candidate_cv" accept=".pdf, .doc, .docx">
+
+        <!-- You can include additional fields here if needed -->
+        <!-- For example: -->
+        <!-- <input type="text" name="otherField" placeholder="Other Field"> -->
+
+        <br>
+
+        <button type="submit">Upload File</button>
+    </form>
+
+</body>
+</html>

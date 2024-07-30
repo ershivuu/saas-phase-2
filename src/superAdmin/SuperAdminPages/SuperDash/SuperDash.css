@@ -1,0 +1,116 @@
+.registered-companies {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 30px;
+  justify-content: center;
+}
+.welcome-card {
+  background-color: #95d14f;
+  width: 400px;
+  height: 300px;
+  border-radius: 10px;
+  padding: 20px;
+  /* flex-grow: 1; */
+}
+.total-company {
+  width: 400px;
+  height: 300px;
+  border-radius: 10px;
+  padding: 20px;
+  /* flex-grow: 1; */
+  background-color: #95cffd;
+}
+.total-user {
+  width: 400px;
+  height: 300px;
+  border-radius: 10px;
+  padding: 20px;
+  /* flex-grow: 1; */
+  background-color: #d2f8a0;
+}
+.profile-photo {
+  width: 100px;
+  height: 100px;
+  object-fit: contain;
+}
+.profile-photo img {
+  width: inherit;
+  height: inherit;
+  border-radius: 50%;
+}
+.profile-detail {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 15px;
+  padding-bottom: 10px;
+  border-bottom: 2px solid rgba(0, 0, 0, 0.413);
+}
+.profile-name {
+  line-height: 0.5;
+  color: white;
+}
+
+.profile-name p:nth-child(1) {
+  font-size: 18px;
+}
+.profile-name p:nth-child(2) {
+  font-size: 24px;
+  font-weight: bold;
+}
+.date,
+.time {
+  margin-top: 10px;
+  color: white;
+  line-height: 1;
+  border-left: 2px solid yellow;
+  padding-left: 10px;
+}
+.date p:nth-child(1),
+.time p:nth-child(1) {
+  font-size: 14px;
+  font-weight: 500;
+}
+.date p:nth-child(2),
+.time p:nth-child(2) {
+  font-size: 24px;
+  font-weight: 500;
+  margin-top: -10px;
+}
+
+.login-time {
+  margin-top: 20px;
+}
+.super-card-head {
+  line-height: 1;
+}
+.super-card-head p:nth-child(1) {
+  font-size: 16px;
+  font-weight: bold;
+}
+.super-card-head p:nth-child(2) {
+  font-size: 24px;
+  font-weight: 600;
+}
+.super-card-details {
+  display: flex;
+  text-align: center;
+  justify-content: center;
+  gap: 10px;
+}
+.super-card-details div {
+  padding: 5px 20px 5px 20px;
+  line-height: 1;
+}
+.super-card-details div:nth-child(1),
+.super-card-details div:nth-child(2) {
+  border-right: 2px solid white;
+}
+.super-card-details div p:nth-child(1) {
+  font-size: 16px;
+  font-weight: 500;
+}
+.super-card-details div p:nth-child(2) {
+  font-size: 24px;
+  font-weight: 600;
+}

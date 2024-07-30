@@ -1,0 +1,114 @@
+.container-404 {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -ms-flex-wrap: wrap;
+  flex-wrap: wrap;
+  -ms-flex-pack: distribute;
+  justify-content: space-around;
+  place-items: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  margin-top: 10%;
+}
+
+.data-404 p:nth-child(1) {
+  font-size: 50px;
+  font-family: "Open Sans", sans-serif;
+  color: #344a5f;
+}
+
+.data-404 p:nth-child(2) {
+  font-size: 20px;
+  font-weight: 500;
+  color: #344a5f;
+  font-family: "Open Sans", sans-serif;
+}
+
+.back-home-btn {
+  position: relative;
+  margin-left: 9%;
+  margin-top: -5%;
+}
+.back-home-btn button {
+  background-color: transparent;
+  border: 2px solid #344a5f;
+  padding: 2px 20px 2px 20px;
+  -webkit-transition: background-color 0.8s ease;
+  -o-transition: background-color 0.8s ease;
+  transition: background-color 0.8s ease;
+  font-size: 20px;
+  font-family: "Open Sans", sans-serif;
+  font-weight: 600;
+  color: #344a5f;
+}
+.back-home-btn button:hover {
+  background-color: #344a5f;
+  color: white;
+}
+
+@media screen and (max-width: 320px) {
+  /* Styles for smaller smartphones */
+  .container-404 {
+    margin-top: 10%;
+  }
+}
+
+@media screen and (min-width: 321px) and (max-width: 480px) {
+  /* Styles for larger smartphones */
+}
+
+@media screen and (min-width: 481px) and (max-width: 768px) {
+  /* Styles for tablets */
+  .container-404 {
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -ms-flex-wrap: wrap;
+    flex-wrap: wrap;
+    -ms-flex-pack: distribute;
+    justify-content: space-around;
+    place-items: center;
+    -webkit-box-align: center;
+    -ms-flex-align: center;
+    align-items: center;
+    margin-top: 10%;
+  }
+}
+
+@media screen and (min-width: 769px) and (max-width: 1024px) {
+  .container-404 {
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -ms-flex-wrap: wrap;
+    flex-wrap: wrap;
+    -ms-flex-pack: distribute;
+    justify-content: space-around;
+    place-items: center;
+    -webkit-box-align: center;
+    -ms-flex-align: center;
+    align-items: center;
+    margin-top: 10%;
+  }
+}
+
+@media screen and (min-width: 1025px) and (max-width: 1440px) {
+  .container-404 {
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -ms-flex-wrap: wrap;
+    flex-wrap: wrap;
+    -ms-flex-pack: distribute;
+    justify-content: space-around;
+    place-items: center;
+    -webkit-box-align: center;
+    -ms-flex-align: center;
+    align-items: center;
+    margin-top: 10%;
+  }
+}
+
+/* Additional media queries for larger screens can be added if needed */

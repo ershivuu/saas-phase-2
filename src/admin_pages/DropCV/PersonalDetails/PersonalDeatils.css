@@ -1,0 +1,139 @@
+.row1 {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -ms-flex-wrap: wrap;
+  flex-wrap: wrap;
+}
+.error-message {
+  font-family: "Open Sans", sans-serif;
+  font-size: 14px;
+  color: red;
+  margin-left: 10px;
+  font-weight: 600;
+}
+.personaldetails-form {
+  -webkit-box-pack: center;
+  -ms-flex-pack: center;
+  justify-content: center;
+  margin-top: 4%;
+  font-family: "Open Sans", sans-serif;
+}
+
+.PD-heading {
+  font-size: 23px;
+  color: #170f49;
+  font-weight: 700;
+}
+
+.PD-subheading {
+  color: #6f6c90;
+  font-size: 17px;
+  font-weight: 400;
+}
+
+.form-section {
+  margin-top: 8%;
+}
+
+.SetLabel-Name {
+  font-size: 16px;
+  font-weight: 500;
+  letter-spacing: 0.2px;
+}
+
+.SetLabel-Name span {
+  color: red;
+}
+
+.set-dropdown {
+  width: 75%;
+  padding: 12px;
+  border-radius: 45px;
+  color: #6f6c90;
+  border-color: #eff0f6;
+  /* -webkit-box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
+  box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px; */
+}
+
+.custom-dropdown {
+  font-size: 16px;
+  color: blue;
+}
+
+.set-input:focus {
+  outline: none;
+}
+.set-dropdown:focus {
+  outline: none;
+}
+
+.set-icon {
+  margin-left: -33px;
+  color: rgba(160, 163, 189, 1);
+}
+
+/* .date-input{
+  width: 99.5% !important;
+  height: 55px;
+  border-radius: 45px;
+  border: 1px solid;
+  border-color: #eff0f6;
+  -webkit-box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
+  box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
+  color: #6f6c90;
+  font-size: 15px;
+  padding: 14px;
+} */
+
+
+
+input[type="date"]
+{
+    display:block;
+    -webkit-appearance: none;
+    -moz-appearance: textfield;
+    min-height: 1.2em;
+    width: 100%;
+    text-align: left;
+}
+
+
+
+@media only screen and (max-width: 767px) {
+  .set-input {
+    width: 100% !important;
+    font-size: 12px !important;
+  }
+
+  .set-dropdown {
+    width: 100% !important;
+    font-size: 12px !important;
+  }
+
+  .SetLabel-Name {
+    font-size: 11px !important;
+  }
+}
+
+@media only screen and (min-device-width: 768px) and (max-device-width: 1024px) and (-webkit-min-device-pixel-ratio: 2) {
+  .set-input {
+    width: 80% !important;
+    font-size: 12px !important;
+  }
+
+  .set-dropdown {
+    width: 80% !important;
+    font-size: 12px !important;
+  }
+}
+
+@media only screen and (max-width: 820px) {
+  .container {
+    padding: 10px;
+  }
+
+  .form-section {
+    margin-bottom: 15px;
+  }
+}

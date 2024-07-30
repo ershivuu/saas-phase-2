@@ -1,0 +1,27 @@
+.plus-buttons {
+  padding: 2px 7px 2px 7px;
+  float: right;
+  border: none;
+  background-color: transparent;
+}
+.plus-buttons img {
+  width: 20px;
+  height: 20px;
+}
+
+.minus-buttons {
+  padding: 2px 7px 2px 7px;
+  float: right;
+  border: none;
+  background-color: transparent;
+}
+.minus-buttons img {
+  width: 20px;
+  height: 20px;
+}
+
+.highlighted-experience {
+  -webkit-box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
+  box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
+  padding: 10px;
+}

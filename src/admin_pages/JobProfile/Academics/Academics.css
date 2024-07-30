@@ -1,0 +1,156 @@
+:root {
+  --hide-col: #ececec;
+}
+.apply-for-dean {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -ms-flex-wrap: wrap;
+  flex-wrap: wrap;
+  -ms-flex-pack: distribute;
+  justify-content: space-between;
+  max-width: 1200px;
+  margin: auto;
+  margin-top: 50px;
+}
+.dept-name {
+  text-transform: capitalize;
+}
+
+.apply-for-dean p {
+  font-size: 40px;
+  font-family: "Open Sans", sans-serif;
+  font-weight: 700;
+}
+.jd-dropdown {
+  max-width: 1220px;
+  margin: auto;
+}
+.accordion-button {
+  text-transform: capitalize;
+}
+/* .apply-for-dean button {
+  border: none;
+  padding: 10px;
+  width: 130px;
+  border-radius: 50px;
+  margin-top: 20px;
+  font-family: "Open Sans", sans-serif;
+  font-weight: bold;
+}
+.apply-for-dean button a {
+  color: black;
+  text-decoration: none;
+} */
+
+.apply-btn-jp button {
+  border: none;
+  padding: 10px;
+  width: 130px;
+  border-radius: 50px;
+  margin-top: 10px;
+  font-family: "Open Sans", sans-serif;
+  font-weight: bold;
+  background-color: #f0f0f0;
+}
+.apply-btn-jp a {
+  color: black;
+  text-decoration: none;
+}
+.courses {
+  font-family: "Open Sans", sans-serif;
+  color: rgba(0, 0, 0, 0.759);
+  max-width: 1200px;
+  margin: auto;
+  margin-bottom: 30px;
+}
+
+.my-table {
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  margin-left: 8.9%;
+  margin-right: 8.9%;
+}
+
+.table thead th,
+.table tbody td {
+  color: rgba(0, 0, 0, 0.73);
+}
+
+.table tr {
+  padding-left: 20px;
+  padding-right: 20px;
+}
+
+details {
+  font-size: 16px;
+  padding-bottom: 1%;
+  font-family: "Open Sans", sans-serif;
+}
+
+#my-dropdown {
+  border-radius: 10px;
+  background-color: #ececec;
+  margin-bottom: 10px;
+  color: rgba(0, 0, 0, 0.548);
+  padding-right: 10px;
+  padding-left: 1px;
+}
+
+#my-dropdown::marker {
+  display: none !important;
+  color: var(--hide-col) !important;
+}
+.hide-dropdown-btn {
+  display: none !important;
+  color: var(--hide-col) !important;
+}
+
+#my-dropdown::before {
+  margin-top: 5px;
+  content: "▼";
+  font-size: 15px;
+  float: right;
+  color: rgba(0, 0, 0, 0.718);
+  padding: 2px;
+  margin: 2px;
+}
+
+details[open] #my-dropdown::before {
+  content: "▼";
+  rotate: 180deg;
+  margin-right: -15px;
+}
+
+details[open] > summary {
+  background-color: white;
+}
+/* 
+.table-dropdown {
+  margin-left: 10.3%;
+  margin-right: 10.3%;
+} */
+
+.drp-table {
+  margin-top: 15px;
+}
+
+@media only screen and (max-width: 767px) {
+  .my-table {
+    margin-left: 5%;
+    margin-right: 5%;
+  }
+
+  /* .table-dropdown {
+    margin-left: 5%;
+    margin-right: 5%;
+  } */
+
+  #my-dropdown {
+    text-align: center;
+  }
+  .courses {
+    margin-left: 2%;
+  }
+}

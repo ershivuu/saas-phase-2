@@ -1,0 +1,36 @@
+.table th {
+  padding-top: 15px;
+  padding-bottom: 15px;
+}
+.table td {
+  padding-top: 15px;
+  padding-bottom: 15px;
+}
+.SCADM-table {
+  padding: 3% 10% 1% 10%;
+}
+.SCADM-heading {
+  font-size: 25px;
+  font-family: "Open Sans", sans-serif;
+  color: #901626;
+  font-weight: 600;
+}
+.table-des {
+  margin-top: -15px;
+  margin-bottom: 50px;
+  font-size: 20px;
+  font-family: "Open Sans", sans-serif;
+  color: rgba(0, 0, 0, 0.725);
+}
+.pagination {
+  float: right;
+}
+@media only screen and (max-width: 767px) {
+  .SCADM-table {
+    padding: 3% 3% 1% 3%;
+  }
+  .pagination {
+    float: left;
+    margin-bottom: 20px;
+  }
+}

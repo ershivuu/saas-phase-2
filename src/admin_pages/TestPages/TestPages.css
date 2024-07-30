@@ -1,0 +1,38 @@
+/* .slider-imgs div {
+  width: 293px;
+  height: 290px;
+  border-radius: 35px;
+  overflow: hidden;
+}
+.slider-imgs div p {
+  font-size: 17px;
+  padding-left: 20px;
+  width: 250px;
+  letter-spacing: 2px;
+  font-family: "Open Sans", sans-serif;
+  margin-top: 80%;
+  position: relative;
+  z-index: 9999;
+}
+
+.img-card1,
+.img-card2,
+.img-card3,
+.img-card4 {
+  cursor: pointer;
+  background-size: cover !important;
+  overflow: hidden;
+  position: relative;
+}
+.slider-imgs div img {
+  width: 293px;
+  height: 290px;
+  border-radius: 35px;
+  object-fit: cover;
+}
+.card-content {
+  color: black !important;
+  position: absolute !important;
+  z-index: 9999 !important;
+  bottom: 0;
+} */

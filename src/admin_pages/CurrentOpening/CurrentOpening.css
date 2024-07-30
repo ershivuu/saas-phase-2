@@ -1,0 +1,100 @@
+.cop-heading {
+  margin-top: 3% !important;
+  font-size: 3vw;
+  font-family: "Playfair Display", serif;
+  max-width: -webkit-max-content;
+  max-width: -moz-max-content;
+  max-width: max-content;
+  margin: auto;
+}
+
+.cop-heading span {
+  border-bottom: 2px solid #901626;
+}
+
+.table {
+  border: 2px solid rgba(99, 99, 99, 0.13) !important;
+}
+
+.table th {
+  padding-top: 15px;
+  padding-bottom: 15px;
+  text-align: left !important;
+  color: #7c7c7c !important;
+}
+
+.table td {
+  padding-top: 15px;
+  padding-bottom: 15px;
+  text-align: left !important;
+  font-weight: bold;
+}
+
+.table thead {
+  border: 2px solid rgba(99, 99, 99, 0.13) !important;
+}
+
+.academic-table {
+  max-width: 1300px;
+  margin: auto;
+}
+
+.non-academin-table {
+  margin: 25px 10% 50px 10%;
+}
+
+.apn-btn {
+  border: none;
+  padding: 5px 10px 5px 10px;
+  border-radius: 10px;
+  font-weight: bold;
+  background-color: #d2d2d2;
+}
+
+.apn-btn a {
+  color: rgba(0, 0, 0, 0.63);
+}
+
+.table-heading {
+  font-weight: 500;
+  padding-top: 20px;
+  font-size: 30px;
+}
+
+.pagination {
+  float: right;
+}
+
+.css-10w330c-MuiButtonBase-root-MuiPaginationItem-root.Mui-selected {
+  background-color: rgb(0 0 0 / 26%) !important;
+}
+
+@media only screen and (max-width: 767px) {
+  .academic-table {
+    margin: 25px 5% 50px 5%;
+  }
+
+  .non-academin-table {
+    margin: 25px 5% 50px 5%;
+  }
+
+  .pagination {
+    float: left;
+    margin-bottom: 20px;
+  }
+
+  .cop-heading {
+    font-size: 25px;
+  }
+
+  .table-heading {
+    font-size: 20px;
+  }
+
+  .apn-btn {
+    border: none;
+    padding: 5px 10px 5px 10px;
+    border-radius: 10px;
+    font-size: 15px !important;
+  }
+}

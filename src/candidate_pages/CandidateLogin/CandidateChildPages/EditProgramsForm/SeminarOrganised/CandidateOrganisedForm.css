@@ -1,0 +1,33 @@
+.flex-btns {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 30px;
+  align-items: center;
+  margin-top: 5%;
+  margin-bottom: 2.5%;
+}
+.add-btn {
+  padding: 10px 22px 10px 22px;
+  border-radius: 56px;
+  border: none;
+  font-weight: 500;
+  background-color: rgba(226, 226, 226, 1);
+  height: fit-content;
+  box-shadow: rgb(100 100 111 / 17%) 0px 7px 29px 0px;
+}
+.candidate-table-heading {
+  font-size: 30px;
+  font-family: "Open Sans", sans-serif;
+  color: #901626;
+  font-weight: 600;
+  margin-bottom: -8px;
+}
+
+.set-programs-tabel{
+  margin-top: 25px;
+}
+
+.error{
+  color: red;
+}

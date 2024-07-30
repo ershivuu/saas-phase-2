@@ -1,0 +1,182 @@
+.user-header {
+  -webkit-box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
+  box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
+  padding: 10px;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -ms-flex-wrap: wrap;
+  flex-wrap: wrap;
+  -webkit-box-pack: justify;
+  -ms-flex-pack: justify;
+  justify-content: space-between;
+  width: 100%;
+  background-color: white;
+}
+
+.user-logo {
+  width: 200px;
+  height: 60px;
+}
+
+.logo-coloured {
+  margin-left: 3%;
+}
+
+.log-res {
+  width: 25px;
+  height: 25px;
+  margin: 15px;
+}
+
+.logs {
+  margin-right: 3%;
+}
+.logs button {
+  background-color: transparent;
+  border: none;
+}
+
+.set-sidebar {
+  height: 100%;
+  padding-top: 10%;
+  position: relative;
+  z-index: 10;
+  background-color: white;
+  padding-right: 10px;
+  width: 300px;
+}
+
+.row1 {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -ms-flex-wrap: wrap;
+  flex-wrap: wrap;
+}
+
+.set-col-2 {
+  width: 100%;
+}
+
+.isClose {
+  display: none;
+}
+
+.user-logo {
+  width: 200px;
+  height: 60px;
+}
+.active-link {
+  color: maroon; /* Change color as needed */
+}
+.logo-coloured {
+  margin-left: 3%;
+}
+
+.log-res {
+  width: 25px;
+  height: 25px;
+  margin: 15px;
+}
+
+.logs {
+  margin-right: 3%;
+}
+
+/* .......................................... */
+
+.set-menu a {
+  text-decoration: none;
+  /* font-size: 10px; */
+  font-weight: 700;
+  color: rgb(112 112 112 / 78%) !important;
+  padding-left: 10px;
+  letter-spacing: 0.5px;
+
+  cursor: pointer;
+}
+
+.set-menu {
+  padding-left: 10% !important;
+  padding-right: 5px;
+}
+
+.set-menu li {
+  padding-top: 20px;
+  padding-bottom: 10px;
+  text-align: left;
+}
+.menu-list span {
+  text-align: justify;
+}
+.set-menu-icon {
+  color: rgb(112 112 112 / 78%);
+  font-size: 18px;
+  width: 2rem;
+  margin-right: -10px;
+}
+
+.set-menu a:focus {
+  color: maroon;
+}
+
+
+.sidebar-btn {
+  font-size: 30px !important;
+  color: rgb(112 112 112 / 78%) !important;
+  position: relative;
+  left: 0 !important;
+  z-index: 9999 !important;
+}
+
+.toggle-div {
+  background-color: white;
+  position: relative;
+  z-index: 10;
+}
+
+.set-menu li a.active {
+  color: red;
+}
+
+@media only screen and (max-width: 767px) {
+  .logo-coloured {
+    margin-left: 1%;
+  }
+  .logs {
+    margin-right: 0.1%;
+  }
+  .log-res {
+    width: 20px;
+    height: 20px;
+    margin: 15px;
+  }
+  .set-sidebar {
+    padding-top: 10px;
+    position: absolute;
+    z-index: 100;
+    width: 98vw;
+    margin-top: 0.1em;
+    background-color: rgb(255, 255, 255);
+  }
+}
+
+@media only screen and (max-width: 767px) {
+  .logo-coloured {
+    margin-left: 1%;
+  }
+
+  .logs {
+    margin-right: 0.1%;
+  }
+
+  .log-res {
+    width: 20px;
+    height: 20px;
+    margin: 15px;
+  }
+  .dropdown-menu {
+    width: auto;
+  }
+}

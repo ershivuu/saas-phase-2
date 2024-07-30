@@ -1,0 +1,41 @@
+.close-btn {
+    width: 20px;
+    float: right;
+    position: absolute;
+    cursor: pointer;
+    left: 98%;
+    top: -20px;
+
+}
+
+.forgot-pass {
+    text-decoration: none;
+    color: grey;
+    font-family: "Open Sans", sans-serif;
+    font-weight: 600;
+    font-size: 15px;
+}
+
+
+.password-togglee {
+    position: absolute;
+    right: 6px;
+    top: 27%;
+    transform: translateY(-50%);
+  }
+  
+
+@keyframes shake {
+    0% { transform: translateX(0); }
+    25% { transform: translateX(-5px); }
+    50% { transform: translateX(5px); }
+    75% { transform: translateX(-3px); }
+    100% { transform: translateX(0); }
+  }
+  
+  .shake-animation {
+    animation: shake 0.5s ease-in-out;
+  }
+  .input-error {
+    border: 2px solid rgb(163, 4, 4);
+  }
