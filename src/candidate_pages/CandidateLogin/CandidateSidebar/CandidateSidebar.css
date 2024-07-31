@@ -147,11 +147,7 @@
   .logs {
     margin-right: 0.1%;
   }
-  .log-res {
-    width: 20px;
-    height: 20px;
-    margin: 15px;
-  }
+ 
   .set-sidebar {
     padding-top: 10px;
     position: absolute;
@@ -159,6 +155,11 @@
     width: 98vw;
     margin-top: 0.1em;
     background-color: rgb(255, 255, 255);
+  }
+  .log-res {
+    width: 20px;
+    height: 20px;
+    margin: 15px;
   }
 }
 
