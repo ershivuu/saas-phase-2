@@ -98,6 +98,26 @@ const AdminSidebar = ({ isOpen, onToggle }) => {
                 text: "Post",
                 path: "/admin-dashboard/admin-posts",
               },
+              {
+                text: "Sub Post",
+                path: "/admin-dashboard/admin-subpost",
+              },
+              {
+                text: "Department",
+                path: "/admin-dashboard/admin-department",
+              },
+              {
+                text: "Subjects",
+                path: "/admin-dashboard/admin-subject",
+              },
+              {
+                text: "Exam Type",
+                path: "/admin-dashboard/admin-examtype",
+              },
+              {
+                text: "Degree",
+                path: "/admin-dashboard/admin-degree",
+              },
             ],
           },
         ].map((item, index) => (

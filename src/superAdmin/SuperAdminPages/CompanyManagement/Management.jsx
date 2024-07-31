@@ -469,7 +469,7 @@ function Management() {
               >
                 {plans.map((plan) => (
                   <MenuItem key={plan.id} value={plan.id}>
-                    {plan.name}
+                    {plan.plan_name}
                   </MenuItem>
                 ))}
               </Select>

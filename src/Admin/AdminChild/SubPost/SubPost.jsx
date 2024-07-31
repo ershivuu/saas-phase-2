@@ -18,35 +18,35 @@ import {
   MenuItem,
 } from "@mui/material";
 import {
+  getSubPosts,
   getPosts,
-  getCategories,
-  createPost,
-  updatePost,
-  deletePost,
+  createSubPost,
+  updateSubPost,
+  deleteSubPost,
 } from "../../Services/AdminServices";
 
-function CreatePosts() {
+function SubPost() {
+  const [subPosts, setSubPosts] = useState([]);
   const [posts, setPosts] = useState([]);
-  const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [dialogOpen, setDialogOpen] = useState(false);
-  const [isEditing, setIsEditing] = useState(false);
-  const [selectedPost, setSelectedPost] = useState(null);
-  const [categoryId, setCategoryId] = useState("");
-  const [postName, setPostName] = useState("");
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
-  const [postToDelete, setPostToDelete] = useState(null);
+  const [isEditing, setIsEditing] = useState(false);
+  const [selectedSubPost, setSelectedSubPost] = useState(null);
+  const [subPostName, setSubPostName] = useState("");
+  const [selectedPostId, setSelectedPostId] = useState("");
+  const [subPostToDelete, setSubPostToDelete] = useState(null);
 
   useEffect(() => {
-    const fetchPostsAndCategories = async () => {
+    const fetchData = async () => {
       try {
-        const [postsData, categoriesData] = await Promise.all([
+        const [subPostsData, postsData] = await Promise.all([
+          getSubPosts(),
           getPosts(),
-          getCategories(),
         ]);
+        setSubPosts(subPostsData);
         setPosts(postsData);
-        setCategories(categoriesData);
       } catch (error) {
         setError(error.message);
       } finally {
@@ -54,51 +54,50 @@ function CreatePosts() {
       }
     };
 
-    fetchPostsAndCategories();
+    fetchData();
   }, []);
 
-  const handleAddPostClick = () => {
+  const handleAddSubPostClick = () => {
     setIsEditing(false);
     setDialogOpen(true);
-    setCategoryId("");
-    setPostName("");
+    setSubPostName("");
+    setSelectedPostId("");
   };
 
-  const handleEditClick = (post) => {
+  const handleEditClick = (subPost) => {
     setIsEditing(true);
-    setSelectedPost(post);
-    setCategoryId(post.category_id);
-    setPostName(post.post_name);
+    setSelectedSubPost(subPost);
+    setSubPostName(subPost.subpost_name);
+    setSelectedPostId(subPost.post_id);
     setDialogOpen(true);
   };
 
-  const handleDeleteClick = (post) => {
-    console.log("Setting post to delete:", post); // Debug log
-    setPostToDelete(post);
+  const handleDeleteClick = (subPost) => {
+    setSubPostToDelete(subPost);
     setDeleteDialogOpen(true);
   };
 
   const handleCloseDialog = () => {
     setDialogOpen(false);
-    setCategoryId("");
-    setPostName("");
-    setSelectedPost(null);
+    setSubPostName("");
+    setSelectedPostId("");
+    setSelectedSubPost(null);
   };
 
   const handleCloseDeleteDialog = () => {
     setDeleteDialogOpen(false);
-    setPostToDelete(null);
+    setSubPostToDelete(null);
   };
 
   const handleSubmit = async () => {
     try {
       if (isEditing) {
-        await updatePost(selectedPost.id, categoryId, postName);
+        await updateSubPost(selectedSubPost.id, selectedPostId, subPostName);
       } else {
-        await createPost(categoryId, postName);
+        await createSubPost(selectedPostId, subPostName);
       }
-      const postsData = await getPosts();
-      setPosts(postsData);
+      const subPostsData = await getSubPosts();
+      setSubPosts(subPostsData);
       handleCloseDialog();
     } catch (error) {
       setError(error.message);
@@ -107,11 +106,10 @@ function CreatePosts() {
 
   const handleDelete = async () => {
     try {
-      if (postToDelete) {
-        console.log("Deleting post with ID:", postToDelete.id); // Debug log
-        await deletePost(postToDelete.id);
-        const postsData = await getPosts();
-        setPosts(postsData);
+      if (subPostToDelete) {
+        await deleteSubPost(subPostToDelete.id);
+        const subPostsData = await getSubPosts();
+        setSubPosts(subPostsData);
         handleCloseDeleteDialog();
       }
     } catch (error) {
@@ -133,8 +131,8 @@ function CreatePosts() {
             <TableHead>
               <TableRow>
                 <TableCell>ID</TableCell>
-                <TableCell>Category</TableCell>
-                <TableCell>Post Name</TableCell>
+                <TableCell>Post</TableCell>
+                <TableCell>Sub Post</TableCell>
                 <TableCell>Edit</TableCell>
                 <TableCell>Delete</TableCell>
               </TableRow>
@@ -152,8 +150,8 @@ function CreatePosts() {
   return (
     <div style={{ padding: "20px" }}>
       <div style={{ float: "right", marginBottom: "20px" }}>
-        <Button variant="contained" onClick={handleAddPostClick}>
-          Add Post
+        <Button variant="contained" onClick={handleAddSubPostClick}>
+          Add Sub Post
         </Button>
       </div>
       <TableContainer component={Paper}>
@@ -161,22 +159,22 @@ function CreatePosts() {
           <TableHead>
             <TableRow>
               <TableCell>ID</TableCell>
-              <TableCell>Category</TableCell>
-              <TableCell>Post Name</TableCell>
+              <TableCell>Post</TableCell>
+              <TableCell>Sub Post</TableCell>
               <TableCell>Edit</TableCell>
               <TableCell>Delete</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
-            {posts.map((post) => (
-              <TableRow key={post.id}>
-                <TableCell>{post.id}</TableCell>
-                <TableCell>{post.category_name}</TableCell>
-                <TableCell>{post.post_name}</TableCell>
+            {subPosts.map((subPost, index) => (
+              <TableRow key={subPost.id}>
+                <TableCell>{index + 1}</TableCell>
+                <TableCell>{subPost.post_name}</TableCell>
+                <TableCell>{subPost.subpost_name}</TableCell>
                 <TableCell>
                   <Button
                     variant="outlined"
-                    onClick={() => handleEditClick(post)}
+                    onClick={() => handleEditClick(subPost)}
                   >
                     Edit
                   </Button>
@@ -185,7 +183,7 @@ function CreatePosts() {
                   <Button
                     variant="outlined"
                     color="error"
-                    onClick={() => handleDeleteClick(post)}
+                    onClick={() => handleDeleteClick(subPost)}
                   >
                     Delete
                   </Button>
@@ -196,26 +194,28 @@ function CreatePosts() {
         </Table>
       </TableContainer>
       <Dialog open={dialogOpen} onClose={handleCloseDialog}>
-        <DialogTitle>{isEditing ? "Edit Post" : "Add New Post"}</DialogTitle>
+        <DialogTitle>
+          {isEditing ? "Edit Sub Post" : "Add New Sub Post"}
+        </DialogTitle>
         <DialogContent>
           <TextField
             select
-            label="Category"
-            value={categoryId}
-            onChange={(e) => setCategoryId(e.target.value)}
+            label="Post"
+            value={selectedPostId}
+            onChange={(e) => setSelectedPostId(e.target.value)}
             fullWidth
             margin="normal"
           >
-            {categories.map((category) => (
-              <MenuItem key={category.id} value={category.id}>
-                {category.category_name}
+            {posts.map((post) => (
+              <MenuItem key={post.id} value={post.id}>
+                {post.post_name}
               </MenuItem>
             ))}
           </TextField>
           <TextField
-            label="Post Name"
-            value={postName}
-            onChange={(e) => setPostName(e.target.value)}
+            label="Sub Post Name"
+            value={subPostName}
+            onChange={(e) => setSubPostName(e.target.value)}
             fullWidth
             margin="normal"
           />
@@ -225,14 +225,16 @@ function CreatePosts() {
             Cancel
           </Button>
           <Button onClick={handleSubmit} color="primary">
-            {isEditing ? "Update Post" : "Add Post"}
+            {isEditing ? "UPDATE" : "ADD"}
           </Button>
         </DialogActions>
       </Dialog>
       <Dialog open={deleteDialogOpen} onClose={handleCloseDeleteDialog}>
         <DialogTitle>Confirm Delete</DialogTitle>
         <DialogContent>
-          <Typography>Are you sure you want to delete this post?</Typography>
+          <Typography>
+            Are you sure you want to delete this sub post?
+          </Typography>
         </DialogContent>
         <DialogActions>
           <Button onClick={handleCloseDeleteDialog} color="primary">
@@ -247,4 +249,4 @@ function CreatePosts() {
   );
 }
 
-export default CreatePosts;
+export default SubPost;
