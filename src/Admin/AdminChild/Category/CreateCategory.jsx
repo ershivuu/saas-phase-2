@@ -111,8 +111,34 @@ function CreateCategory() {
     }
   };
 
-  if (loading) return <CircularProgress />;
-  if (error) return <Typography color="error">Error: {error}</Typography>;
+  if (loading)
+    return (
+      <div className="loading-process">
+        <CircularProgress />
+      </div>
+    );
+  if (error)
+    return (
+      <div style={{ padding: "20px" }}>
+        <TableContainer component={Paper}>
+          <Table>
+            <TableHead>
+              <TableRow>
+                <TableCell>ID</TableCell>
+                <TableCell>Category Name</TableCell>
+                <TableCell>Edit</TableCell>
+                <TableCell>Delete</TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              <Typography color="error" sx={{ padding: "10px" }}>
+                Error: {error}
+              </Typography>
+            </TableBody>
+          </Table>
+        </TableContainer>
+      </div>
+    );
 
   return (
     <div style={{ padding: "20px" }}>
