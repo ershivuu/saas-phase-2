@@ -86,22 +86,20 @@ const AdminSidebar = ({ isOpen, onToggle }) => {
             path: "/admin-dashboard/admin-page",
           },
 
-          //   {
-          //     text: "Plan Management",
-          //     icon: <PollIcon />,
-          //     subItems: [
-          //       {
-          //         text: "Plan & Pricing",
-          //         path: "/super-admin/plan-and-pricing",
-          //       },
-          //       { text: "Services List", path: "/super-admin/service-list" },
-          //       {
-          //         text: "Offline Payment",
-          //         path: "/super-admin/offline-payments",
-          //       },
-          //       { text: "Payment History", path: "/super-admin/payment-history" },
-          //     ],
-          //   },
+          {
+            text: "Master List",
+            icon: <PollIcon />,
+            subItems: [
+              {
+                text: "Category",
+                path: "/admin-dashboard/admin-category",
+              },
+              {
+                text: "Post",
+                path: "/admin-dashboard/admin-posts",
+              },
+            ],
+          },
         ].map((item, index) => (
           <div key={item.text}>
             <ListItem

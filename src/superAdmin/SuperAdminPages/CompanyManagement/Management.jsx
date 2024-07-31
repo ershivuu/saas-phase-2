@@ -47,6 +47,7 @@ function Management() {
     subdomain: "",
   });
   const [plans, setPlans] = useState([]); // State for subscription plans
+  const [selectedCompany, setSelectedCompany] = useState(null);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -194,6 +195,7 @@ function Management() {
       console.error("Error creating admin:", error);
     }
   };
+
   const formatDate = (dateString) => {
     const date = new Date(dateString);
     const day = String(date.getDate()).padStart(2, "0");
@@ -202,6 +204,7 @@ function Management() {
 
     return `${day}:${month}:${year}`;
   };
+
   useEffect(() => {
     let filtered = [...companies];
     const now = new Date();
@@ -229,6 +232,10 @@ function Management() {
 
     setFilteredCompanies(filtered);
   }, [filter, companies, searchTerm]); // Add searchTerm to dependencies
+
+  const handleViewClick = (company) => {
+    setSelectedCompany(company);
+  };
 
   return (
     <>
@@ -283,7 +290,7 @@ function Management() {
             <img src={greenbag} alt="" />
           </div>
           <div>
-            <p>Active Company</p>
+            <p>Active</p>
             <p>{activeCompanies}</p>
           </div>
         </div>
@@ -292,7 +299,7 @@ function Management() {
             <img src={redbag} alt="" />
           </div>
           <div>
-            <p>Inactive Company</p>
+            <p>Inactive</p>
             <p>{inactiveCompanies}</p>
           </div>
         </div>
@@ -301,7 +308,7 @@ function Management() {
             <img src={yellowbag} alt="" />
           </div>
           <div>
-            <p>Paid Company</p>
+            <p>Paid</p>
             <p>{paidCompanies}</p>
           </div>
         </div>
@@ -314,12 +321,11 @@ function Management() {
                 <img src={bluebag} alt="" />
               </div>
               <div className="company-other-details">
-                <p>Name : {company.company_name}</p>
-                <p>Subdomain : {company.subdomain}</p>
+                <p>Name: {company.company_name}</p>
+                <p>Subdomain: {company.subdomain}</p>
                 <p>
                   Duration: <span>{company.subscription_plan.duration}</span>
                 </p>
-
                 <p>
                   Reg.Date: <span>{formatDate(company.reg_date)}</span>
                 </p>
@@ -328,7 +334,11 @@ function Management() {
                 <IconButton color="error" aria-label="delete">
                   <DeleteIcon />
                 </IconButton>
-                <IconButton color="primary" aria-label="view">
+                <IconButton
+                  color="primary"
+                  aria-label="view"
+                  onClick={() => handleViewClick(company)}
+                >
                   <VisibilityIcon />
                 </IconButton>
               </div>
@@ -357,49 +367,100 @@ function Management() {
           </div>
         ))}
       </div>
-
-      {/* Dialog for adding company */}
+      <Dialog open={!!selectedCompany} onClose={() => setSelectedCompany(null)}>
+        <DialogTitle>Company Details</DialogTitle>
+        <DialogContent>
+          {selectedCompany && (
+            <div>
+              <Typography variant="h6">
+                Company Name: {selectedCompany.company_name}
+              </Typography>
+              <Typography>Email: {selectedCompany.email}</Typography>
+              <Typography>Password: {selectedCompany.password}</Typography>
+              <Typography>Contact: {selectedCompany.contact}</Typography>
+              <Typography>Subdomain: {selectedCompany.subdomain}</Typography>
+              <Typography>
+                Registration Date: {formatDate(selectedCompany.reg_date)}
+              </Typography>
+              <Typography>
+                Start Date: {formatDate(selectedCompany.start_date)}
+              </Typography>
+              <Typography>
+                End Date: {formatDate(selectedCompany.end_date)}
+              </Typography>
+              <Typography>
+                Plan Name: {selectedCompany.subscription_plan.name}
+              </Typography>
+              <Typography>
+                Plan Details: {selectedCompany.subscription_plan.details}
+              </Typography>
+              <Typography>
+                Plan Price: {selectedCompany.subscription_plan.price}
+              </Typography>
+              <Typography>
+                Plan Duration: {selectedCompany.subscription_plan.duration} days
+              </Typography>
+              <Typography>
+                Is Paid: {selectedCompany.is_paid ? "Yes" : "No"}
+              </Typography>
+              <Typography>
+                Is Active: {selectedCompany.is_active ? "Yes" : "No"}
+              </Typography>
+            </div>
+          )}
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setSelectedCompany(null)} color="primary">
+            Close
+          </Button>
+        </DialogActions>
+      </Dialog>
       <Dialog open={openDialog} onClose={handleDialogClose}>
-        <DialogTitle>Add New Company</DialogTitle>
+        <DialogTitle>Add Company</DialogTitle>
         <DialogContent>
           <form onSubmit={handleFormSubmit}>
             <TextField
-              margin="dense"
               label="Company Name"
-              type="text"
-              fullWidth
               name="company_name"
               value={formValues.company_name}
               onChange={handleInputChange}
+              fullWidth
+              margin="normal"
             />
             <TextField
-              margin="dense"
               label="Email"
-              type="email"
-              fullWidth
               name="email"
               value={formValues.email}
               onChange={handleInputChange}
+              fullWidth
+              margin="normal"
             />
             <TextField
-              margin="dense"
               label="Password"
               type="password"
-              fullWidth
               name="password"
               value={formValues.password}
               onChange={handleInputChange}
+              fullWidth
+              margin="normal"
             />
             <TextField
-              margin="dense"
               label="Contact"
-              type="text"
-              fullWidth
               name="contact"
               value={formValues.contact}
               onChange={handleInputChange}
+              fullWidth
+              margin="normal"
             />
-            <FormControl fullWidth margin="dense">
+            <TextField
+              label="Subdomain"
+              name="subdomain"
+              value={formValues.subdomain}
+              onChange={handleInputChange}
+              fullWidth
+              margin="normal"
+            />
+            <FormControl fullWidth margin="normal">
               <InputLabel>Subscription Plan</InputLabel>
               <Select
                 name="subscription_plan"
@@ -408,28 +469,21 @@ function Management() {
               >
                 {plans.map((plan) => (
                   <MenuItem key={plan.id} value={plan.id}>
-                    {plan.plan_name}
+                    {plan.name}
                   </MenuItem>
                 ))}
               </Select>
             </FormControl>
-            <TextField
-              margin="dense"
-              label="Subdomain"
-              type="text"
-              fullWidth
-              name="subdomain"
-              value={formValues.subdomain}
-              onChange={handleInputChange}
-            />
-            <DialogActions>
-              <Button onClick={handleDialogClose}>Cancel</Button>
-              <Button type="submit" color="primary">
-                Add
-              </Button>
-            </DialogActions>
+            <Button type="submit" variant="contained" color="primary">
+              Add Company
+            </Button>
           </form>
         </DialogContent>
+        <DialogActions>
+          <Button onClick={handleDialogClose} color="primary">
+            Close
+          </Button>
+        </DialogActions>
       </Dialog>
     </>
   );
