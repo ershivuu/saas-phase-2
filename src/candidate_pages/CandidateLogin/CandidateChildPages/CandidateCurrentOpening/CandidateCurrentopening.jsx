@@ -3,8 +3,8 @@ import React from "react";
 // import apiService from "../../../../Services/ApiServices";
 
 import "./Candidateco.css";
-import Academictable from "../../../../admin_pages/CurrentOpening/Academictable";
-import NonAcademictable from "../../../../admin_pages/CurrentOpening/NonAcademictable";
+import Academictable from "../../../../pages/CurrentOpening/Academictable";
+import NonAcademictable from "../../../../pages/CurrentOpening/NonAcademictable";
 function CandidateCurrentopening() {
   // const [selectedImage, setSelectedImage] = useState(null);
   // const [data, setData] = useState({});

@@ -2,40 +2,38 @@
 import React from "react";
 import { Route } from "react-router-dom";
 import UnAuthGuards from "../gaurd/UnAuthGuards";
-import Home from "../admin_pages/Home/Home";
-import CurrentOpening from "../admin_pages/CurrentOpening/CurrentOpening";
-import InterviewShedule from "../admin_pages/InterviewSchedule/InterviewSchedule";
+import Home from "../pages/Home/Home";
+import CurrentOpening from "../pages/CurrentOpening/CurrentOpening";
+import InterviewShedule from "../pages/InterviewSchedule/InterviewSchedule";
 
-import FAQ from "../admin_pages/FAQ/FAQ";
-import DropCV from "../admin_pages/DropCV/Dropcv";
+import FAQ from "../pages/FAQ/FAQ";
+import DropCV from "../pages/DropCV/Dropcv";
 import ForgottenPassword from "../candidate_pages/CandidateLogin/CandidateLogin/ForgottenPassword";
 import CandidateLogin from "../candidate_pages/CandidateLogin/CandidateLogin/CandidateLogin";
+import Qualification from "../pages/DropCV/Qualification/Qualification";
+import CurrentExperience from "../pages/DropCV/CurrentExperience/CurrentExperience";
+import UserDetails from "../pages/CurrentOpening/ApplyNowForm/UserDetails/UserDetails";
+import Academics from "../pages/JobProfile/Academics/Academics";
+import PersonalDetails from "../pages/DropCV/PersonalDetails/PersonalDeatils";
 
-import Qualification from "../admin_pages/DropCV/Qualification/Qualification";
-import CurrentExperience from "../admin_pages/DropCV/CurrentExperience/CurrentExperience";
-import UserDetails from "../admin_pages/CurrentOpening/ApplyNowForm/UserDetails/UserDetails";
-import Academics from "../admin_pages/JobProfile/Academics/Academics";
-import PersonalDetails from "../admin_pages/DropCV/PersonalDetails/PersonalDeatils";
+import ApplyNow from "../pages/CurrentOpening/ApplyNowForm/ApplyNow";
 
-import ApplyNow from "../admin_pages/CurrentOpening/ApplyNowForm/ApplyNow";
-
-import PageNotFound from "../admin_pages/PageNotFound/PageNotFound";
-import ContactUs from "../admin_pages/Contactus/ContactUs";
-import Submitsuccess from "../admin_pages/DropCV/OTPVerifivation/Submitsuccess";
-import OTPVerification from "../admin_pages/DropCV/OTPVerifivation/OTPVerification";
-
-import Sidenav from "../admin_pages/TestPages/Sidenav";
-import NonAcademicForm from "../admin_pages/CurrentOpening/NonAcademicForm/NonAcademicForm";
-import Process from "../admin_pages/ApplicationProcess/Process";
+import PageNotFound from "../pages/PageNotFound/PageNotFound";
+import ContactUs from "../pages/Contactus/ContactUs";
+import Submitsuccess from "../pages/DropCV/OTPVerifivation/Submitsuccess";
+import OTPVerification from "../pages/DropCV/OTPVerifivation/OTPVerification";
+import Sidenav from "../pages/TestPages/Sidenav";
+import NonAcademicForm from "../pages/CurrentOpening/NonAcademicForm/NonAcademicForm";
+import Process from "../pages/ApplicationProcess/Process";
 
 import FrontEndPanel from "../AdminFrontend/FrontEndPanel/FrontEndPanel";
 
-import TestPages from "../admin_pages/TestPages/TestPages";
+import TestPages from "../pages/TestPages/TestPages";
 
 import Footers from "../components/Footer/Footers";
 
 import SuperLogin from "../superAdmin/SuperLogin/SuperLogin";
-
+import AdminLogin from "../Admin/AdminLogin/AdminLogin";
 // console.log("inside UnAuthRoutes");
 const UnAuthRoutes = [
   <Route
@@ -131,7 +129,6 @@ const UnAuthRoutes = [
     path="verification-successfull"
     element={<UnAuthGuards component={<Submitsuccess />} />}
   ></Route>,
-
   <Route
     key="sidenav"
     path="sidenav"
@@ -167,6 +164,11 @@ const UnAuthRoutes = [
     key="Footers"
     path="footer"
     element={<UnAuthGuards component={<Footers />} />}
+  ></Route>,
+  <Route
+    key="AdminLogin"
+    path="admin"
+    element={<UnAuthGuards component={<AdminLogin />} />}
   ></Route>,
 ];
 
