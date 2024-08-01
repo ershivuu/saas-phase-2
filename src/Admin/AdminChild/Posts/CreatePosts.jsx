@@ -24,6 +24,7 @@ import {
   updatePost,
   deletePost,
 } from "../../Services/AdminServices";
+import Notification from "../../../Notification/Notification";
 
 function CreatePosts() {
   const [posts, setPosts] = useState([]);
@@ -37,6 +38,15 @@ function CreatePosts() {
   const [postName, setPostName] = useState("");
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [postToDelete, setPostToDelete] = useState(null);
+  const [notification, setNotification] = useState({
+    open: false,
+    message: "",
+    severity: "success",
+  });
+  const [errors, setErrors] = useState({
+    categoryId: "",
+    postName: "",
+  });
 
   useEffect(() => {
     const fetchPostsAndCategories = async () => {
@@ -62,6 +72,10 @@ function CreatePosts() {
     setDialogOpen(true);
     setCategoryId("");
     setPostName("");
+    setErrors({
+      categoryId: "",
+      postName: "",
+    });
   };
 
   const handleEditClick = (post) => {
@@ -70,6 +84,10 @@ function CreatePosts() {
     setCategoryId(post.category_id);
     setPostName(post.post_name);
     setDialogOpen(true);
+    setErrors({
+      categoryId: "",
+      postName: "",
+    });
   };
 
   const handleDeleteClick = (post) => {
@@ -90,18 +108,38 @@ function CreatePosts() {
     setPostToDelete(null);
   };
 
+  const validateFields = () => {
+    const newErrors = {};
+    if (!categoryId) newErrors.categoryId = "This field is required";
+    if (!postName) newErrors.postName = "This field is required";
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
   const handleSubmit = async () => {
+    if (!validateFields()) return;
     try {
+      let response ;
       if (isEditing) {
-        await updatePost(selectedPost.id, categoryId, postName);
+      response = await updatePost(selectedPost.id, categoryId, postName);
       } else {
-        await createPost(categoryId, postName);
+      response = await createPost(categoryId, postName);
       }
       const postsData = await getPosts();
       setPosts(postsData);
       handleCloseDialog();
+      setNotification({
+        open: true,
+        message: response.message || (isEditing ? "Updated Successfully" : "Added Successfully"),
+        severity: "success",
+      });
     } catch (error) {
       setError(error.message);
+      setNotification({
+        open: true,
+        message: error.message,
+        severity: "error",
+      });
     }
   };
 
@@ -109,15 +147,36 @@ function CreatePosts() {
     try {
       if (postToDelete) {
         console.log("Deleting post with ID:", postToDelete.id); // Debug log
-        await deletePost(postToDelete.id);
+      const response =  await deletePost(postToDelete.id);
         const postsData = await getPosts();
         setPosts(postsData);
         handleCloseDeleteDialog();
+         setNotification({
+          open: true,
+          message: response.message || "Deleted Successfully",
+          severity: "success",
+        });
       }
     } catch (error) {
       setError(error.message);
+      setNotification({
+        open: true,
+        message: error.message,
+        severity: "error",
+      });
     }
   };
+
+  const handleCategoryChange = (e) => {
+    setCategoryId(e.target.value);
+    if (e.target.value) setErrors({ ...errors, categoryId: "" });
+  };
+
+  const handlePostNameChange = (e) => {
+    setPostName(e.target.value);
+    if (e.target.value) setErrors({ ...errors, postName: "" });
+  };
+
 
   if (loading)
     return (
@@ -156,7 +215,10 @@ function CreatePosts() {
           Add Post
         </Button>
       </div>
-      <TableContainer component={Paper}>
+      <Typography variant="h5" gutterBottom>
+        Posts
+      </Typography>
+      <TableContainer component={Paper} className="admin-tables">
         <Table>
           <TableHead>
             <TableRow>
@@ -202,9 +264,11 @@ function CreatePosts() {
             select
             label="Category"
             value={categoryId}
-            onChange={(e) => setCategoryId(e.target.value)}
+            onChange={handleCategoryChange}
             fullWidth
             margin="normal"
+            error={Boolean(errors.categoryId)}
+            helperText={errors.categoryId}
           >
             {categories.map((category) => (
               <MenuItem key={category.id} value={category.id}>
@@ -215,9 +279,11 @@ function CreatePosts() {
           <TextField
             label="Post Name"
             value={postName}
-            onChange={(e) => setPostName(e.target.value)}
+            onChange={handlePostNameChange}
             fullWidth
             margin="normal"
+            error={Boolean(errors.postName)}
+            helperText={errors.postName}
           />
         </DialogContent>
         <DialogActions>
@@ -243,6 +309,12 @@ function CreatePosts() {
           </Button>
         </DialogActions>
       </Dialog>
+      <Notification
+        open={notification.open}
+        handleClose={() => setNotification({ ...notification, open: false })}
+        alertMessage={notification.message}
+        alertSeverity={notification.severity}
+      />
     </div>
   );
 }

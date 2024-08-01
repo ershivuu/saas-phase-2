@@ -27,6 +27,7 @@ import {
   updateDegree,
   deleteDegree,
 } from "../../Services/AdminServices"; // Adjust the path as needed
+import Notification from "../../../Notification/Notification";
 
 function CreateDegree() {
   const [degrees, setDegrees] = useState([]);
@@ -41,6 +42,15 @@ function CreateDegree() {
   const [dialogLoading, setDialogLoading] = useState(false);
   const [degreeToEdit, setDegreeToEdit] = useState(null);
   const [degreeToDelete, setDegreeToDelete] = useState(null);
+  const [notification, setNotification] = useState({
+    open: false,
+    message: "",
+    severity: "success",
+  });
+  const [errors, setErrors] = useState({
+    degreeName: false,
+    selectedExamType: false,
+  });
 
   useEffect(() => {
     const fetchData = async () => {
@@ -62,14 +72,18 @@ function CreateDegree() {
   const handleAddDegreeClick = () => {
     setDegreeName("");
     setSelectedExamType("");
+    setErrors({ degreeName: false, selectedExamType: false });
     setAddDialogOpen(true);
+    
   };
 
   const handleEditDegreeClick = (degree) => {
     setDegreeName(degree.degree_name);
     setSelectedExamType(degree.exam_type_id);
     setDegreeToEdit(degree);
+    setErrors({ degreeName: false, selectedExamType: false });
     setEditDialogOpen(true);
+    
   };
 
   const handleDeleteDegreeClick = (degree) => {
@@ -95,31 +109,66 @@ function CreateDegree() {
     setDegreeToDelete(null);
   };
 
+  const validateFields = () => {
+    const newErrors = {
+      degreeName: !degreeName.trim(),
+      selectedExamType: !selectedExamType,
+    };
+    setErrors(newErrors);
+    return !Object.values(newErrors).some((error) => error);
+  };
+
   const handleAddDegreeSubmit = async () => {
+    if (!validateFields()) return;
     setDialogLoading(true);
     try {
-      await createDegree(degreeName, selectedExamType);
+      const response = await createDegree(degreeName, selectedExamType);
       const data = await getDegree(); // Refresh the list of degrees
       setDegrees(data);
       handleCloseAddDialog();
+      setNotification({
+        open: true,
+        message: response.message || "Added Successfully",
+        severity: "success",
+      });
     } catch (error) {
       setError(error.message);
+      setNotification({
+        open: true,
+        message: error.message,
+        severity: "error",
+      });
     } finally {
       setDialogLoading(false);
     }
   };
 
   const handleEditDegreeSubmit = async () => {
+    if (!validateFields()) return;
     setDialogLoading(true);
     try {
       if (degreeToEdit) {
-        await updateDegree(degreeToEdit.id, degreeName, selectedExamType);
+        const response = await updateDegree(
+          degreeToEdit.id,
+          degreeName,
+          selectedExamType
+        );
         const data = await getDegree(); // Refresh the list of degrees
         setDegrees(data);
         handleCloseEditDialog();
+        setNotification({
+          open: true,
+          message: response.message || "Edited Successfully",
+          severity: "success",
+        });
       }
     } catch (error) {
       setError(error.message);
+      setNotification({
+        open: true,
+        message: error.message,
+        severity: "error",
+      });
     } finally {
       setDialogLoading(false);
     }
@@ -129,13 +178,23 @@ function CreateDegree() {
     setDialogLoading(true);
     try {
       if (degreeToDelete) {
-        await deleteDegree(degreeToDelete.id);
+        const response = await deleteDegree(degreeToDelete.id);
         const data = await getDegree(); // Refresh the list of degrees
         setDegrees(data);
         handleCloseDeleteDialog();
+        setNotification({
+          open: true,
+          message: response.message || "Deleted Successfully",
+          severity: "success",
+        });
       }
     } catch (error) {
       setError(error.message);
+      setNotification({
+        open: true,
+        message: error.message,
+        severity: "error",
+      });
     } finally {
       setDialogLoading(false);
     }
@@ -178,7 +237,10 @@ function CreateDegree() {
           Add Degree
         </Button>
       </div>
-      <TableContainer component={Paper}>
+      <Typography variant="h5" gutterBottom>
+        Degree
+      </Typography>
+      <TableContainer component={Paper} className="admin-tables">
         <Table>
           <TableHead>
             <TableRow>
@@ -190,6 +252,11 @@ function CreateDegree() {
             </TableRow>
           </TableHead>
           <TableBody>
+            {degrees.length === 0 && (
+              <TableRow>
+                <TableCell colSpan={8}>No degrees available...</TableCell>
+              </TableRow>
+            )}
             {degrees.map((degree, index) => (
               <TableRow key={degree.id}>
                 <TableCell>{index + 1}</TableCell>
@@ -225,15 +292,23 @@ function CreateDegree() {
           <TextField
             label="Degree Name"
             value={degreeName}
-            onChange={(e) => setDegreeName(e.target.value)}
+            onChange={(e) => {
+              setDegreeName(e.target.value);
+              setErrors({ ...errors, degreeName: false });
+            }}
             fullWidth
             margin="normal"
+            error={errors.degreeName}
+            helperText={errors.degreeName && "This feild is required"}
           />
           <FormControl fullWidth margin="normal">
             <InputLabel>Exam Type</InputLabel>
             <Select
               value={selectedExamType}
-              onChange={(e) => setSelectedExamType(e.target.value)}
+              onChange={(e) => {
+                setSelectedExamType(e.target.value);
+                setErrors({ ...errors, selectedExamType: false });
+              }}
               label="Exam Type"
             >
               {examTypes.map((examType) => (
@@ -242,6 +317,12 @@ function CreateDegree() {
                 </MenuItem>
               ))}
             </Select>
+            {errors.selectedExamType && (
+              <Typography color="error" variant="body2">
+                Exam type is required
+              </Typography>
+            )}
+
           </FormControl>
         </DialogContent>
         <DialogActions>
@@ -265,15 +346,24 @@ function CreateDegree() {
           <TextField
             label="Degree Name"
             value={degreeName}
-            onChange={(e) => setDegreeName(e.target.value)}
+            onChange={(e) => {
+              setDegreeName(e.target.value);
+              setErrors({ ...errors, degreeName: false });
+            }}
+
             fullWidth
             margin="normal"
+            error={errors.degreeName}
+            helperText={errors.degreeName && "This feild is required"}
           />
           <FormControl fullWidth margin="normal">
             <InputLabel>Exam Type</InputLabel>
             <Select
               value={selectedExamType}
-              onChange={(e) => setSelectedExamType(e.target.value)}
+              onChange={(e) => {
+                setSelectedExamType(e.target.value);
+                setErrors({ ...errors, selectedExamType: false });
+              }}
               label="Exam Type"
             >
               {examTypes.map((examType) => (
@@ -282,6 +372,11 @@ function CreateDegree() {
                 </MenuItem>
               ))}
             </Select>
+            {errors.selectedExamType && (
+              <Typography color="error" variant="body2">
+                Exam type is required
+              </Typography>
+            )}
           </FormControl>
         </DialogContent>
         <DialogActions>
@@ -320,6 +415,12 @@ function CreateDegree() {
           </Button>
         </DialogActions>
       </Dialog>
+      <Notification
+        open={notification.open}
+        handleClose={() => setNotification({ ...notification, open: false })}
+        alertMessage={notification.message}
+        alertSeverity={notification.severity}
+      />
     </div>
   );
 }

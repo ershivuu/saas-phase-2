@@ -24,6 +24,7 @@ import {
   deleteSubject,
   getDepartment,
 } from "../../Services/AdminServices"; // Adjust the path as needed
+import Notification from "../../../Notification/Notification";
 
 function CreateSubjects() {
   const [subjects, setSubjects] = useState([]);
@@ -34,12 +35,18 @@ function CreateSubjects() {
   const [editDialogOpen, setEditDialogOpen] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [subjectName, setSubjectName] = useState("");
+  const [subjectNameError, setSubjectNameError] = useState("");
   const [selectedDepartment, setSelectedDepartment] = useState("");
   const [departmentError, setDepartmentError] = useState("");
   const [editingSubject, setEditingSubject] = useState(null);
   const [editedSubjectName, setEditedSubjectName] = useState("");
   const [editedSelectedDepartment, setEditedSelectedDepartment] = useState("");
   const [subjectToDelete, setSubjectToDelete] = useState(null);
+  const [notification, setNotification] = useState({
+    open: false,
+    message: "",
+    severity: "success",
+  });
 
   useEffect(() => {
     const fetchSubjects = async () => {
@@ -74,20 +81,38 @@ function CreateSubjects() {
     setSubjectName("");
     setSelectedDepartment("");
     setDepartmentError("");
+    setSubjectNameError("");
   };
 
   const handleAddSubmit = async () => {
+   
+    if (!subjectName) {
+      setSubjectNameError("This field is required");
+    }
     if (!selectedDepartment) {
       setDepartmentError("Please select a department");
+    }
+    if (!subjectName || !selectedDepartment) {
       return;
     }
     try {
-      await createSubject(subjectName, selectedDepartment);
+      
+     const response = await createSubject(subjectName, selectedDepartment);
       const data = await getSubjects(); // Refresh subjects list
       setSubjects(data);
       handleCloseDialog();
+      setNotification({
+        open: true,
+        message: response.message || "Added Successfully",
+        severity: "success",
+      });
     } catch (error) {
       setError(error.message);
+      setNotification({
+        open: true,
+        message: error.message,
+        severity: "error",
+      });
     }
   };
 
@@ -103,16 +128,22 @@ function CreateSubjects() {
     setEditingSubject(null);
     setEditedSubjectName("");
     setEditedSelectedDepartment("");
+    setSubjectNameError("");
   };
 
   const handleEditSubmit = async () => {
+    if (!editedSubjectName) {
+      setSubjectNameError("This field is required");
+    }
     if (!editedSelectedDepartment) {
       setDepartmentError("Please select a department");
+    }
+    if (!editedSubjectName || !editedSelectedDepartment) {
       return;
     }
     try {
       if (editingSubject) {
-        await updateSubject(
+      const response =  await updateSubject(
           editingSubject.id,
           editedSubjectName,
           editedSelectedDepartment
@@ -120,9 +151,19 @@ function CreateSubjects() {
         const data = await getSubjects(); // Refresh subjects list
         setSubjects(data);
         handleEditCloseDialog();
+        setNotification({
+          open: true,
+          message: response.message || "Edited Successfully",
+          severity: "success",
+        });
       }
     } catch (error) {
       setError(error.message);
+      setNotification({
+        open: true,
+        message: error.message,
+        severity: "error",
+      });
     }
   };
 
@@ -139,13 +180,23 @@ function CreateSubjects() {
   const handleDeleteSubmit = async () => {
     try {
       if (subjectToDelete) {
-        await deleteSubject(subjectToDelete.id);
+       const response = await deleteSubject(subjectToDelete.id);
         const data = await getSubjects(); // Refresh subjects list
         setSubjects(data);
         handleDeleteCloseDialog();
+        setNotification({
+          open: true,
+          message: response.message || "Deleted Successfully",
+          severity: "success",
+        });
       }
     } catch (error) {
       setError(error.message);
+        setNotification({
+        open: true,
+        message: error.message,
+        severity: "error",
+      });
     }
   };
 
@@ -186,7 +237,10 @@ function CreateSubjects() {
           Add Subject
         </Button>
       </div>
-      <TableContainer component={Paper}>
+      <Typography variant="h5" gutterBottom>
+        Subject
+      </Typography>
+      <TableContainer component={Paper} className="admin-tables">
         <Table>
           <TableHead>
             <TableRow>
@@ -239,6 +293,8 @@ function CreateSubjects() {
             }}
             fullWidth
             margin="normal"
+            error={Boolean(departmentError)}
+            helperText={departmentError}
           >
             {departments.map((department) => (
               <MenuItem key={department.id} value={department.id}>
@@ -254,9 +310,14 @@ function CreateSubjects() {
           <TextField
             label="Subject Name"
             value={subjectName}
-            onChange={(e) => setSubjectName(e.target.value)}
+            onChange={(e) => {
+              setSubjectName(e.target.value);
+              setSubjectNameError(""); // Clear any previous error
+            }}
             fullWidth
             margin="normal"
+            error={Boolean(subjectNameError)}
+            helperText={subjectNameError}
           />
         </DialogContent>
         <DialogActions>
@@ -282,6 +343,8 @@ function CreateSubjects() {
             }}
             fullWidth
             margin="normal"
+            error={Boolean(departmentError)}
+            helperText={departmentError}
           >
             {departments.map((department) => (
               <MenuItem key={department.id} value={department.id}>
@@ -297,9 +360,14 @@ function CreateSubjects() {
           <TextField
             label="Subject Name"
             value={editedSubjectName}
-            onChange={(e) => setEditedSubjectName(e.target.value)}
+            onChange={(e) => {
+              setEditedSubjectName(e.target.value);
+              setSubjectNameError(""); // Clear any previous error
+            }}
             fullWidth
             margin="normal"
+            error={Boolean(subjectNameError)}
+            helperText={subjectNameError}
           />
         </DialogContent>
         <DialogActions>
@@ -326,6 +394,12 @@ function CreateSubjects() {
           </Button>
         </DialogActions>
       </Dialog>
+      <Notification
+        open={notification.open}
+        handleClose={() => setNotification({ ...notification, open: false })}
+        alertMessage={notification.message}
+        alertSeverity={notification.severity}
+      />
     </div>
   );
 }
