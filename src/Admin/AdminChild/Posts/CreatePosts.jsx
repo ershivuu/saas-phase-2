@@ -156,7 +156,10 @@ function CreatePosts() {
           Add Post
         </Button>
       </div>
-      <TableContainer component={Paper}>
+      <Typography variant="h5" gutterBottom>
+        Posts
+      </Typography>
+      <TableContainer component={Paper} className="admin-tables">
         <Table>
           <TableHead>
             <TableRow>

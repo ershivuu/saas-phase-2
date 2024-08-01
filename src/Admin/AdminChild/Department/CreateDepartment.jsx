@@ -144,7 +144,10 @@ function CreateDepartment() {
           Add Department
         </Button>
       </div>
-      <TableContainer component={Paper}>
+      <Typography variant="h5" gutterBottom>
+        Department
+      </Typography>
+      <TableContainer component={Paper} className="admin-tables">
         <Table>
           <TableHead>
             <TableRow>

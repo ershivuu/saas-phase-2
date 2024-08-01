@@ -147,7 +147,10 @@ function CreateCategory() {
           Add Category
         </Button>
       </div>
-      <TableContainer component={Paper}>
+      <Typography variant="h5" gutterBottom>
+        Categories
+      </Typography>
+      <TableContainer component={Paper} className="admin-tables">
         <Table>
           <TableHead>
             <TableRow>
@@ -159,6 +162,11 @@ function CreateCategory() {
             </TableRow>
           </TableHead>
           <TableBody>
+            {categories.length === 0 && (
+              <TableRow>
+                <TableCell colSpan={8}>No categories available...</TableCell>
+              </TableRow>
+            )}
             {categories.map((category, index) => (
               <TableRow key={category.id}>
                 <TableCell>{index + 1}</TableCell>

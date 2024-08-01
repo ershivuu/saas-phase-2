@@ -178,7 +178,10 @@ function CreateDegree() {
           Add Degree
         </Button>
       </div>
-      <TableContainer component={Paper}>
+      <Typography variant="h5" gutterBottom>
+        Degree
+      </Typography>
+      <TableContainer component={Paper} className="admin-tables">
         <Table>
           <TableHead>
             <TableRow>
@@ -190,6 +193,11 @@ function CreateDegree() {
             </TableRow>
           </TableHead>
           <TableBody>
+            {degrees.length === 0 && (
+              <TableRow>
+                <TableCell colSpan={8}>No degrees available...</TableCell>
+              </TableRow>
+            )}
             {degrees.map((degree, index) => (
               <TableRow key={degree.id}>
                 <TableCell>{index + 1}</TableCell>

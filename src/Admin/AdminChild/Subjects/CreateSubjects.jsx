@@ -186,7 +186,10 @@ function CreateSubjects() {
           Add Subject
         </Button>
       </div>
-      <TableContainer component={Paper}>
+      <Typography variant="h5" gutterBottom>
+        Subject
+      </Typography>
+      <TableContainer component={Paper} className="admin-tables">
         <Table>
           <TableHead>
             <TableRow>

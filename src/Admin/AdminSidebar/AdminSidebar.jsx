@@ -85,6 +85,26 @@ const AdminSidebar = ({ isOpen, onToggle }) => {
             icon: <DashboardIcon />,
             path: "/admin-dashboard/admin-page",
           },
+          {
+            text: "Current Opening",
+            icon: <DashboardIcon />,
+            path: "/admin-dashboard/admin-current-opening",
+          },
+          {
+            text: "Interview Schedules",
+            icon: <DashboardIcon />,
+            path: "/admin-dashboard/admin-interview-schedules",
+          },
+          {
+            text: "Applied Candidates",
+            icon: <DashboardIcon />,
+            path: "/admin-dashboard/admin-applied-candidates",
+          },
+          {
+            text: "Visitors",
+            icon: <DashboardIcon />,
+            path: "/admin-dashboard/admin-visitors",
+          },
 
           {
             text: "Master List",
