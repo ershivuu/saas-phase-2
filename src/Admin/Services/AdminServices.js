@@ -677,3 +677,100 @@ export const deleteDegree = async (degreeId) => {
     throw error;
   }
 };
+export const getAllApplicants = async () => {
+  const token = getAdminToken();
+  if (!token) {
+    throw new Error("No authentication token found.");
+  }
+
+  try {
+    const response = await axios.get(
+      `${NEW_ADMIN_BASE_URL}/applicants/getAllApplicants`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.error(
+      "Error fetching applicants:",
+      error.response ? error.response.data : error.message
+    );
+    throw error;
+  }
+};
+export const getJobOpenings = async () => {
+  const token = getAdminToken();
+  if (!token) {
+    throw new Error("No authentication token found.");
+  }
+
+  try {
+    const response = await axios.get(
+      `${NEW_ADMIN_BASE_URL}/jobOpenings/getAllMasterJobOpenings`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.error(
+      "Error fetching applicants:",
+      error.response ? error.response.data : error.message
+    );
+    throw error;
+  }
+};
+export const createJobOpening = async (jobData) => {
+  const token = getAdminToken();
+  if (!token) {
+    throw new Error("No authentication token found.");
+  }
+
+  try {
+    const response = await axios.post(
+      `${NEW_ADMIN_BASE_URL}/jobOpenings/createMasterJobOpenings`,
+      jobData,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.error(
+      "Error creating job opening:",
+      error.response ? error.response.data : error.message
+    );
+    throw error;
+  }
+};
+export const getCombineCategories = async () => {
+  const token = getAdminToken();
+  if (!token) {
+    throw new Error("No authentication token found.");
+  }
+
+  try {
+    const response = await axios.get(
+      `${NEW_ADMIN_BASE_URL}/category/getAll-category-post-subpost`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.error(
+      "Error fetching categories:",
+      error.response ? error.response.data : error.message
+    );
+    throw error;
+  }
+};

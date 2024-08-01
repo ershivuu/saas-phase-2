@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Table,
   TableBody,
@@ -7,371 +7,375 @@ import {
   TableHead,
   TableRow,
   Paper,
-  Typography,
-  Switch,
-  FormControlLabel,
+  CircularProgress,
   Button,
+  Typography,
   Dialog,
   DialogActions,
   DialogContent,
   DialogTitle,
   TextField,
-  IconButton,
+  Switch,
+  FormControlLabel,
+  MenuItem,
 } from "@mui/material";
-import EditIcon from "@mui/icons-material/Edit";
-import DeleteIcon from "@mui/icons-material/Delete";
-
-// Dummy data
-const dummyData = [
-  {
-    id: 1,
-    category: "Software",
-    post: "Developer",
-    department: "Engineering",
-    lastDate: "2024-08-15",
-    active: true,
-  },
-  {
-    id: 2,
-    category: "Hardware",
-    post: "Technician",
-    department: "Maintenance",
-    lastDate: "2024-09-01",
-    active: false,
-  },
-  {
-    id: 3,
-    category: "Management",
-    post: "Project Manager",
-    department: "Operations",
-    lastDate: "2024-07-30",
-    active: true,
-  },
-  {
-    id: 4,
-    category: "Management",
-    post: "Project Manager",
-    department: "Operations",
-    lastDate: "2024-07-30",
-    active: true,
-  },
-  {
-    id: 5,
-    category: "Management",
-    post: "Project Manager",
-    department: "Operations",
-    lastDate: "2024-07-30",
-    active: true,
-  },
-  {
-    id: 6,
-    category: "Management",
-    post: "Project Manager",
-    department: "Operations",
-    lastDate: "2024-07-30",
-    active: true,
-  },
-  {
-    id: 7,
-    category: "Management",
-    post: "Project Manager",
-    department: "Operations",
-    lastDate: "2024-07-30",
-    active: true,
-  },
-];
+import {
+  getJobOpenings,
+  createJobOpening,
+  getCombineCategories,
+  getDepartment,
+} from "../../Services/AdminServices";
 
 function CreateCurrentOpening() {
-  const [openings, setOpenings] = useState(dummyData);
-  const [editDialogOpen, setEditDialogOpen] = useState(false);
-  const [addDialogOpen, setAddDialogOpen] = useState(false);
-  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
-  const [currentOpening, setCurrentOpening] = useState(null);
-  const [newOpening, setNewOpening] = useState({
-    category: "",
-    post: "",
-    department: "",
-    lastDate: "",
-    active: true,
+  const [jobOpenings, setJobOpenings] = useState([]);
+  const [categories, setCategories] = useState([]);
+  const [departments, setDepartments] = useState([]); // Added state for departments
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const [open, setOpen] = useState(false); // For the dialog
+  const [formData, setFormData] = useState({
+    category_of_appointment: "",
+    post_applied_for: "",
+    sub_post_applied_for: "",
+    departments: "", // Changed to hold department ID
+    qualification_and_experience: "",
+    highly_desirable: "",
+    last_date_to_apply: "",
+    eligibility_criteria: "",
+    interview_date_1: "",
+    interview_date_2: "",
+    interview_date_3: "",
+    publish_to_job_profile: false,
+    publish_to_schedule_interview: false,
+    publish_to_vacancy: false,
   });
+  const [posts, setPosts] = useState([]);
+  const [subposts, setSubposts] = useState([]);
+  const [categoryMap, setCategoryMap] = useState(new Map());
+  const [postMap, setPostMap] = useState(new Map());
+  const [subpostMap, setSubpostMap] = useState(new Map());
 
-  const handleStatusChange = (id) => {
-    setOpenings((prevOpenings) =>
-      prevOpenings.map((opening) =>
-        opening.id === id ? { ...opening, active: !opening.active } : opening
-      )
-    );
+  useEffect(() => {
+    const fetchJobOpenings = async () => {
+      try {
+        const data = await getJobOpenings();
+        setJobOpenings(data.jobOpenings);
+      } catch (error) {
+        setError(error.message);
+      }
+    };
+
+    const fetchCategories = async () => {
+      try {
+        const data = await getCombineCategories();
+        setCategories(data);
+
+        // Build maps for quick lookup
+        const catMap = new Map();
+        const postMap = new Map();
+        const subpostMap = new Map();
+        data.forEach((category) => {
+          catMap.set(category.category_id, category.category_name);
+          category.posts.forEach((post) => {
+            postMap.set(post.post_id, post.post_name);
+            post.subposts.forEach((subpost) => {
+              subpostMap.set(subpost.subpost_id, subpost.subpost_name);
+            });
+          });
+        });
+        setCategoryMap(catMap);
+        setPostMap(postMap);
+        setSubpostMap(subpostMap);
+      } catch (error) {
+        setError(error.message);
+      }
+    };
+
+    const fetchDepartments = async () => {
+      try {
+        const data = await getDepartment();
+        setDepartments(data); // Set the departments data
+      } catch (error) {
+        setError(error.message);
+      }
+    };
+
+    fetchJobOpenings();
+    fetchCategories();
+    fetchDepartments(); // Fetch departments
+  }, []);
+
+  const handleClickOpen = () => {
+    setOpen(true);
   };
 
-  const handleEditClick = (opening) => {
-    setCurrentOpening(opening);
-    setEditDialogOpen(true);
+  const handleClose = () => {
+    setOpen(false);
   };
 
-  const handleCloseEditDialog = () => {
-    setEditDialogOpen(false);
-    setCurrentOpening(null);
-  };
-
-  const handleSaveChanges = () => {
-    setOpenings((prevOpenings) =>
-      prevOpenings.map((opening) =>
-        opening.id === currentOpening.id ? currentOpening : opening
-      )
-    );
-    handleCloseEditDialog();
-  };
-
-  const handleFieldChange = (e) => {
-    const { name, value } = e.target;
-    setCurrentOpening((prevOpening) => ({
-      ...prevOpening,
-      [name]: value,
-    }));
-  };
-
-  const handleOpenAddDialog = () => {
-    setNewOpening({
-      category: "",
-      post: "",
-      department: "",
-      lastDate: "",
-      active: true,
+  const handleChange = (e) => {
+    const { name, value, type, checked } = e.target;
+    setFormData({
+      ...formData,
+      [name]: type === "checkbox" ? checked : value,
     });
-    setAddDialogOpen(true);
   };
 
-  const handleCloseAddDialog = () => {
-    setAddDialogOpen(false);
-  };
-
-  const handleAddFieldChange = (e) => {
-    const { name, value } = e.target;
-    setNewOpening((prevOpening) => ({
-      ...prevOpening,
-      [name]: value,
-    }));
-  };
-
-  const handleAddOpening = () => {
-    setOpenings((prevOpenings) => [
-      ...prevOpenings,
-      { id: prevOpenings.length + 1, ...newOpening },
-    ]);
-    handleCloseAddDialog();
-  };
-
-  const handleOpenDeleteDialog = (opening) => {
-    setCurrentOpening(opening);
-    setDeleteDialogOpen(true);
-  };
-
-  const handleCloseDeleteDialog = () => {
-    setDeleteDialogOpen(false);
-    setCurrentOpening(null);
-  };
-
-  const handleDeleteOpening = () => {
-    setOpenings((prevOpenings) =>
-      prevOpenings.filter((opening) => opening.id !== currentOpening.id)
+  const handleCategoryChange = (e) => {
+    const selectedCategoryId = e.target.value;
+    const category = categories.find(
+      (c) => c.category_id === selectedCategoryId
     );
-    handleCloseDeleteDialog();
+    setPosts(category ? category.posts : []);
+    setSubposts([]); // Reset subposts when category changes
+    setFormData({
+      ...formData,
+      category_of_appointment: selectedCategoryId,
+      post_applied_for: "", // Reset post and subpost
+      sub_post_applied_for: "",
+    });
   };
+
+  const handlePostChange = (e) => {
+    const selectedPostId = e.target.value;
+    const post = posts.find((p) => p.post_id === selectedPostId);
+    setSubposts(post ? post.subposts : []);
+    setFormData({
+      ...formData,
+      post_applied_for: selectedPostId,
+      sub_post_applied_for: "", // Reset subpost
+    });
+  };
+
+  const handleSubmit = async () => {
+    try {
+      // Convert IDs to names/values
+      const dataToSubmit = {
+        ...formData,
+        category_of_appointment: categoryMap.get(
+          formData.category_of_appointment
+        ),
+        post_applied_for: postMap.get(formData.post_applied_for),
+        sub_post_applied_for: subpostMap.get(formData.sub_post_applied_for),
+      };
+
+      await createJobOpening(dataToSubmit);
+      handleClose();
+      // Optionally, refetch job openings here
+      const data = await getJobOpenings();
+      setJobOpenings(data.jobOpenings);
+    } catch (error) {
+      setError(error.message);
+    }
+  };
+
+  if (loading) return <CircularProgress />;
+  if (error) return <div>Error: {error}</div>;
 
   return (
     <div style={{ padding: "20px" }}>
       <div style={{ float: "right", marginBottom: "20px" }}>
-        <Button
-          variant="contained"
-          color="primary"
-          onClick={handleOpenAddDialog}
-        >
-          Add New Opening
+        <Button variant="contained" onClick={handleClickOpen}>
+          Add Current Opening
         </Button>
       </div>
       <Typography variant="h5" gutterBottom>
-        Current Openings
+        Current Opening
       </Typography>
-
       <TableContainer component={Paper}>
         <Table>
           <TableHead>
             <TableRow>
-              <TableCell>Sr.No</TableCell>
+              <TableCell>S.No</TableCell>
               <TableCell>Category</TableCell>
               <TableCell>Post</TableCell>
+              <TableCell>Sub Post</TableCell>
               <TableCell>Department</TableCell>
-              <TableCell>Last Date</TableCell>
-              <TableCell>Status</TableCell>
-              <TableCell>Edit</TableCell>
-              <TableCell>Delete</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
-            {openings.length === 0 ? (
-              <TableRow>
-                <TableCell colSpan={7}>No data available...</TableCell>
+            {jobOpenings.map((job, index) => (
+              <TableRow key={job.id}>
+                <TableCell>{index + 1}</TableCell>
+                <TableCell>{job.category_of_appointment}</TableCell>
+                <TableCell>{job.post_applied_for}</TableCell>
+                <TableCell>{job.sub_post_applied_for}</TableCell>
+                <TableCell>{job.departments}</TableCell>
               </TableRow>
-            ) : (
-              openings.map((opening, index) => (
-                <TableRow key={opening.id}>
-                  <TableCell>{index + 1}</TableCell>
-                  <TableCell>{opening.category}</TableCell>
-                  <TableCell>{opening.post}</TableCell>
-                  <TableCell>{opening.department}</TableCell>
-                  <TableCell>{opening.lastDate}</TableCell>
-                  <TableCell>
-                    <FormControlLabel
-                      control={
-                        <Switch
-                          checked={opening.active}
-                          onChange={() => handleStatusChange(opening.id)}
-                        />
-                      }
-                      label={opening.active ? "Active" : "Inactive"}
-                    />
-                  </TableCell>
-                  <TableCell>
-                    <IconButton
-                      onClick={() => handleEditClick(opening)}
-                      disabled={!opening.active} // Disable if inactive
-                      color="primary"
-                    >
-                      <EditIcon />
-                    </IconButton>
-                  </TableCell>
-                  <TableCell>
-                    <IconButton
-                      onClick={() => handleOpenDeleteDialog(opening)}
-                      color="error"
-                      disabled={!opening.active} // Disable if inactive
-                      style={{ marginLeft: "10px" }}
-                    >
-                      <DeleteIcon />
-                    </IconButton>
-                  </TableCell>
-                </TableRow>
-              ))
-            )}
+            ))}
           </TableBody>
         </Table>
       </TableContainer>
 
-      {/* Edit Opening Dialog */}
-      <Dialog open={editDialogOpen} onClose={handleCloseEditDialog}>
-        <DialogTitle>Edit Opening</DialogTitle>
-        <DialogContent>
-          {currentOpening && (
-            <>
-              <TextField
-                label="Category"
-                name="category"
-                value={currentOpening.category}
-                onChange={handleFieldChange}
-                fullWidth
-                margin="normal"
-              />
-              <TextField
-                label="Post"
-                name="post"
-                value={currentOpening.post}
-                onChange={handleFieldChange}
-                fullWidth
-                margin="normal"
-              />
-              <TextField
-                label="Department"
-                name="department"
-                value={currentOpening.department}
-                onChange={handleFieldChange}
-                fullWidth
-                margin="normal"
-              />
-              <TextField
-                label="Last Date"
-                name="lastDate"
-                value={currentOpening.lastDate}
-                onChange={handleFieldChange}
-                fullWidth
-                margin="normal"
-                type="date"
-                InputLabelProps={{ shrink: true }}
-              />
-            </>
-          )}
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleCloseEditDialog} color="primary">
-            Cancel
-          </Button>
-          <Button onClick={handleSaveChanges} color="primary">
-            Save
-          </Button>
-        </DialogActions>
-      </Dialog>
-
-      {/* Add Opening Dialog */}
-      <Dialog open={addDialogOpen} onClose={handleCloseAddDialog}>
-        <DialogTitle>Add New Opening</DialogTitle>
+      {/* Dialog for adding new job opening */}
+      <Dialog open={open} onClose={handleClose}>
+        <DialogTitle>Add New Job Opening</DialogTitle>
         <DialogContent>
           <TextField
+            select
             label="Category"
-            name="category"
-            value={newOpening.category}
-            onChange={handleAddFieldChange}
+            name="category_of_appointment"
+            value={formData.category_of_appointment}
+            onChange={handleCategoryChange}
             fullWidth
             margin="normal"
-          />
+          >
+            {categories.map((category) => (
+              <MenuItem key={category.category_id} value={category.category_id}>
+                {category.category_name}
+              </MenuItem>
+            ))}
+          </TextField>
           <TextField
+            select
             label="Post"
-            name="post"
-            value={newOpening.post}
-            onChange={handleAddFieldChange}
+            name="post_applied_for"
+            value={formData.post_applied_for}
+            onChange={handlePostChange}
             fullWidth
-            margin="normal"
-          />
+            margin="dense"
+            disabled={!formData.category_of_appointment} // Disable if no category selected
+          >
+            {posts.map((post) => (
+              <MenuItem key={post.post_id} value={post.post_id}>
+                {post.post_name}
+              </MenuItem>
+            ))}
+          </TextField>
           <TextField
+            select
+            label="Sub Post"
+            name="sub_post_applied_for"
+            value={formData.sub_post_applied_for}
+            onChange={handleChange}
+            fullWidth
+            margin="dense"
+            disabled={!formData.post_applied_for} // Disable if no post selected
+          >
+            {subposts.map((subpost) => (
+              <MenuItem key={subpost.subpost_id} value={subpost.subpost_id}>
+                {subpost.subpost_name}
+              </MenuItem>
+            ))}
+          </TextField>
+
+          <TextField
+            select
             label="Department"
-            name="department"
-            value={newOpening.department}
-            onChange={handleAddFieldChange}
+            name="departments"
+            value={formData.departments}
+            onChange={handleChange}
             fullWidth
-            margin="normal"
+            margin="dense"
+          >
+            {departments.map((department) => (
+              <MenuItem key={department.id} value={department.depart_name}>
+                {department.depart_name}
+              </MenuItem>
+            ))}
+          </TextField>
+
+          <TextField
+            margin="dense"
+            name="qualification_and_experience"
+            label="Qualification and Experience"
+            type="text"
+            fullWidth
+            value={formData.qualification_and_experience}
+            onChange={handleChange}
           />
           <TextField
-            label="Last Date"
-            name="lastDate"
-            value={newOpening.lastDate}
-            onChange={handleAddFieldChange}
+            margin="dense"
+            name="highly_desirable"
+            label="Highly Desirable"
+            type="text"
             fullWidth
-            margin="normal"
+            value={formData.highly_desirable}
+            onChange={handleChange}
+          />
+          <TextField
+            margin="dense"
+            name="last_date_to_apply"
+            label="Last Date to Apply"
             type="date"
+            fullWidth
+            value={formData.last_date_to_apply}
+            onChange={handleChange}
             InputLabelProps={{ shrink: true }}
           />
+          <TextField
+            margin="dense"
+            name="eligibility_criteria"
+            label="Eligibility Criteria"
+            type="text"
+            fullWidth
+            value={formData.eligibility_criteria}
+            onChange={handleChange}
+          />
+          <TextField
+            margin="dense"
+            name="interview_date_1"
+            label="Interview Date 1"
+            type="date"
+            fullWidth
+            value={formData.interview_date_1}
+            onChange={handleChange}
+            InputLabelProps={{ shrink: true }}
+          />
+          <TextField
+            margin="dense"
+            name="interview_date_2"
+            label="Interview Date 2"
+            type="date"
+            fullWidth
+            value={formData.interview_date_2}
+            onChange={handleChange}
+            InputLabelProps={{ shrink: true }}
+          />
+          <TextField
+            margin="dense"
+            name="interview_date_3"
+            label="Interview Date 3"
+            type="date"
+            fullWidth
+            value={formData.interview_date_3}
+            onChange={handleChange}
+            InputLabelProps={{ shrink: true }}
+          />
+          <FormControlLabel
+            control={
+              <Switch
+                name="publish_to_job_profile"
+                checked={formData.publish_to_job_profile}
+                onChange={handleChange}
+              />
+            }
+            label="Publish to Job Profile"
+          />
+          <FormControlLabel
+            control={
+              <Switch
+                name="publish_to_schedule_interview"
+                checked={formData.publish_to_schedule_interview}
+                onChange={handleChange}
+              />
+            }
+            label="Publish to Schedule Interview"
+          />
+          <FormControlLabel
+            control={
+              <Switch
+                name="publish_to_vacancy"
+                checked={formData.publish_to_vacancy}
+                onChange={handleChange}
+              />
+            }
+            label="Publish to Vacancy"
+          />
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleCloseAddDialog} color="primary">
-            Cancel
-          </Button>
-          <Button onClick={handleAddOpening} color="primary">
-            Add
-          </Button>
-        </DialogActions>
-      </Dialog>
-
-      {/* Delete Opening Dialog */}
-      <Dialog open={deleteDialogOpen} onClose={handleCloseDeleteDialog}>
-        <DialogTitle>Confirm Deletion</DialogTitle>
-        <DialogContent>
-          Are you sure you want to delete this opening?
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleCloseDeleteDialog} color="primary">
-            Cancel
-          </Button>
-          <Button onClick={handleDeleteOpening} color="error">
-            Delete
-          </Button>
+          <Button onClick={handleClose}>Cancel</Button>
+          <Button onClick={handleSubmit}>Submit</Button>
         </DialogActions>
       </Dialog>
     </div>
