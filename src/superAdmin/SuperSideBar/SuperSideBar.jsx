@@ -28,6 +28,10 @@ import {
   ExpandMore,
   Logout as LogoutIcon,
 } from "@mui/icons-material";
+import SettingsIcon from "@mui/icons-material/Settings";
+import AssessmentIcon from "@mui/icons-material/Assessment";
+import SecurityIcon from "@mui/icons-material/Security";
+
 import "./Sidebar.css";
 import corusview from "../../assets/logos/corusview.png";
 
@@ -88,12 +92,12 @@ const SuperSideBar = ({ isOpen, onToggle }) => {
 
           {
             text: "Company Management",
-            icon: <PeopleIcon />,
+            icon: <SettingsIcon />,
             path: "/super-admin/company-management",
           },
           {
             text: "Plan Management",
-            icon: <PollIcon />,
+            icon: <AssessmentIcon />,
             subItems: [
               {
                 text: "Plan & Pricing",
@@ -109,7 +113,7 @@ const SuperSideBar = ({ isOpen, onToggle }) => {
           },
           {
             text: "Login Logs",
-            icon: <DashboardIcon />,
+            icon: <SecurityIcon />,
             path: "/super-admin/login-logs",
           },
         ].map((item, index) => (

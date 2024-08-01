@@ -18,10 +18,13 @@ import {
   Switch,
   FormControlLabel,
   MenuItem,
+  IconButton,
 } from "@mui/material";
+import EditIcon from "@mui/icons-material/Edit";
 import {
   getJobOpenings,
   createJobOpening,
+  updateMasterJobOpenings,
   getCombineCategories,
   getDepartment,
 } from "../../Services/AdminServices";
@@ -54,6 +57,7 @@ function CreateCurrentOpening() {
   const [categoryMap, setCategoryMap] = useState(new Map());
   const [postMap, setPostMap] = useState(new Map());
   const [subpostMap, setSubpostMap] = useState(new Map());
+  const [editingId, setEditingId] = useState(null);
 
   useEffect(() => {
     const fetchJobOpenings = async () => {
@@ -191,6 +195,7 @@ function CreateCurrentOpening() {
               <TableCell>Post</TableCell>
               <TableCell>Sub Post</TableCell>
               <TableCell>Department</TableCell>
+              <TableCell>Edit</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -201,6 +206,11 @@ function CreateCurrentOpening() {
                 <TableCell>{job.post_applied_for}</TableCell>
                 <TableCell>{job.sub_post_applied_for}</TableCell>
                 <TableCell>{job.departments}</TableCell>
+                <TableCell>
+                  <IconButton color="primary">
+                    <EditIcon />
+                  </IconButton>
+                </TableCell>
               </TableRow>
             ))}
           </TableBody>
