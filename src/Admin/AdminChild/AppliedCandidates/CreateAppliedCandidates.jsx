@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Table,
   TableBody,
@@ -15,44 +15,32 @@ import {
   Typography,
   Grid,
   IconButton,
-  Divider,
 } from "@mui/material";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import FileOpenIcon from "@mui/icons-material/FileOpen";
 import DeleteIcon from "@mui/icons-material/Delete";
-
-// Dummy data
-const initialData = [
-  {
-    id: 8,
-    email: "amber3@gmail.com",
-    phone_number: "4521365890",
-    first_name: "Amber",
-    last_name: "Desai",
-    date_of_birth: "2001-01-08T00:00:00.000Z",
-    gender: "male",
-    title: "Mr",
-    specialization: "Software Engineering",
-    nature_of_job: "Full-time",
-    current_address: "123 Main St, Indore, India",
-    alternate_contact_number: "9876543210",
-    country: "India",
-    city: "Indore",
-    pin_code: "452001",
-    current_organization: "Cview Survey",
-    current_designation: "Developer",
-    current_salary: "25000.00",
-    resumePath: "http://192.168.25.8:5000/uploads/CV_Sample-1722431609227.pdf",
-  },
-  // Add more objects here as needed
-];
+import { getAllApplicants } from "../../Services/AdminServices";
 
 function CreateAppliedCandidates() {
   const [open, setOpen] = useState(false);
   const [resumeDialogOpen, setResumeDialogOpen] = useState(false);
   const [confirmationDialogOpen, setConfirmationDialogOpen] = useState(false);
   const [selectedCandidate, setSelectedCandidate] = useState(null);
-  const [data, setData] = useState(initialData);
+  const [data, setData] = useState([]);
+
+  useEffect(() => {
+    // Fetch data when the component mounts
+    const fetchData = async () => {
+      try {
+        const applicants = await getAllApplicants();
+        setData(applicants);
+      } catch (error) {
+        console.error("Failed to fetch applicants:", error);
+      }
+    };
+
+    fetchData();
+  }, []);
 
   const handleClickOpen = (candidate) => {
     setSelectedCandidate(candidate);
@@ -102,11 +90,13 @@ function CreateAppliedCandidates() {
           <Table>
             <TableHead>
               <TableRow>
+                <TableCell>S.No</TableCell>
                 <TableCell>Name</TableCell>
                 <TableCell>Email</TableCell>
                 <TableCell>Phone Number</TableCell>
-                <TableCell>Date of Birth</TableCell>
-                <TableCell>Gender</TableCell>
+                <TableCell>Category</TableCell>
+                <TableCell>Post</TableCell>
+                <TableCell>Specialization</TableCell>
                 <TableCell>Resume</TableCell>
                 <TableCell>View</TableCell>
                 <TableCell>Delete</TableCell>
@@ -118,17 +108,18 @@ function CreateAppliedCandidates() {
                   <TableCell colSpan={8}>No candidates available...</TableCell>
                 </TableRow>
               )}
-              {data.map((row) => (
+              {data.map((row, index) => (
                 <TableRow key={row.id}>
+                  <TableCell>{index + 1}</TableCell>
                   <TableCell>{`${row.first_name} ${row.last_name}`}</TableCell>
                   <TableCell>
                     <p style={{ textTransform: "lowercase" }}>{row.email}</p>
                   </TableCell>
                   <TableCell>{row.phone_number}</TableCell>
-                  <TableCell>
-                    {new Date(row.date_of_birth).toLocaleDateString()}
-                  </TableCell>
-                  <TableCell>{row.gender}</TableCell>
+
+                  <TableCell>{row.category_of_appointment}</TableCell>
+                  <TableCell>{row.post_applied_for}</TableCell>
+                  <TableCell>{row.specialization || "-"}</TableCell>
                   <TableCell>
                     <IconButton
                       color="primary"
@@ -137,7 +128,6 @@ function CreateAppliedCandidates() {
                       <FileOpenIcon />
                     </IconButton>
                   </TableCell>
-
                   <TableCell>
                     <IconButton
                       color="primary"
@@ -163,73 +153,475 @@ function CreateAppliedCandidates() {
 
         {selectedCandidate && (
           <Dialog open={open} onClose={handleClose} maxWidth="md" fullWidth>
-            <DialogTitle>Candidate Details</DialogTitle>
+            <DialogTitle>
+              <Typography
+                style={{ textTransform: "capitalize", fontSize: "20px" }}
+              >
+                {`${selectedCandidate.first_name} ${selectedCandidate.last_name}`}
+              </Typography>
+            </DialogTitle>
             <DialogContent>
+              {/* Personal Information Section */}
+              <Typography
+                variant="h6"
+                gutterBottom
+                style={{ borderBottom: "2px solid black" }}
+              >
+                <strong>Personal Information</strong>
+              </Typography>
               <Grid container spacing={2}>
-                <Grid item xs={12} sm={6}>
-                  <Typography variant="h6">Basic Information</Typography>
-                  <Typography variant="body1">
-                    <strong>Full Name:</strong>{" "}
+                <Grid item xs={6}>
+                  <Typography
+                    variant="body1"
+                    style={{ textTransform: "capitalize" }}
+                  >
+                    <strong>Name:</strong>{" "}
                     {`${selectedCandidate.first_name} ${selectedCandidate.last_name}`}
                   </Typography>
+                </Grid>
+                <Grid item xs={6}>
                   <Typography variant="body1">
-                    <strong>Email:</strong> {selectedCandidate.email}
-                  </Typography>
-                  <Typography variant="body1">
-                    <strong>Phone Number:</strong>{" "}
-                    {selectedCandidate.phone_number}
-                  </Typography>
-                  <Typography variant="body1">
-                    <strong>Date of Birth:</strong>{" "}
-                    {new Date(
-                      selectedCandidate.date_of_birth
-                    ).toLocaleDateString()}
-                  </Typography>
-                  <Typography variant="body1">
-                    <strong>Gender:</strong> {selectedCandidate.gender}
+                    <strong>Email:</strong> {`${selectedCandidate.email}`}
                   </Typography>
                 </Grid>
-                <Grid item xs={12} sm={6}>
-                  <Typography variant="h6">Additional Information</Typography>
-                  <Typography variant="body1">
-                    <strong>Title:</strong> {selectedCandidate.title}
+                <Grid item xs={6}>
+                  <Typography
+                    variant="body1"
+                    style={{ textTransform: "capitalize" }}
+                  >
+                    <strong>Number:</strong>
+                    {`${selectedCandidate.phone_number}`}
                   </Typography>
-                  <Typography variant="body1">
-                    <strong>Specialization:</strong>{" "}
-                    {selectedCandidate.specialization}
+                </Grid>
+
+                <Grid item xs={6}>
+                  <Typography
+                    variant="body1"
+                    style={{ textTransform: "capitalize" }}
+                  >
+                    <strong>DOB :</strong>
+                    {`${new Date(
+                      selectedCandidate.date_of_birth
+                    ).toLocaleDateString()}`}
                   </Typography>
-                  <Typography variant="body1">
-                    <strong>Nature of Job:</strong>{" "}
-                    {selectedCandidate.nature_of_job}
+                </Grid>
+                <Grid item xs={6}>
+                  <Typography
+                    variant="body1"
+                    style={{ textTransform: "capitalize" }}
+                  >
+                    <strong>Gender:</strong> {`${selectedCandidate.gender}`}
                   </Typography>
-                  <Typography variant="body1">
-                    <strong>Current Address:</strong>{" "}
-                    {selectedCandidate.current_address}
+                </Grid>
+                <Grid item xs={6}>
+                  <Typography
+                    variant="body1"
+                    style={{ textTransform: "capitalize" }}
+                  >
+                    <strong>Country:</strong> {`${selectedCandidate.country}`}
                   </Typography>
-                  <Typography variant="body1">
-                    <strong>Alternate Contact Number:</strong>{" "}
-                    {selectedCandidate.alternate_contact_number}
+                </Grid>
+                <Grid item xs={6}>
+                  <Typography
+                    variant="body1"
+                    style={{ textTransform: "capitalize" }}
+                  >
+                    <strong>City:</strong> {`${selectedCandidate.city}`}
                   </Typography>
-                  <Typography variant="body1">
-                    <strong>Country:</strong> {selectedCandidate.country}
+                </Grid>
+              </Grid>
+
+              {/* Job Application Information Section */}
+              <Typography
+                variant="h6"
+                gutterBottom
+                style={{ borderBottom: "2px solid black" }}
+              >
+                <strong>Job Application Information</strong>
+              </Typography>
+              <Grid container spacing={2}>
+                <Grid item xs={6}>
+                  <Typography
+                    variant="body1"
+                    style={{ textTransform: "capitalize" }}
+                  >
+                    <strong>Post Applied For:</strong>{" "}
+                    {`${selectedCandidate.post_applied_for}`}
                   </Typography>
-                  <Typography variant="body1">
-                    <strong>City:</strong> {selectedCandidate.city}
+                </Grid>
+                <Grid item xs={6}>
+                  <Typography
+                    variant="body1"
+                    style={{ textTransform: "capitalize" }}
+                  >
+                    <strong>Sub Post Applied For:</strong>{" "}
+                    {`${selectedCandidate.sub_post_applied_for}`}
                   </Typography>
-                  <Typography variant="body1">
-                    <strong>Pin Code:</strong> {selectedCandidate.pin_code}
+                </Grid>
+                <Grid item xs={6}>
+                  <Typography
+                    variant="body1"
+                    style={{ textTransform: "capitalize" }}
+                  >
+                    <strong>Category of Appointment:</strong>{" "}
+                    {`${selectedCandidate.category_of_appointment}`}
                   </Typography>
-                  <Typography variant="body1">
+                </Grid>
+                <Grid item xs={6}>
+                  <Typography
+                    variant="body1"
+                    style={{ textTransform: "capitalize" }}
+                  >
+                    <strong>Subject:</strong> {`${selectedCandidate.subject}`}
+                  </Typography>
+                </Grid>
+                <Grid item xs={6}>
+                  <Typography
+                    variant="body1"
+                    style={{ textTransform: "capitalize" }}
+                  >
+                    <strong>Exam Type:</strong>{" "}
+                    {`${selectedCandidate.exam_type}`}
+                  </Typography>
+                </Grid>
+                <Grid item xs={6}>
+                  <Typography
+                    variant="body1"
+                    style={{ textTransform: "capitalize" }}
+                  >
+                    <strong>Degree:</strong> {`${selectedCandidate.degree}`}
+                  </Typography>
+                </Grid>
+                <Grid item xs={6}>
+                  <Typography
+                    variant="body1"
+                    style={{ textTransform: "capitalize" }}
+                  >
+                    <strong>Qualification Status:</strong>{" "}
+                    {`${selectedCandidate.qualification_status}`}
+                  </Typography>
+                </Grid>
+              </Grid>
+
+              {/* Experience and Research Section */}
+              <Typography
+                variant="h6"
+                gutterBottom
+                style={{ borderBottom: "2px solid black" }}
+              >
+                <strong>Experience and Research</strong>
+              </Typography>
+              <Grid container spacing={2}>
+                <Grid item xs={6}>
+                  <Typography
+                    variant="body1"
+                    style={{ textTransform: "capitalize" }}
+                  >
+                    <strong>Total Experience:</strong>{" "}
+                    {`${selectedCandidate.total_experience} years`}
+                  </Typography>
+                </Grid>
+                <Grid item xs={6}>
+                  <Typography
+                    variant="body1"
+                    style={{ textTransform: "capitalize" }}
+                  >
+                    <strong>Total Research Experience:</strong>{" "}
+                    {`${selectedCandidate.total_research} years`}
+                  </Typography>
+                </Grid>
+                <Grid item xs={6}>
+                  <Typography
+                    variant="body1"
+                    style={{ textTransform: "capitalize" }}
+                  >
+                    <strong>Total Industry Experience:</strong>{" "}
+                    {`${selectedCandidate.total_industry} years`}
+                  </Typography>
+                </Grid>
+              </Grid>
+
+              {/* Current Employment Section */}
+              <Typography
+                variant="h6"
+                gutterBottom
+                style={{ borderBottom: "2px solid black" }}
+              >
+                <strong>Current Employment</strong>
+              </Typography>
+              <Grid container spacing={2}>
+                <Grid item xs={6}>
+                  <Typography
+                    variant="body1"
+                    style={{ textTransform: "capitalize" }}
+                  >
                     <strong>Current Organization:</strong>{" "}
-                    {selectedCandidate.current_organization}
+                    {`${selectedCandidate.current_organization}`}
                   </Typography>
-                  <Typography variant="body1">
+                </Grid>
+                <Grid item xs={6}>
+                  <Typography
+                    variant="body1"
+                    style={{ textTransform: "capitalize" }}
+                  >
                     <strong>Current Designation:</strong>{" "}
-                    {selectedCandidate.current_designation}
+                    {`${selectedCandidate.current_designation}`}
                   </Typography>
-                  <Typography variant="body1">
+                </Grid>
+                <Grid item xs={6}>
+                  <Typography
+                    variant="body1"
+                    style={{ textTransform: "capitalize" }}
+                  >
                     <strong>Current Salary:</strong>{" "}
-                    {selectedCandidate.current_salary}
+                    {`${selectedCandidate.current_salary}`}
+                  </Typography>
+                </Grid>
+              </Grid>
+
+              {/* Benefits Section */}
+              <Typography
+                variant="h6"
+                gutterBottom
+                style={{ borderBottom: "2px solid black" }}
+              >
+                <strong> Benefits</strong>
+              </Typography>
+              <Grid container spacing={2}>
+                <Grid item xs={6}>
+                  <Typography
+                    variant="body1"
+                    style={{ textTransform: "capitalize" }}
+                  >
+                    <strong>Accommodation Benefits:</strong>{" "}
+                    {`${
+                      selectedCandidate.accommodation_benefits || "Not Provided"
+                    }`}
+                  </Typography>
+                </Grid>
+                <Grid item xs={6}>
+                  <Typography
+                    variant="body1"
+                    style={{ textTransform: "capitalize" }}
+                  >
+                    <strong>Transportation Benefits:</strong>{" "}
+                    {`${
+                      selectedCandidate.transportation_benefits ||
+                      "Not Provided"
+                    }`}
+                  </Typography>
+                </Grid>
+                <Grid item xs={6}>
+                  <Typography
+                    variant="body1"
+                    style={{ textTransform: "capitalize" }}
+                  >
+                    <strong>Food Benefits:</strong>{" "}
+                    {`${selectedCandidate.food_benefits || "Not Provided"}`}
+                  </Typography>
+                </Grid>
+                <Grid item xs={6}>
+                  <Typography
+                    variant="body1"
+                    style={{ textTransform: "capitalize" }}
+                  >
+                    <strong>Mediclaim Benefits:</strong>{" "}
+                    {`${
+                      selectedCandidate.mediclaim_benefits || "Not Provided"
+                    }`}
+                  </Typography>
+                </Grid>
+                <Grid item xs={6}>
+                  <Typography
+                    variant="body1"
+                    style={{ textTransform: "capitalize" }}
+                  >
+                    <strong>Others Benefits:</strong>{" "}
+                    {`${selectedCandidate.others_benefits || "Not Provided"}`}
+                  </Typography>
+                </Grid>
+              </Grid>
+
+              {/* References Section */}
+              <Typography
+                variant="h6"
+                gutterBottom
+                style={{ borderBottom: "2px solid black" }}
+              >
+                <strong>References</strong>
+              </Typography>
+              <Grid container spacing={2}>
+                <Grid item xs={6}>
+                  <Typography
+                    variant="body1"
+                    style={{ textTransform: "capitalize" }}
+                  >
+                    <strong>First Reference Name:</strong>{" "}
+                    {`${
+                      selectedCandidate.first_reference_name || "Not Provided"
+                    }`}
+                  </Typography>
+                </Grid>
+                <Grid item xs={6}>
+                  <Typography
+                    variant="body1"
+                    style={{ textTransform: "capitalize" }}
+                  >
+                    <strong>First Reference Organization:</strong>{" "}
+                    {`${
+                      selectedCandidate.first_reference_organization ||
+                      "Not Provided"
+                    }`}
+                  </Typography>
+                </Grid>
+                <Grid item xs={6}>
+                  <Typography
+                    variant="body1"
+                    style={{ textTransform: "capitalize" }}
+                  >
+                    <strong>First Reference Position:</strong>{" "}
+                    {`${
+                      selectedCandidate.first_reference_position ||
+                      "Not Provided"
+                    }`}
+                  </Typography>
+                </Grid>
+                <Grid item xs={6}>
+                  <Typography
+                    variant="body1"
+                    style={{ textTransform: "capitalize" }}
+                  >
+                    <strong>First Reference Email:</strong>{" "}
+                    {`${
+                      selectedCandidate.first_reference_email || "Not Provided"
+                    }`}
+                  </Typography>
+                </Grid>
+                <Grid item xs={6}>
+                  <Typography
+                    variant="body1"
+                    style={{ textTransform: "capitalize" }}
+                  >
+                    <strong>First Reference Contact:</strong>{" "}
+                    {`${
+                      selectedCandidate.first_reference_contact ||
+                      "Not Provided"
+                    }`}
+                  </Typography>
+                </Grid>
+                <Grid item xs={6}>
+                  <Typography
+                    variant="body1"
+                    style={{ textTransform: "capitalize" }}
+                  >
+                    <strong>Second Reference Name:</strong>{" "}
+                    {`${
+                      selectedCandidate.second_reference_name || "Not Provided"
+                    }`}
+                  </Typography>
+                </Grid>
+                <Grid item xs={6}>
+                  <Typography
+                    variant="body1"
+                    style={{ textTransform: "capitalize" }}
+                  >
+                    <strong>Second Reference Organization:</strong>{" "}
+                    {`${
+                      selectedCandidate.second_reference_organization ||
+                      "Not Provided"
+                    }`}
+                  </Typography>
+                </Grid>
+                <Grid item xs={6}>
+                  <Typography
+                    variant="body1"
+                    style={{ textTransform: "capitalize" }}
+                  >
+                    <strong>Second Reference Position:</strong>{" "}
+                    {`${
+                      selectedCandidate.second_reference_position ||
+                      "Not Provided"
+                    }`}
+                  </Typography>
+                </Grid>
+                <Grid item xs={6}>
+                  <Typography
+                    variant="body1"
+                    style={{ textTransform: "capitalize" }}
+                  >
+                    <strong>Second Reference Email:</strong>{" "}
+                    {`${
+                      selectedCandidate.second_reference_email || "Not Provided"
+                    }`}
+                  </Typography>
+                </Grid>
+                <Grid item xs={6}>
+                  <Typography
+                    variant="body1"
+                    style={{ textTransform: "capitalize" }}
+                  >
+                    <strong>Second Reference Contact:</strong>{" "}
+                    {`${
+                      selectedCandidate.second_reference_contact ||
+                      "Not Provided"
+                    }`}
+                  </Typography>
+                </Grid>
+              </Grid>
+
+              {/* Additional Information Section */}
+              <Typography
+                variant="h6"
+                gutterBottom
+                style={{ borderBottom: "2px solid black" }}
+              >
+                <strong> Additional Information</strong>
+              </Typography>
+              <Grid container spacing={2}>
+                <Grid item xs={12}>
+                  <Typography
+                    variant="body1"
+                    style={{ textTransform: "capitalize" }}
+                  >
+                    <strong>Awards/Recognitions:</strong>{" "}
+                    {`${
+                      selectedCandidate.awards_recognitions || "Not Provided"
+                    }`}
+                  </Typography>
+                </Grid>
+                <Grid item xs={12}>
+                  <Typography
+                    variant="body1"
+                    style={{ textTransform: "capitalize" }}
+                  >
+                    <strong>Co-Curricular/Extra-Curricular Activities:</strong>{" "}
+                    {`${
+                      selectedCandidate.co_curricular_extra_curricular ||
+                      "Not Provided"
+                    }`}
+                  </Typography>
+                </Grid>
+                <Grid item xs={12}>
+                  <Typography
+                    variant="body1"
+                    style={{ textTransform: "capitalize" }}
+                  >
+                    <strong>Other Relevant Information:</strong>{" "}
+                    {`${
+                      selectedCandidate.other_relevant_information ||
+                      "Not Provided"
+                    }`}
+                  </Typography>
+                </Grid>
+                <Grid item xs={12}>
+                  <Typography
+                    variant="body1"
+                    style={{ textTransform: "capitalize" }}
+                  >
+                    <strong>Period for Joining:</strong>{" "}
+                    {`${
+                      selectedCandidate.period_for_joining || "Not Provided"
+                    }`}
                   </Typography>
                 </Grid>
               </Grid>
