@@ -28,18 +28,12 @@ import {
   ExpandMore,
   Logout as LogoutIcon,
 } from "@mui/icons-material";
-import LibraryBooksIcon from '@mui/icons-material/LibraryBooks';
-import ScheduleIcon from '@mui/icons-material/Schedule';
-import GroupIcon from '@mui/icons-material/Group';
-import QuestionAnswerIcon from '@mui/icons-material/QuestionAnswer';
+import LibraryBooksIcon from "@mui/icons-material/LibraryBooks";
 
-import ListIcon from '@mui/icons-material/List';
+import QuestionAnswerIcon from "@mui/icons-material/QuestionAnswer";
 
-
-
-
-
-
+import ListIcon from "@mui/icons-material/List";
+import EventIcon from "@mui/icons-material/Event";
 
 import "./AdminSidebar.css";
 import corusview from "../../assets/logos/corusview.png";
@@ -100,28 +94,28 @@ const AdminSidebar = ({ isOpen, onToggle }) => {
           },
           {
             text: "Current Opening",
-            icon: <LibraryBooksIcon  />,
+            icon: <LibraryBooksIcon />,
             path: "/admin-dashboard/admin-current-opening",
           },
           {
             text: "Interview Schedules",
-            icon: <ScheduleIcon  />,
+            icon: <EventIcon />,
             path: "/admin-dashboard/admin-interview-schedules",
           },
           {
             text: "Applied Candidates",
-            icon: <GroupIcon  />,
+            icon: <PeopleIcon />,
             path: "/admin-dashboard/admin-applied-candidates",
           },
           {
             text: "Visitors",
-            icon: <QuestionAnswerIcon  />,
+            icon: <QuestionAnswerIcon />,
             path: "/admin-dashboard/admin-visitors",
           },
 
           {
             text: "Master List",
-            icon: <ListIcon     />,
+            icon: <ListIcon />,
             subItems: [
               {
                 text: "Category",
