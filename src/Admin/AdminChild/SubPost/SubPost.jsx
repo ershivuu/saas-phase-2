@@ -233,6 +233,11 @@ function SubPost() {
             </TableRow>
           </TableHead>
           <TableBody>
+            {subPosts.length === 0 && (
+              <TableRow>
+                <TableCell colSpan={8}>No Sub Posts available...</TableCell>
+              </TableRow>
+            )}
             {subPosts.map((subPost, index) => (
               <TableRow key={subPost.id}>
                 <TableCell>{index + 1}</TableCell>

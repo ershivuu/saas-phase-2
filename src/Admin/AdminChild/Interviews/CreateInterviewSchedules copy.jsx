@@ -16,37 +16,33 @@ import {
   TextField,
   Switch,
   Typography,
-  CircularProgress,
-} from "@mui/material";
+  } from "@mui/material";
 import {
   getInterviewSchedule,
   updateInterviewSchedule,
-} from "../../Services/AdminServices";
+} from "../../Services/AdminServices"; // Import the new update function
 import EditIcon from "@mui/icons-material/Edit";
 
 function CreateInterviewSchedules() {
   const [jobOpenings, setJobOpenings] = useState([]);
   const [open, setOpen] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
+
   const [currentJob, setCurrentJob] = useState(null);
   const [formData, setFormData] = useState({
     interview_date_1: "",
     interview_date_2: "",
     interview_date_3: "",
     eligibility_criteria: "",
+    // Removed publish_to_schedule_interview from formData
   });
 
   useEffect(() => {
     const fetchJobOpenings = async () => {
-      setLoading(true);
       try {
         const data = await getInterviewSchedule();
         setJobOpenings(data);
       } catch (error) {
-        setError("Error fetching job openings: " + error.message);
-      } finally {
-        setLoading(false);
+        console.error("Error fetching job openings:", error);
       }
     };
 
@@ -60,15 +56,17 @@ function CreateInterviewSchedules() {
       interview_date_2: formatDateTime(job.interview_date_2),
       interview_date_3: formatDateTime(job.interview_date_3),
       eligibility_criteria: job.eligibility_criteria,
+      // Removed publish_to_schedule_interview
     });
     setOpen(true);
   };
 
+  // Utility function to format the date to YYYY-MM-DDTHH:MM
   const formatDateTime = (dateString) => {
-    if (!dateString) return "";
+    if (!dateString) return ""; // Handle null or undefined values
     const date = new Date(dateString);
     const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const month = String(date.getMonth() + 1).padStart(2, "0"); // Months are 0-indexed
     const day = String(date.getDate()).padStart(2, "0");
     const hours = String(date.getHours()).padStart(2, "0");
     const minutes = String(date.getMinutes()).padStart(2, "0");
@@ -87,16 +85,28 @@ function CreateInterviewSchedules() {
     });
   };
 
-  const handleSwitchChange = async (job) => {
+  const handleSwitchChange = async (jobId) => {
+    const updatedJobOpenings = jobOpenings.map((job) => {
+      if (job.id === jobId) {
+        return {
+          ...job,
+          publish_to_schedule_interview: !job.publish_to_schedule_interview,
+        };
+      }
+      return job;
+    });
+
+    setJobOpenings(updatedJobOpenings);
+
+    const updatedData = updatedJobOpenings.find((job) => job.id === jobId);
+
     try {
-      const updatedStatus = !job.publish_to_schedule_interview;
-      await updateInterviewSchedule(job.id, {
-        publish_to_schedule_interview: updatedStatus,
+      await updateInterviewSchedule(jobId, {
+        ...updatedData,
+        // The id field should not be included in the update data
       });
-      const data = await getInterviewSchedule();
-      setJobOpenings(data);
     } catch (error) {
-      setError("Error updating interview status: " + error.message);
+      console.error("Error updating publish status:", error);
     }
   };
 
@@ -104,43 +114,17 @@ function CreateInterviewSchedules() {
     try {
       await updateInterviewSchedule(currentJob.id, {
         ...formData,
-        publish_to_schedule_interview: currentJob.publish_to_schedule_interview,
-      });
+        publish_to_schedule_interview: currentJob.publish_to_schedule_interview, // Preserve the current state for this field
+      }); // Pass the current job id and updated data
+      // Optionally refresh the job openings
       const data = await getInterviewSchedule();
       setJobOpenings(data);
       handleClose();
     } catch (error) {
-      setError("Error updating interview schedule: " + error.message);
+      console.error("Error updating interview schedule:", error);
     }
   };
 
-  if (loading)
-    return (
-      <div className="loading-process">
-        <div className="inner-loading">
-          <CircularProgress />
-        </div>
-      </div>
-    );
-  if (error)
-    return (
-      <div style={{ padding: "20px" }}>
-        <TableContainer component={Paper}>
-          <Table>
-            <TableHead>
-              <TableRow>
-                <TableCell>Error</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              <Typography color="error" sx={{ padding: "10px" }}>
-                Error: {error}
-              </Typography>
-            </TableBody>
-          </Table>
-        </TableContainer>
-      </div>
-    );
   return (
     <div style={{ padding: "20px" }}>
       <Typography variant="h5" gutterBottom>
@@ -159,7 +143,7 @@ function CreateInterviewSchedules() {
               <TableCell>Date 1</TableCell>
               <TableCell>Date 2</TableCell>
               <TableCell>Date 3</TableCell>
-              <TableCell>Publish to Schedule</TableCell> {/* New Column */}
+              <TableCell>Publish</TableCell> {/* New column for the switch */}
               <TableCell>Edit</TableCell>
             </TableRow>
           </TableHead>
@@ -184,8 +168,7 @@ function CreateInterviewSchedules() {
                 <TableCell>
                   <Switch
                     checked={job.publish_to_schedule_interview}
-                    onChange={() => handleSwitchChange(job)} // Handle the Switch change
-                    color="primary"
+                    onChange={() => handleSwitchChange(job.id)}
                   />
                 </TableCell>
                 <TableCell>

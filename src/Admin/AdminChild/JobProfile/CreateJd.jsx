@@ -8,6 +8,7 @@ import {
   TableRow,
   Paper,
   Typography,
+  CircularProgress,
 } from "@mui/material";
 import { getInterviewSchedule } from "../../Services/AdminServices"; // Update with the correct path
 
@@ -31,13 +32,33 @@ function CreateJd() {
     fetchJobOpenings();
   }, []);
 
-  if (loading) {
-    return <div>Loading...</div>;
-  }
-
-  if (error) {
-    return <div>Error: {error}</div>;
-  }
+  if (loading)
+    return (
+      <div className="loading-process">
+        <div className="inner-loading">
+          <CircularProgress />
+        </div>
+      </div>
+    );
+  if (error)
+    return (
+      <div style={{ padding: "20px" }}>
+        <TableContainer component={Paper}>
+          <Table>
+            <TableHead>
+              <TableRow>
+                <TableCell>Error</TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              <Typography color="error" sx={{ padding: "10px" }}>
+                Error: {error}
+              </Typography>
+            </TableBody>
+          </Table>
+        </TableContainer>
+      </div>
+    );
 
   return (
     <div style={{ padding: "20px" }}>
