@@ -24,7 +24,7 @@ import EditIcon from "@mui/icons-material/Edit";
 import {
   getJobOpenings,
   createJobOpening,
-  updateMasterJobOpenings,
+  updateJobOpening,
   getCombineCategories,
   getDepartment,
 } from "../../Services/AdminServices";
@@ -32,15 +32,17 @@ import {
 function CreateCurrentOpening() {
   const [jobOpenings, setJobOpenings] = useState([]);
   const [categories, setCategories] = useState([]);
-  const [departments, setDepartments] = useState([]); // Added state for departments
+  const [departments, setDepartments] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const [open, setOpen] = useState(false); // For the dialog
+
+  // States for Add Job Opening Dialog
+  const [open, setOpen] = useState(false);
   const [formData, setFormData] = useState({
     category_of_appointment: "",
     post_applied_for: "",
     sub_post_applied_for: "",
-    departments: "", // Changed to hold department ID
+    departments: "",
     qualification_and_experience: "",
     highly_desirable: "",
     last_date_to_apply: "",
@@ -52,11 +54,20 @@ function CreateCurrentOpening() {
     publish_to_schedule_interview: false,
     publish_to_vacancy: false,
   });
+
+  // States for Edit Job Opening Dialog
+  const [editOpen, setEditOpen] = useState(false);
+  const [currentEditId, setCurrentEditId] = useState(null);
+  const [editFormData, setEditFormData] = useState({
+    ...formData,
+  });
+
   const [posts, setPosts] = useState([]);
   const [subposts, setSubposts] = useState([]);
   const [categoryMap, setCategoryMap] = useState(new Map());
   const [postMap, setPostMap] = useState(new Map());
   const [subpostMap, setSubpostMap] = useState(new Map());
+
   const fetchJobOpenings = async () => {
     try {
       const data = await getJobOpenings();
@@ -65,6 +76,7 @@ function CreateCurrentOpening() {
       setError(error.message);
     }
   };
+
   const fetchCategories = async () => {
     try {
       const data = await getCombineCategories();
@@ -90,10 +102,11 @@ function CreateCurrentOpening() {
       setError(error.message);
     }
   };
+
   const fetchDepartments = async () => {
     try {
       const data = await getDepartment();
-      setDepartments(data); // Set the departments data
+      setDepartments(data);
     } catch (error) {
       setError(error.message);
     }
@@ -102,8 +115,15 @@ function CreateCurrentOpening() {
   useEffect(() => {
     fetchJobOpenings();
     fetchCategories();
-    fetchDepartments(); // Fetch departments
+    fetchDepartments();
   }, []);
+
+  // Utility function to format dates for server
+  const formatDateForServer = (date) => {
+    if (!date) return null;
+    const [year, month, day] = date.split("T")[0].split("-");
+    return `${year}/${month}/${day}`;
+  };
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -127,11 +147,11 @@ function CreateCurrentOpening() {
       (c) => c.category_id === selectedCategoryId
     );
     setPosts(category ? category.posts : []);
-    setSubposts([]); // Reset subposts when category changes
+    setSubposts([]);
     setFormData({
       ...formData,
       category_of_appointment: selectedCategoryId,
-      post_applied_for: "", // Reset post and subpost
+      post_applied_for: "",
       sub_post_applied_for: "",
     });
   };
@@ -143,13 +163,12 @@ function CreateCurrentOpening() {
     setFormData({
       ...formData,
       post_applied_for: selectedPostId,
-      sub_post_applied_for: "", // Reset subpost
+      sub_post_applied_for: "",
     });
   };
 
   const handleSubmit = async () => {
     try {
-      // Convert IDs to names/values
       const dataToSubmit = {
         ...formData,
         category_of_appointment: categoryMap.get(
@@ -157,13 +176,83 @@ function CreateCurrentOpening() {
         ),
         post_applied_for: postMap.get(formData.post_applied_for),
         sub_post_applied_for: subpostMap.get(formData.sub_post_applied_for),
+        last_date_to_apply: formatDateForServer(formData.last_date_to_apply),
+        interview_date_1: formatDateForServer(formData.interview_date_1),
+        interview_date_2: formatDateForServer(formData.interview_date_2),
+        interview_date_3: formatDateForServer(formData.interview_date_3),
       };
 
       await createJobOpening(dataToSubmit);
       handleClose();
-      // Optionally, refetch job openings here
-      const data = await getJobOpenings();
-      setJobOpenings(data.jobOpenings);
+      fetchJobOpenings();
+    } catch (error) {
+      setError(error.message);
+    }
+  };
+
+  // Edit Job Opening Dialog Handlers
+  const handleEditClick = (job) => {
+    setCurrentEditId(job.id);
+    setEditFormData({
+      category_of_appointment: job.category_of_appointment,
+      post_applied_for: job.post_applied_for,
+      sub_post_applied_for: job.sub_post_applied_for,
+      departments: job.departments,
+      qualification_and_experience: job.qualification_and_experience,
+      highly_desirable: job.highly_desirable,
+      last_date_to_apply: job.last_date_to_apply,
+      eligibility_criteria: job.eligibility_criteria,
+      interview_date_1: job.interview_date_1,
+      interview_date_2: job.interview_date_2,
+      interview_date_3: job.interview_date_3,
+      publish_to_job_profile: job.publish_to_job_profile,
+      publish_to_schedule_interview: job.publish_to_schedule_interview,
+      publish_to_vacancy: job.publish_to_vacancy,
+    });
+    setEditOpen(true);
+  };
+
+  const handleEditChange = (e) => {
+    const { name, value, type, checked } = e.target;
+    setEditFormData({
+      ...editFormData,
+      [name]: type === "checkbox" ? checked : value,
+    });
+  };
+
+  const handleEditSubmit = async () => {
+    try {
+      const dataToUpdate = {
+        ...editFormData,
+        category_of_appointment: categoryMap.get(
+          editFormData.category_of_appointment
+        ),
+        post_applied_for: postMap.get(editFormData.post_applied_for),
+        sub_post_applied_for: subpostMap.get(editFormData.sub_post_applied_for),
+        last_date_to_apply: formatDateForServer(
+          editFormData.last_date_to_apply
+        ),
+        interview_date_1: formatDateForServer(editFormData.interview_date_1),
+        interview_date_2: formatDateForServer(editFormData.interview_date_2),
+        interview_date_3: formatDateForServer(editFormData.interview_date_3),
+      };
+
+      await updateJobOpening(currentEditId, dataToUpdate);
+      handleCloseEdit();
+      fetchJobOpenings();
+    } catch (error) {
+      setError(error.message);
+    }
+  };
+
+  const handleCloseEdit = () => {
+    setEditOpen(false);
+  };
+
+  const handleSwitchChange = async (id, isActive) => {
+    try {
+      await updateJobOpening(id, { is_active_all: isActive });
+      fetchJobOpenings();
     } catch (error) {
       setError(error.message);
     }
@@ -191,6 +280,8 @@ function CreateCurrentOpening() {
               <TableCell>Post</TableCell>
               <TableCell>Sub Post</TableCell>
               <TableCell>Department</TableCell>
+              <TableCell>Last Date</TableCell>
+              <TableCell>Active</TableCell>
               <TableCell>Edit</TableCell>
             </TableRow>
           </TableHead>
@@ -203,7 +294,25 @@ function CreateCurrentOpening() {
                 <TableCell>{job.sub_post_applied_for}</TableCell>
                 <TableCell>{job.departments}</TableCell>
                 <TableCell>
-                  <IconButton color="primary">
+                  {formatDateForServer(job.last_date_to_apply)}
+                </TableCell>
+                <TableCell>
+                  <FormControlLabel
+                    control={
+                      <Switch
+                        checked={job.is_active_all}
+                        onChange={(e) =>
+                          handleSwitchChange(job.id, e.target.checked)
+                        }
+                      />
+                    }
+                  />
+                </TableCell>
+                <TableCell>
+                  <IconButton
+                    color="primary"
+                    onClick={() => handleEditClick(job)}
+                  >
                     <EditIcon />
                   </IconButton>
                 </TableCell>
@@ -213,18 +322,18 @@ function CreateCurrentOpening() {
         </Table>
       </TableContainer>
 
-      {/* Dialog for adding new job opening */}
+      {/* Add Job Opening Dialog */}
       <Dialog open={open} onClose={handleClose}>
-        <DialogTitle>Add New Job Opening</DialogTitle>
+        <DialogTitle>Add Job Opening</DialogTitle>
         <DialogContent>
           <TextField
-            select
+            margin="dense"
             label="Category"
             name="category_of_appointment"
+            select
+            fullWidth
             value={formData.category_of_appointment}
             onChange={handleCategoryChange}
-            fullWidth
-            margin="normal"
           >
             {categories.map((category) => (
               <MenuItem key={category.category_id} value={category.category_id}>
@@ -233,14 +342,13 @@ function CreateCurrentOpening() {
             ))}
           </TextField>
           <TextField
-            select
+            margin="dense"
             label="Post"
             name="post_applied_for"
+            select
+            fullWidth
             value={formData.post_applied_for}
             onChange={handlePostChange}
-            fullWidth
-            margin="dense"
-            disabled={!formData.category_of_appointment} // Disable if no category selected
           >
             {posts.map((post) => (
               <MenuItem key={post.post_id} value={post.post_id}>
@@ -249,14 +357,13 @@ function CreateCurrentOpening() {
             ))}
           </TextField>
           <TextField
-            select
-            label="Sub Post"
+            margin="dense"
+            label="Subpost"
             name="sub_post_applied_for"
+            select
+            fullWidth
             value={formData.sub_post_applied_for}
             onChange={handleChange}
-            fullWidth
-            margin="dense"
-            disabled={!formData.post_applied_for} // Disable if no post selected
           >
             {subposts.map((subpost) => (
               <MenuItem key={subpost.subpost_id} value={subpost.subpost_id}>
@@ -264,96 +371,92 @@ function CreateCurrentOpening() {
               </MenuItem>
             ))}
           </TextField>
-
           <TextField
-            select
-            label="Department"
+            margin="dense"
+            label="Departments"
             name="departments"
+            fullWidth
             value={formData.departments}
             onChange={handleChange}
-            fullWidth
-            margin="dense"
-          >
-            {departments.map((department) => (
-              <MenuItem key={department.id} value={department.depart_name}>
-                {department.depart_name}
-              </MenuItem>
-            ))}
-          </TextField>
-
+          />
           <TextField
             margin="dense"
-            name="qualification_and_experience"
             label="Qualification and Experience"
-            type="text"
+            name="qualification_and_experience"
             fullWidth
             value={formData.qualification_and_experience}
             onChange={handleChange}
           />
           <TextField
             margin="dense"
-            name="highly_desirable"
             label="Highly Desirable"
-            type="text"
+            name="highly_desirable"
             fullWidth
             value={formData.highly_desirable}
             onChange={handleChange}
           />
           <TextField
             margin="dense"
-            name="last_date_to_apply"
             label="Last Date to Apply"
+            name="last_date_to_apply"
             type="date"
             fullWidth
             value={formData.last_date_to_apply}
             onChange={handleChange}
-            InputLabelProps={{ shrink: true }}
+            InputLabelProps={{
+              shrink: true,
+            }}
           />
           <TextField
             margin="dense"
-            name="eligibility_criteria"
             label="Eligibility Criteria"
-            type="text"
+            name="eligibility_criteria"
             fullWidth
             value={formData.eligibility_criteria}
             onChange={handleChange}
           />
           <TextField
             margin="dense"
-            name="interview_date_1"
             label="Interview Date 1"
+            name="interview_date_1"
             type="date"
             fullWidth
             value={formData.interview_date_1}
             onChange={handleChange}
-            InputLabelProps={{ shrink: true }}
+            InputLabelProps={{
+              shrink: true,
+            }}
           />
           <TextField
             margin="dense"
-            name="interview_date_2"
             label="Interview Date 2"
+            name="interview_date_2"
             type="date"
             fullWidth
             value={formData.interview_date_2}
             onChange={handleChange}
-            InputLabelProps={{ shrink: true }}
+            InputLabelProps={{
+              shrink: true,
+            }}
           />
           <TextField
             margin="dense"
-            name="interview_date_3"
             label="Interview Date 3"
+            name="interview_date_3"
             type="date"
             fullWidth
             value={formData.interview_date_3}
             onChange={handleChange}
-            InputLabelProps={{ shrink: true }}
+            InputLabelProps={{
+              shrink: true,
+            }}
           />
           <FormControlLabel
             control={
               <Switch
-                name="publish_to_job_profile"
                 checked={formData.publish_to_job_profile}
                 onChange={handleChange}
+                name="publish_to_job_profile"
               />
             }
             label="Publish to Job Profile"
@@ -361,9 +464,9 @@ function CreateCurrentOpening() {
           <FormControlLabel
             control={
               <Switch
-                name="publish_to_schedule_interview"
                 checked={formData.publish_to_schedule_interview}
                 onChange={handleChange}
+                name="publish_to_schedule_interview"
               />
             }
             label="Publish to Schedule Interview"
@@ -371,17 +474,192 @@ function CreateCurrentOpening() {
           <FormControlLabel
             control={
               <Switch
-                name="publish_to_vacancy"
                 checked={formData.publish_to_vacancy}
                 onChange={handleChange}
+                name="publish_to_vacancy"
               />
             }
             label="Publish to Vacancy"
           />
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleClose}>Cancel</Button>
-          <Button onClick={handleSubmit}>Submit</Button>
+          <Button onClick={handleClose} color="primary">
+            Cancel
+          </Button>
+          <Button onClick={handleSubmit} color="primary">
+            Submit
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      {/* Edit Job Opening Dialog */}
+      <Dialog open={editOpen} onClose={handleCloseEdit}>
+        <DialogTitle>Edit Job Opening</DialogTitle>
+        <DialogContent>
+          {/* Similar form fields as in the add dialog */}
+          <TextField
+            margin="dense"
+            label="Category"
+            name="category_of_appointment"
+            select
+            fullWidth
+            value={editFormData.category_of_appointment}
+            onChange={handleEditChange}
+          >
+            {categories.map((category) => (
+              <MenuItem key={category.category_id} value={category.category_id}>
+                {category.category_name}
+              </MenuItem>
+            ))}
+          </TextField>
+          <TextField
+            margin="dense"
+            label="Post"
+            name="post_applied_for"
+            select
+            fullWidth
+            value={editFormData.post_applied_for}
+            onChange={handleEditChange}
+          >
+            {posts.map((post) => (
+              <MenuItem key={post.post_id} value={post.post_id}>
+                {post.post_name}
+              </MenuItem>
+            ))}
+          </TextField>
+          <TextField
+            margin="dense"
+            label="Subpost"
+            name="sub_post_applied_for"
+            select
+            fullWidth
+            value={editFormData.sub_post_applied_for}
+            onChange={handleEditChange}
+          >
+            {subposts.map((subpost) => (
+              <MenuItem key={subpost.subpost_id} value={subpost.subpost_id}>
+                {subpost.subpost_name}
+              </MenuItem>
+            ))}
+          </TextField>
+          <TextField
+            margin="dense"
+            label="Departments"
+            name="departments"
+            fullWidth
+            value={editFormData.departments}
+            onChange={handleEditChange}
+          />
+          <TextField
+            margin="dense"
+            label="Qualification and Experience"
+            name="qualification_and_experience"
+            fullWidth
+            value={editFormData.qualification_and_experience}
+            onChange={handleEditChange}
+          />
+          <TextField
+            margin="dense"
+            label="Highly Desirable"
+            name="highly_desirable"
+            fullWidth
+            value={editFormData.highly_desirable}
+            onChange={handleEditChange}
+          />
+          <TextField
+            margin="dense"
+            label="Last Date to Apply"
+            name="last_date_to_apply"
+            type="date"
+            fullWidth
+            value={editFormData.last_date_to_apply}
+            onChange={handleEditChange}
+            InputLabelProps={{
+              shrink: true,
+            }}
+          />
+          <TextField
+            margin="dense"
+            label="Eligibility Criteria"
+            name="eligibility_criteria"
+            fullWidth
+            value={editFormData.eligibility_criteria}
+            onChange={handleEditChange}
+          />
+          <TextField
+            margin="dense"
+            label="Interview Date 1"
+            name="interview_date_1"
+            type="date"
+            fullWidth
+            value={editFormData.interview_date_1}
+            onChange={handleEditChange}
+            InputLabelProps={{
+              shrink: true,
+            }}
+          />
+          <TextField
+            margin="dense"
+            label="Interview Date 2"
+            name="interview_date_2"
+            type="date"
+            fullWidth
+            value={editFormData.interview_date_2}
+            onChange={handleEditChange}
+            InputLabelProps={{
+              shrink: true,
+            }}
+          />
+          <TextField
+            margin="dense"
+            label="Interview Date 3"
+            name="interview_date_3"
+            type="date"
+            fullWidth
+            value={editFormData.interview_date_3}
+            onChange={handleEditChange}
+            InputLabelProps={{
+              shrink: true,
+            }}
+          />
+          <FormControlLabel
+            control={
+              <Switch
+                checked={editFormData.publish_to_job_profile}
+                onChange={handleEditChange}
+                name="publish_to_job_profile"
+              />
+            }
+            label="Publish to Job Profile"
+          />
+          <FormControlLabel
+            control={
+              <Switch
+                checked={editFormData.publish_to_schedule_interview}
+                onChange={handleEditChange}
+                name="publish_to_schedule_interview"
+              />
+            }
+            label="Publish to Schedule Interview"
+          />
+          <FormControlLabel
+            control={
+              <Switch
+                checked={editFormData.publish_to_vacancy}
+                onChange={handleEditChange}
+                name="publish_to_vacancy"
+              />
+            }
+            label="Publish to Vacancy"
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseEdit} color="primary">
+            Cancel
+          </Button>
+          <Button onClick={handleEditSubmit} color="primary">
+            Submit
+          </Button>
         </DialogActions>
       </Dialog>
     </div>

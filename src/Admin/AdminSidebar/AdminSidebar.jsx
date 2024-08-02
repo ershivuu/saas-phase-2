@@ -38,6 +38,7 @@ import PeopleAltIcon from "@mui/icons-material/PeopleAlt";
 import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
 import SwitchAccountIcon from "@mui/icons-material/SwitchAccount";
 import WorkHistoryIcon from "@mui/icons-material/WorkHistory";
+import FeaturedPlayListIcon from "@mui/icons-material/FeaturedPlayList";
 const AdminSidebar = ({ isOpen, onToggle }) => {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(true);
@@ -103,6 +104,11 @@ const AdminSidebar = ({ isOpen, onToggle }) => {
             path: "/admin-dashboard/admin-interview-schedules",
           },
           {
+            text: "Job Description",
+            icon: <WorkHistoryIcon />,
+            path: "/admin-dashboard/admin-jd",
+          },
+          {
             text: "Applied Candidates",
             icon: <PeopleAltIcon />,
             path: "/admin-dashboard/admin-applied-candidates",
@@ -112,15 +118,10 @@ const AdminSidebar = ({ isOpen, onToggle }) => {
             icon: <SwitchAccountIcon />,
             path: "/admin-dashboard/admin-visitors",
           },
-          {
-            text: "Job Description",
-            icon: <WorkHistoryIcon />,
-            path: "/admin-dashboard/admin-jd",
-          },
 
           {
             text: "Master List",
-            icon: <ListIcon />,
+            icon: <FeaturedPlayListIcon />,
             subItems: [
               {
                 text: "Category",
@@ -215,21 +216,11 @@ const AdminSidebar = ({ isOpen, onToggle }) => {
       >
         {isOpen ? "" : ""}
         <Toolbar>
-          {/* <IconButton
-            color="inherit"
-            aria-label="open drawer"
-            edge="start"
-            onClick={handleDrawerToggle}
-            sx={{ mr: 2, display: { sm: "none" } }}
-          >
-            <Menu />
-          </IconButton> */}
           <IconButton
             color="inherit"
             aria-label="toggle sidebar"
             edge="start"
             onClick={handleSidebarToggle}
-            // sx={{ display: { xs: "none", sm: "block" } }}
           >
             <Menu />
           </IconButton>
@@ -253,7 +244,7 @@ const AdminSidebar = ({ isOpen, onToggle }) => {
           open={mobileOpen}
           onClose={handleDrawerToggle}
           ModalProps={{
-            keepMounted: true, // Better open performance on mobile.
+            keepMounted: true,
           }}
           sx={{
             display: { xs: "block", sm: "none" },

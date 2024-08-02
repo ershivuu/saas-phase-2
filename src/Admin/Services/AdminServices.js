@@ -223,7 +223,7 @@ export const getSubPosts = async () => {
     throw error;
   }
 };
-export const createSubPost = async (postId, subPostName) => {
+export const createSubPost = async (postId, categoryId, subPostName) => {
   const token = getAdminToken();
   if (!token) {
     throw new Error("No authentication token found.");
@@ -232,7 +232,7 @@ export const createSubPost = async (postId, subPostName) => {
   try {
     const response = await axios.post(
       `${NEW_ADMIN_BASE_URL}/subposts/createSubPost`,
-      { post_id: postId, subpost_name: subPostName },
+      { post_id: postId, category_id: categoryId, subpost_name: subPostName },
       {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -245,6 +245,7 @@ export const createSubPost = async (postId, subPostName) => {
     throw error;
   }
 };
+
 export const deleteSubPost = async (subPostId) => {
   const token = getAdminToken();
   if (!token) {
@@ -266,7 +267,12 @@ export const deleteSubPost = async (subPostId) => {
     throw error;
   }
 };
-export const updateSubPost = async (subPostId, postId, subPostName) => {
+export const updateSubPost = async (
+  subPostId,
+  postId,
+  categoryId,
+  subPostName
+) => {
   const token = getAdminToken();
   if (!token) {
     throw new Error("No authentication token found.");
@@ -275,7 +281,7 @@ export const updateSubPost = async (subPostId, postId, subPostName) => {
   try {
     const response = await axios.put(
       `${NEW_ADMIN_BASE_URL}/subposts/updateSubPost/${subPostId}`,
-      { post_id: postId, subpost_name: subPostName },
+      { post_id: postId, category_id: categoryId, subpost_name: subPostName },
       {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -288,6 +294,7 @@ export const updateSubPost = async (subPostId, postId, subPostName) => {
     throw error;
   }
 };
+
 export const getDepartment = async () => {
   const token = getAdminToken();
   if (!token) {
@@ -808,8 +815,8 @@ export const updateInterviewSchedule = async (id, data) => {
 
   try {
     const response = await axios.patch(
-      `${NEW_ADMIN_BASE_URL}/updateMasterInterviewSchedule/${id}`,
-      data,
+      `${NEW_ADMIN_BASE_URL}/jobOpenings/updateMasterInterviewSchedule/${id}`,
+      data, // Data should include all updated fields, including publish_to_schedule_interview
       {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -825,7 +832,8 @@ export const updateInterviewSchedule = async (id, data) => {
     throw error;
   }
 };
-export const updateJobOpening = async (jobOpeningData, openingID) => {
+
+export const updateJobOpening = async (id, data) => {
   const token = getAdminToken();
   if (!token) {
     throw new Error("No authentication token found.");
@@ -833,8 +841,8 @@ export const updateJobOpening = async (jobOpeningData, openingID) => {
 
   try {
     const response = await axios.put(
-      `${NEW_ADMIN_BASE_URL}/jobOpenings/updateMasterJobOpenings/${openingID}`,
-      jobOpeningData,
+      `${NEW_ADMIN_BASE_URL}/jobOpenings/updateMasterJobOpenings/${id}`,
+      data,
       {
         headers: {
           Authorization: `Bearer ${token}`,

@@ -214,7 +214,7 @@ function CreateExamType() {
         <Table>
           <TableHead>
             <TableRow>
-              <TableCell>ID</TableCell>
+              <TableCell>S.No</TableCell>
               <TableCell>Exam Type</TableCell>
               <TableCell>Edit</TableCell>
               <TableCell>Delete</TableCell>

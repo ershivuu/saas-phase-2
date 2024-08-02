@@ -124,10 +124,21 @@ function SubPost() {
 
     try {
       let response ;
+      const selectedPost = posts.find((post) => post.id === selectedPostId);
+      if (!selectedPost) {
+        throw new Error("Selected post not found.");
+      }
+      const { category_id } = selectedPost;
+
       if (isEditing) {
-      response =  await updateSubPost(selectedSubPost.id, selectedPostId, subPostName);
+     response =   await updateSubPost(
+          selectedSubPost.id,
+          selectedPostId,
+          category_id,
+          subPostName
+        );
       } else {
-       response = await createSubPost(selectedPostId, subPostName);
+      response =   await createSubPost(selectedPostId, category_id, subPostName);
       }
       const subPostsData = await getSubPosts();
       setSubPosts(subPostsData);
@@ -183,7 +194,7 @@ function SubPost() {
           <Table>
             <TableHead>
               <TableRow>
-                <TableCell>ID</TableCell>
+                <TableCell>S.No</TableCell>
                 <TableCell>Post</TableCell>
                 <TableCell>Sub Post</TableCell>
                 <TableCell>Edit</TableCell>
@@ -214,7 +225,7 @@ function SubPost() {
         <Table>
           <TableHead>
             <TableRow>
-              <TableCell>ID</TableCell>
+              <TableCell>S.No</TableCell>
               <TableCell>Post</TableCell>
               <TableCell>Sub Post</TableCell>
               <TableCell>Edit</TableCell>

@@ -244,7 +244,7 @@ function CreateDegree() {
         <Table>
           <TableHead>
             <TableRow>
-              <TableCell>ID</TableCell>
+              <TableCell>S.No</TableCell>
               <TableCell>Exam Type</TableCell>
               <TableCell>Degree Name</TableCell>
               <TableCell>Edit</TableCell>
@@ -289,18 +289,7 @@ function CreateDegree() {
       <Dialog open={addDialogOpen} onClose={handleCloseAddDialog}>
         <DialogTitle>Add New Degree</DialogTitle>
         <DialogContent>
-          <TextField
-            label="Degree Name"
-            value={degreeName}
-            onChange={(e) => {
-              setDegreeName(e.target.value);
-              setErrors({ ...errors, degreeName: false });
-            }}
-            fullWidth
-            margin="normal"
-            error={errors.degreeName}
-            helperText={errors.degreeName && "This feild is required"}
-          />
+   
           <FormControl fullWidth margin="normal">
             <InputLabel>Exam Type</InputLabel>
             <Select
@@ -324,6 +313,18 @@ function CreateDegree() {
             )}
 
           </FormControl>
+          <TextField
+            label="Degree Name"
+            value={degreeName}
+            onChange={(e) => {
+              setDegreeName(e.target.value);
+              setErrors({ ...errors, degreeName: false });
+            }}
+            fullWidth
+            margin="normal"
+            error={errors.degreeName}
+            helperText={errors.degreeName && "This feild is required"}
+          />
         </DialogContent>
         <DialogActions>
           <Button onClick={handleCloseAddDialog} color="primary">
@@ -343,19 +344,7 @@ function CreateDegree() {
       <Dialog open={editDialogOpen} onClose={handleCloseEditDialog}>
         <DialogTitle>Edit Degree</DialogTitle>
         <DialogContent>
-          <TextField
-            label="Degree Name"
-            value={degreeName}
-            onChange={(e) => {
-              setDegreeName(e.target.value);
-              setErrors({ ...errors, degreeName: false });
-            }}
-
-            fullWidth
-            margin="normal"
-            error={errors.degreeName}
-            helperText={errors.degreeName && "This feild is required"}
-          />
+        
           <FormControl fullWidth margin="normal">
             <InputLabel>Exam Type</InputLabel>
             <Select
@@ -378,6 +367,19 @@ function CreateDegree() {
               </Typography>
             )}
           </FormControl>
+          <TextField
+            label="Degree Name"
+            value={degreeName}
+            onChange={(e) => {
+              setDegreeName(e.target.value);
+              setErrors({ ...errors, degreeName: false });
+            }}
+
+            fullWidth
+            margin="normal"
+            error={errors.degreeName}
+            helperText={errors.degreeName && "This feild is required"}
+          />
         </DialogContent>
         <DialogActions>
           <Button onClick={handleCloseEditDialog} color="primary">

@@ -191,7 +191,7 @@ function CreatePosts() {
           <Table>
             <TableHead>
               <TableRow>
-                <TableCell>ID</TableCell>
+                <TableCell>S.No</TableCell>
                 <TableCell>Category</TableCell>
                 <TableCell>Post Name</TableCell>
                 <TableCell>Edit</TableCell>
@@ -222,7 +222,7 @@ function CreatePosts() {
         <Table>
           <TableHead>
             <TableRow>
-              <TableCell>ID</TableCell>
+              <TableCell>S.No</TableCell>
               <TableCell>Category</TableCell>
               <TableCell>Post Name</TableCell>
               <TableCell>Edit</TableCell>
@@ -230,9 +230,9 @@ function CreatePosts() {
             </TableRow>
           </TableHead>
           <TableBody>
-            {posts.map((post) => (
+            {posts.map((post, index) => (
               <TableRow key={post.id}>
-                <TableCell>{post.id}</TableCell>
+                <TableCell>{index + 1}</TableCell>
                 <TableCell>{post.category_name}</TableCell>
                 <TableCell>{post.post_name}</TableCell>
                 <TableCell>
