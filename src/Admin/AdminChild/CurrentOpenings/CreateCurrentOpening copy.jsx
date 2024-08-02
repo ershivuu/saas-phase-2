@@ -511,7 +511,7 @@ function CreateCurrentOpening() {
               {categories.map((category) => (
                 <MenuItem
                   key={category.category_id}
-                  value={category.category_name} // Display category_name
+                  value={category.category_name}
                 >
                   {category.category_name}
                 </MenuItem>

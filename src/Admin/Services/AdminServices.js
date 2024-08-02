@@ -858,3 +858,28 @@ export const updateJobOpening = async (id, data) => {
     throw error;
   }
 };
+export const updateJobProfile = async (id, updatedData) => {
+  const token = getAdminToken();
+  if (!token) {
+    throw new Error("No authentication token found.");
+  }
+
+  try {
+    const response = await axios.patch(
+      `${NEW_ADMIN_BASE_URL}/jobOpenings/updateJobProfiles/${id}`,
+      updatedData,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.error(
+      "Error updating job profile:",
+      error.response ? error.response.data : error.message
+    );
+    throw error;
+  }
+};
