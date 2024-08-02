@@ -185,7 +185,7 @@ function CreateDegree() {
         <Table>
           <TableHead>
             <TableRow>
-              <TableCell>ID</TableCell>
+              <TableCell>S.No</TableCell>
               <TableCell>Exam Type</TableCell>
               <TableCell>Degree Name</TableCell>
               <TableCell>Edit</TableCell>

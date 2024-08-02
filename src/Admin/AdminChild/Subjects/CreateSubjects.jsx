@@ -193,7 +193,7 @@ function CreateSubjects() {
         <Table>
           <TableHead>
             <TableRow>
-              <TableCell>ID</TableCell>
+              <TableCell>S.No</TableCell>
               <TableCell>Department Name</TableCell>
               <TableCell>Subject Name</TableCell>
               <TableCell>Edit</TableCell>

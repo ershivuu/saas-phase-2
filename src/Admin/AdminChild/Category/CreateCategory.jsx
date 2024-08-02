@@ -124,7 +124,7 @@ function CreateCategory() {
           <Table>
             <TableHead>
               <TableRow>
-                <TableCell>ID</TableCell>
+                <TableCell>S.No</TableCell>
                 <TableCell>Category Name</TableCell>
                 <TableCell>Edit</TableCell>
                 <TableCell>Delete</TableCell>
@@ -154,7 +154,7 @@ function CreateCategory() {
         <Table>
           <TableHead>
             <TableRow>
-              <TableCell>ID</TableCell>
+              <TableCell>S.No</TableCell>
               <TableCell>Category Name</TableCell>
               <TableCell>Edit</TableCell>
               <TableCell>Delete</TableCell>

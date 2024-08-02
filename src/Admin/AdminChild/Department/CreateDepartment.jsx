@@ -151,16 +151,16 @@ function CreateDepartment() {
         <Table>
           <TableHead>
             <TableRow>
-              <TableCell>ID</TableCell>
+              <TableCell>S.No</TableCell>
               <TableCell>Department Name</TableCell>
               <TableCell>Edit</TableCell>
               <TableCell>Delete</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
-            {departments.map((department) => (
+            {departments.map((department, index) => (
               <TableRow key={department.id}>
-                <TableCell>{department.id}</TableCell>
+                <TableCell>{index + 1}</TableCell>
                 <TableCell>{department.depart_name}</TableCell>
                 <TableCell>
                   <Button

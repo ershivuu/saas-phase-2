@@ -97,14 +97,12 @@ function CreateInterviewSchedules() {
 
     setJobOpenings(updatedJobOpenings);
 
-    // Call the API to update the publish status
     const updatedData = updatedJobOpenings.find((job) => job.id === jobId);
+
     try {
       await updateInterviewSchedule(jobId, {
         ...updatedData,
-        interview_date_1: updatedData.interview_date_1,
-        interview_date_2: updatedData.interview_date_2,
-        interview_date_3: updatedData.interview_date_3,
+        // The id field should not be included in the update data
       });
     } catch (error) {
       console.error("Error updating publish status:", error);
@@ -169,7 +167,7 @@ function CreateInterviewSchedules() {
                 <TableCell>
                   <Switch
                     checked={job.publish_to_schedule_interview}
-                    onChange={() => handleSwitchChange(job.id)} // Handle switch toggle
+                    onChange={() => handleSwitchChange(job.id)}
                   />
                 </TableCell>
                 <TableCell>
