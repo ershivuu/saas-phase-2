@@ -171,6 +171,11 @@ function CreatePosts() {
             </TableRow>
           </TableHead>
           <TableBody>
+            {posts.length === 0 && (
+              <TableRow>
+                <TableCell colSpan={8}>No posts available...</TableCell>
+              </TableRow>
+            )}
             {posts.map((post, index) => (
               <TableRow key={post.id}>
                 <TableCell>{index + 1}</TableCell>
