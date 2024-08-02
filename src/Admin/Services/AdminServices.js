@@ -774,3 +774,79 @@ export const getCombineCategories = async () => {
     throw error;
   }
 };
+
+export const getInterviewSchedule = async () => {
+  const token = getAdminToken();
+  if (!token) {
+    throw new Error("No authentication token found.");
+  }
+
+  try {
+    const response = await axios.get(
+      `${NEW_ADMIN_BASE_URL}/jobOpenings/getAllMasterJobOpenings`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    return response.data.jobOpenings;
+  } catch (error) {
+    console.error(
+      "Error fetching job openings:",
+      error.response ? error.response.data : error.message
+    );
+    throw error;
+  }
+};
+
+export const updateInterviewSchedule = async (id, data) => {
+  const token = getAdminToken(); // Retrieve the token
+  if (!token) {
+    throw new Error("No authentication token found.");
+  }
+
+  try {
+    const response = await axios.patch(
+      `${NEW_ADMIN_BASE_URL}/updateMasterInterviewSchedule/${id}`,
+      data,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.error(
+      "Error updating interview schedule:",
+      error.response ? error.response.data : error.message
+    );
+    throw error;
+  }
+};
+export const updateJobOpening = async (jobOpeningData, openingID) => {
+  const token = getAdminToken();
+  if (!token) {
+    throw new Error("No authentication token found.");
+  }
+
+  try {
+    const response = await axios.put(
+      `${NEW_ADMIN_BASE_URL}/jobOpenings/updateMasterJobOpenings/${openingID}`,
+      jobOpeningData,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.error(
+      "Error updating job opening:",
+      error.response ? error.response.data : error.message
+    );
+    throw error;
+  }
+};

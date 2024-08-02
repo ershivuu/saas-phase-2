@@ -1,10 +1,10 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { faEyeSlash, faEye } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Notification from "../../Notification/Notification";
-import { useNavigate } from "react-router-dom";
-
+import { useNavigate, useLocation } from "react-router-dom";
 import { loginAdmin } from "../Services/AdminServices";
+
 function AdminLogin() {
   const [showPassword, setShowPassword] = useState(false);
   const [username, setUsername] = useState("");
@@ -17,6 +17,62 @@ function AdminLogin() {
   });
 
   const navigate = useNavigate();
+  const location = useLocation();
+
+  useEffect(() => {
+    const { email, password, autoLogin } = location.state || {};
+
+    if (autoLogin) {
+      // Automatically log in if autoLogin flag is set
+      handleAutoLogin(email, password);
+    } else if (email && password) {
+      // Set email and password for manual login
+      setUsername(email);
+      setPassword(password);
+    }
+  }, [location.state]);
+
+  const handleAutoLogin = async (email, password) => {
+    try {
+      const response = await loginAdmin(email, password);
+
+      console.log("API Response:", response);
+
+      if (response && response.data.token) {
+        sessionStorage.setItem("Token", JSON.stringify(response.data.token));
+        localStorage.setItem("Token", JSON.stringify(response.data.token));
+        navigate(`/admin-dashboard/admin-page`);
+        setErrorNotification({
+          open: true,
+          message: "Login Successful",
+        });
+      } else {
+        setErrorMessage("Invalid credentials");
+        setErrorNotification({
+          open: true,
+          message: "Invalid credentials",
+        });
+        setErrorCount((prevCount) => prevCount + 1); // Increment error count
+      }
+    } catch (error) {
+      console.error("Error during login:", error);
+      if (error.response && error.response.status === 400) {
+        setErrorMessage(error.response.data.message || "Invalid credentials");
+        setErrorNotification({
+          open: true,
+          message: error.response.data.message || "Invalid credentials",
+        });
+        setErrorCount((prevCount) => prevCount + 1);
+      } else {
+        setErrorMessage("An error occurred during login");
+        setErrorNotification({
+          open: true,
+          message: "An error occurred during login",
+        });
+        setErrorCount((prevCount) => prevCount + 1);
+      }
+    }
+  };
 
   const handleFormSubmit = async (e) => {
     e.preventDefault();

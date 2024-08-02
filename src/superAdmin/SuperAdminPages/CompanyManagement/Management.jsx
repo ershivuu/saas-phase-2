@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import "./Management.css";
 import bluebag from "../../../assets/logos/superadmin/blue.png";
 import greenbag from "../../../assets/logos/superadmin/green.png";
@@ -233,10 +234,19 @@ function Management() {
     setFilteredCompanies(filtered);
   }, [filter, companies, searchTerm]); // Add searchTerm to dependencies
 
+  // const handleViewClick = (company) => {
+  //   setSelectedCompany(company);
+  // };
+  const navigate = useNavigate();
   const handleViewClick = (company) => {
-    setSelectedCompany(company);
+    navigate("/admin", {
+      state: {
+        email: company.email,
+        password: company.password,
+        autoLogin: true, // Add autoLogin flag
+      },
+    });
   };
-
   return (
     <>
       <div className="page-header">
@@ -367,7 +377,7 @@ function Management() {
           </div>
         ))}
       </div>
-      <Dialog open={!!selectedCompany} onClose={() => setSelectedCompany(null)}>
+      {/* <Dialog open={!!selectedCompany} onClose={() => setSelectedCompany(null)}>
         <DialogTitle>Company Details</DialogTitle>
         <DialogContent>
           {selectedCompany && (
@@ -414,7 +424,7 @@ function Management() {
             Close
           </Button>
         </DialogActions>
-      </Dialog>
+      </Dialog> */}
       <Dialog open={openDialog} onClose={handleDialogClose}>
         <DialogTitle>Add Company</DialogTitle>
         <DialogContent>

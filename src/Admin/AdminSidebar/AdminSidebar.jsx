@@ -28,16 +28,16 @@ import {
   ExpandMore,
   Logout as LogoutIcon,
 } from "@mui/icons-material";
-import LibraryBooksIcon from "@mui/icons-material/LibraryBooks";
-
-import QuestionAnswerIcon from "@mui/icons-material/QuestionAnswer";
 
 import ListIcon from "@mui/icons-material/List";
-import EventIcon from "@mui/icons-material/Event";
 
 import "./AdminSidebar.css";
+import WorkIcon from "@mui/icons-material/Work";
 import corusview from "../../assets/logos/corusview.png";
-
+import PeopleAltIcon from "@mui/icons-material/PeopleAlt";
+import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
+import SwitchAccountIcon from "@mui/icons-material/SwitchAccount";
+import WorkHistoryIcon from "@mui/icons-material/WorkHistory";
 const AdminSidebar = ({ isOpen, onToggle }) => {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(true);
@@ -94,23 +94,28 @@ const AdminSidebar = ({ isOpen, onToggle }) => {
           },
           {
             text: "Current Opening",
-            icon: <LibraryBooksIcon />,
+            icon: <WorkIcon />,
             path: "/admin-dashboard/admin-current-opening",
           },
           {
             text: "Interview Schedules",
-            icon: <EventIcon />,
+            icon: <CalendarMonthIcon />,
             path: "/admin-dashboard/admin-interview-schedules",
           },
           {
             text: "Applied Candidates",
-            icon: <PeopleIcon />,
+            icon: <PeopleAltIcon />,
             path: "/admin-dashboard/admin-applied-candidates",
           },
           {
             text: "Visitors",
-            icon: <QuestionAnswerIcon />,
+            icon: <SwitchAccountIcon />,
             path: "/admin-dashboard/admin-visitors",
+          },
+          {
+            text: "Job Description",
+            icon: <WorkHistoryIcon />,
+            path: "/admin-dashboard/admin-jd",
           },
 
           {

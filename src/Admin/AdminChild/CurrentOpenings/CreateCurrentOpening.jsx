@@ -57,53 +57,49 @@ function CreateCurrentOpening() {
   const [categoryMap, setCategoryMap] = useState(new Map());
   const [postMap, setPostMap] = useState(new Map());
   const [subpostMap, setSubpostMap] = useState(new Map());
-  const [editingId, setEditingId] = useState(null);
+  const fetchJobOpenings = async () => {
+    try {
+      const data = await getJobOpenings();
+      setJobOpenings(data.jobOpenings);
+    } catch (error) {
+      setError(error.message);
+    }
+  };
+  const fetchCategories = async () => {
+    try {
+      const data = await getCombineCategories();
+      setCategories(data);
 
-  useEffect(() => {
-    const fetchJobOpenings = async () => {
-      try {
-        const data = await getJobOpenings();
-        setJobOpenings(data.jobOpenings);
-      } catch (error) {
-        setError(error.message);
-      }
-    };
-
-    const fetchCategories = async () => {
-      try {
-        const data = await getCombineCategories();
-        setCategories(data);
-
-        // Build maps for quick lookup
-        const catMap = new Map();
-        const postMap = new Map();
-        const subpostMap = new Map();
-        data.forEach((category) => {
-          catMap.set(category.category_id, category.category_name);
-          category.posts.forEach((post) => {
-            postMap.set(post.post_id, post.post_name);
-            post.subposts.forEach((subpost) => {
-              subpostMap.set(subpost.subpost_id, subpost.subpost_name);
-            });
+      // Build maps for quick lookup
+      const catMap = new Map();
+      const postMap = new Map();
+      const subpostMap = new Map();
+      data.forEach((category) => {
+        catMap.set(category.category_id, category.category_name);
+        category.posts.forEach((post) => {
+          postMap.set(post.post_id, post.post_name);
+          post.subposts.forEach((subpost) => {
+            subpostMap.set(subpost.subpost_id, subpost.subpost_name);
           });
         });
-        setCategoryMap(catMap);
-        setPostMap(postMap);
-        setSubpostMap(subpostMap);
-      } catch (error) {
-        setError(error.message);
-      }
-    };
+      });
+      setCategoryMap(catMap);
+      setPostMap(postMap);
+      setSubpostMap(subpostMap);
+    } catch (error) {
+      setError(error.message);
+    }
+  };
+  const fetchDepartments = async () => {
+    try {
+      const data = await getDepartment();
+      setDepartments(data); // Set the departments data
+    } catch (error) {
+      setError(error.message);
+    }
+  };
 
-    const fetchDepartments = async () => {
-      try {
-        const data = await getDepartment();
-        setDepartments(data); // Set the departments data
-      } catch (error) {
-        setError(error.message);
-      }
-    };
-
+  useEffect(() => {
     fetchJobOpenings();
     fetchCategories();
     fetchDepartments(); // Fetch departments
