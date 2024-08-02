@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Table,
   TableBody,
@@ -7,419 +7,234 @@ import {
   TableHead,
   TableRow,
   Paper,
-  Typography,
-  Button,
+  IconButton,
   Dialog,
-  DialogActions,
-  DialogContent,
   DialogTitle,
+  DialogContent,
+  DialogActions,
+  Button,
   TextField,
   Switch,
-  FormControlLabel,
-  IconButton,
+  Typography,
 } from "@mui/material";
+import {
+  getInterviewSchedule,
+  updateInterviewSchedule,
+} from "../../Services/AdminServices"; // Import the new update function
 import EditIcon from "@mui/icons-material/Edit";
-import DeleteIcon from "@mui/icons-material/Delete";
-
-// Dummy data
-const initialData = [
-  {
-    id: 1,
-    category: "Technical",
-    post: "Software Engineer",
-    subpost: "Frontend Developer",
-    department: "Engineering",
-    date1: "2024-08-01",
-    date2: "2024-08-05",
-    date3: "2024-08-10",
-    isActive: true, // Added status field
-  },
-  {
-    id: 2,
-    category: "Technical",
-    post: "Software Engineer",
-    subpost: "Backend Developer",
-    department: "Engineering",
-    date1: "2024-08-02",
-    date2: "2024-08-06",
-    date3: "2024-08-11",
-    isActive: false, // Added status field
-  },
-  {
-    id: 3,
-    category: "HR",
-    post: "HR Manager",
-    subpost: "Recruiter",
-    department: "Human Resources",
-    date1: "2024-08-03",
-    date2: "2024-08-07",
-    date3: "2024-08-12",
-    isActive: true, // Added status field
-  },
-];
 
 function CreateInterviewSchedules() {
-  const [data, setData] = useState(initialData);
-  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
-  const [addDialogOpen, setAddDialogOpen] = useState(false);
-  const [editDialogOpen, setEditDialogOpen] = useState(false);
-  const [selectedId, setSelectedId] = useState(null);
-  const [newSchedule, setNewSchedule] = useState({
-    category: "",
-    post: "",
-    subpost: "",
-    department: "",
-    date1: "",
-    date2: "",
-    date3: "",
-    isActive: false,
+  const [jobOpenings, setJobOpenings] = useState([]);
+  const [open, setOpen] = useState(false);
+  const [currentJob, setCurrentJob] = useState(null);
+  const [formData, setFormData] = useState({
+    interview_date_1: "",
+    interview_date_2: "",
+    interview_date_3: "",
+    eligibility_criteria: "",
+    // Removed publish_to_schedule_interview from formData
   });
 
-  const handleOpenDeleteDialog = (id) => {
-    setSelectedId(id);
-    setDeleteDialogOpen(true);
+  useEffect(() => {
+    const fetchJobOpenings = async () => {
+      try {
+        const data = await getInterviewSchedule();
+        setJobOpenings(data);
+      } catch (error) {
+        console.error("Error fetching job openings:", error);
+      }
+    };
+
+    fetchJobOpenings();
+  }, []);
+
+  const handleEditClick = (job) => {
+    setCurrentJob(job);
+    setFormData({
+      interview_date_1: formatDateTime(job.interview_date_1),
+      interview_date_2: formatDateTime(job.interview_date_2),
+      interview_date_3: formatDateTime(job.interview_date_3),
+      eligibility_criteria: job.eligibility_criteria,
+      // Removed publish_to_schedule_interview
+    });
+    setOpen(true);
   };
 
-  const handleCloseDeleteDialog = () => {
-    setDeleteDialogOpen(false);
-    setSelectedId(null);
+  // Utility function to format the date to YYYY-MM-DDTHH:MM
+  const formatDateTime = (dateString) => {
+    if (!dateString) return ""; // Handle null or undefined values
+    const date = new Date(dateString);
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0"); // Months are 0-indexed
+    const day = String(date.getDate()).padStart(2, "0");
+    const hours = String(date.getHours()).padStart(2, "0");
+    const minutes = String(date.getMinutes()).padStart(2, "0");
+    return `${year}-${month}-${day}T${hours}:${minutes}`;
   };
 
-  const handleDelete = () => {
-    setData((prevData) => prevData.filter((item) => item.id !== selectedId));
-    handleCloseDeleteDialog();
+  const handleClose = () => {
+    setOpen(false);
   };
 
-  const handleOpenAddDialog = () => {
-    setAddDialogOpen(true);
-  };
-
-  const handleCloseAddDialog = () => {
-    setAddDialogOpen(false);
-    setNewSchedule({
-      category: "",
-      post: "",
-      subpost: "",
-      department: "",
-      date1: "",
-      date2: "",
-      date3: "",
-      isActive: false,
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData({
+      ...formData,
+      [name]: value,
     });
   };
 
-  const handleOpenEditDialog = (item) => {
-    setNewSchedule({ ...item });
-    setSelectedId(item.id);
-    setEditDialogOpen(true);
+  const handleSwitchChange = async (jobId) => {
+    const updatedJobOpenings = jobOpenings.map((job) => {
+      if (job.id === jobId) {
+        return {
+          ...job,
+          publish_to_schedule_interview: !job.publish_to_schedule_interview,
+        };
+      }
+      return job;
+    });
+
+    setJobOpenings(updatedJobOpenings);
+
+    // Call the API to update the publish status
+    const updatedData = updatedJobOpenings.find((job) => job.id === jobId);
+    try {
+      await updateInterviewSchedule(jobId, {
+        ...updatedData,
+        interview_date_1: updatedData.interview_date_1,
+        interview_date_2: updatedData.interview_date_2,
+        interview_date_3: updatedData.interview_date_3,
+      });
+    } catch (error) {
+      console.error("Error updating publish status:", error);
+    }
   };
 
-  const handleCloseEditDialog = () => {
-    setEditDialogOpen(false);
-    setSelectedId(null);
-  };
-
-  const handleFieldChange = (e) => {
-    const { name, value, type, checked } = e.target;
-    setNewSchedule((prev) => ({
-      ...prev,
-      [name]: type === "checkbox" ? checked : value,
-    }));
-  };
-
-  const handleAddSchedule = () => {
-    setData((prevData) => [
-      ...prevData,
-      { id: prevData.length + 1, ...newSchedule },
-    ]);
-    handleCloseAddDialog();
-  };
-
-  const handleEditSchedule = () => {
-    setData((prevData) =>
-      prevData.map((item) => (item.id === selectedId ? newSchedule : item))
-    );
-    handleCloseEditDialog();
+  const handleSubmit = async () => {
+    try {
+      await updateInterviewSchedule(currentJob.id, {
+        ...formData,
+        publish_to_schedule_interview: currentJob.publish_to_schedule_interview, // Preserve the current state for this field
+      }); // Pass the current job id and updated data
+      // Optionally refresh the job openings
+      const data = await getInterviewSchedule();
+      setJobOpenings(data);
+      handleClose();
+    } catch (error) {
+      console.error("Error updating interview schedule:", error);
+    }
   };
 
   return (
-    <>
-      <div style={{ padding: "20px" }}>
-        <div style={{ float: "right", marginBottom: "20px" }}>
-          <Button variant="contained" onClick={handleOpenAddDialog}>
-            Schedule Interviews
-          </Button>
-        </div>
-        <Typography variant="h4" gutterBottom>
-          Interview Schedules
-        </Typography>
-
-        <TableContainer component={Paper}>
-          <Table>
-            <TableHead>
-              <TableRow>
-                <TableCell>Sr.No</TableCell>
-                <TableCell>Category</TableCell>
-                <TableCell>Post</TableCell>
-                <TableCell>Subpost</TableCell>
-                <TableCell>Department</TableCell>
-                <TableCell>Date 1</TableCell>
-                <TableCell>Date 2</TableCell>
-                <TableCell>Date 3</TableCell>
-                <TableCell>Status</TableCell>
-                <TableCell>Edit</TableCell>
-                <TableCell>Delete</TableCell>
+    <div style={{ padding: "20px" }}>
+      <Typography variant="h5" gutterBottom>
+        Interview Schedule
+      </Typography>
+      <TableContainer component={Paper}>
+        <Table>
+          <TableHead>
+            <TableRow>
+              <TableCell>S.No</TableCell>
+              <TableCell>Category</TableCell>
+              <TableCell>Post</TableCell>
+              <TableCell>Sub Post</TableCell>
+              <TableCell>Departments</TableCell>
+              <TableCell>Eligibility</TableCell>
+              <TableCell>Date 1</TableCell>
+              <TableCell>Date 2</TableCell>
+              <TableCell>Date 3</TableCell>
+              <TableCell>Publish</TableCell> {/* New column for the switch */}
+              <TableCell>Edit</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {jobOpenings.map((job, index) => (
+              <TableRow key={job.id}>
+                <TableCell>{index + 1}</TableCell>
+                <TableCell>{job.category_of_appointment}</TableCell>
+                <TableCell>{job.post_applied_for}</TableCell>
+                <TableCell>{job.sub_post_applied_for}</TableCell>
+                <TableCell>{job.departments}</TableCell>
+                <TableCell>{job.eligibility_criteria}</TableCell>
+                <TableCell>
+                  {new Date(job.interview_date_1).toLocaleDateString()}
+                </TableCell>
+                <TableCell>
+                  {new Date(job.interview_date_2).toLocaleDateString()}
+                </TableCell>
+                <TableCell>
+                  {new Date(job.interview_date_3).toLocaleDateString()}
+                </TableCell>
+                <TableCell>
+                  <Switch
+                    checked={job.publish_to_schedule_interview}
+                    onChange={() => handleSwitchChange(job.id)} // Handle switch toggle
+                  />
+                </TableCell>
+                <TableCell>
+                  <IconButton
+                    color="primary"
+                    onClick={() => handleEditClick(job)}
+                  >
+                    <EditIcon />
+                  </IconButton>
+                </TableCell>
               </TableRow>
-            </TableHead>
-            <TableBody>
-              {data.map((item, index) => (
-                <TableRow key={item.id}>
-                  <TableCell>{index + 1}</TableCell>
-                  <TableCell>{item.category}</TableCell>
-                  <TableCell>{item.post}</TableCell>
-                  <TableCell>{item.subpost}</TableCell>
-                  <TableCell>{item.department}</TableCell>
-                  <TableCell>{item.date1}</TableCell>
-                  <TableCell>{item.date2}</TableCell>
-                  <TableCell>{item.date3}</TableCell>
-                  <TableCell>
-                    <FormControlLabel
-                      control={
-                        <Switch
-                          checked={item.isActive}
-                          onChange={() => {
-                            setData((prevData) =>
-                              prevData.map((schedule) =>
-                                schedule.id === item.id
-                                  ? {
-                                      ...schedule,
-                                      isActive: !schedule.isActive,
-                                    }
-                                  : schedule
-                              )
-                            );
-                          }}
-                        />
-                      }
-                      label={item.isActive ? "Active" : "Inactive"}
-                    />
-                  </TableCell>
-                  <TableCell>
-                    <IconButton
-                      onClick={() => handleOpenEditDialog(item)}
-                      color="primary"
-                      disabled={item.isActive} // Disable if active
-                    >
-                      <EditIcon />
-                    </IconButton>
-                  </TableCell>
-                  <TableCell>
-                    <IconButton
-                      onClick={() => handleOpenDeleteDialog(item.id)}
-                      color="error"
-                      style={{ marginLeft: "10px" }}
-                      disabled={item.isActive} // Disable if active
-                    >
-                      <DeleteIcon />
-                    </IconButton>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
+            ))}
+          </TableBody>
+        </Table>
+      </TableContainer>
 
-        {/* Add Schedule Dialog */}
-        <Dialog open={addDialogOpen} onClose={handleCloseAddDialog}>
-          <DialogTitle>Add New Schedule</DialogTitle>
-          <DialogContent>
-            <TextField
-              label="Category"
-              name="category"
-              value={newSchedule.category}
-              onChange={handleFieldChange}
-              fullWidth
-              margin="normal"
-            />
-            <TextField
-              label="Post"
-              name="post"
-              value={newSchedule.post}
-              onChange={handleFieldChange}
-              fullWidth
-              margin="normal"
-            />
-            <TextField
-              label="Subpost"
-              name="subpost"
-              value={newSchedule.subpost}
-              onChange={handleFieldChange}
-              fullWidth
-              margin="normal"
-            />
-            <TextField
-              label="Department"
-              name="department"
-              value={newSchedule.department}
-              onChange={handleFieldChange}
-              fullWidth
-              margin="normal"
-            />
-            <TextField
-              label="Date 1"
-              name="date1"
-              type="date"
-              value={newSchedule.date1}
-              onChange={handleFieldChange}
-              fullWidth
-              margin="normal"
-              InputLabelProps={{ shrink: true }}
-            />
-            <TextField
-              label="Date 2"
-              name="date2"
-              type="date"
-              value={newSchedule.date2}
-              onChange={handleFieldChange}
-              fullWidth
-              margin="normal"
-              InputLabelProps={{ shrink: true }}
-            />
-            <TextField
-              label="Date 3"
-              name="date3"
-              type="date"
-              value={newSchedule.date3}
-              onChange={handleFieldChange}
-              fullWidth
-              margin="normal"
-              InputLabelProps={{ shrink: true }}
-            />
-            <FormControlLabel
-              control={
-                <Switch
-                  name="isActive"
-                  checked={newSchedule.isActive}
-                  onChange={handleFieldChange}
-                />
-              }
-              label="Active"
-            />
-          </DialogContent>
-          <DialogActions>
-            <Button onClick={handleCloseAddDialog} color="primary">
-              Cancel
-            </Button>
-            <Button onClick={handleAddSchedule} color="primary">
-              Add
-            </Button>
-          </DialogActions>
-        </Dialog>
-
-        {/* Edit Schedule Dialog */}
-        <Dialog open={editDialogOpen} onClose={handleCloseEditDialog}>
-          <DialogTitle>Edit Schedule</DialogTitle>
-          <DialogContent>
-            <TextField
-              label="Category"
-              name="category"
-              value={newSchedule.category}
-              onChange={handleFieldChange}
-              fullWidth
-              margin="normal"
-            />
-            <TextField
-              label="Post"
-              name="post"
-              value={newSchedule.post}
-              onChange={handleFieldChange}
-              fullWidth
-              margin="normal"
-            />
-            <TextField
-              label="Subpost"
-              name="subpost"
-              value={newSchedule.subpost}
-              onChange={handleFieldChange}
-              fullWidth
-              margin="normal"
-            />
-            <TextField
-              label="Department"
-              name="department"
-              value={newSchedule.department}
-              onChange={handleFieldChange}
-              fullWidth
-              margin="normal"
-            />
-            <TextField
-              label="Date 1"
-              name="date1"
-              type="date"
-              value={newSchedule.date1}
-              onChange={handleFieldChange}
-              fullWidth
-              margin="normal"
-              InputLabelProps={{ shrink: true }}
-            />
-            <TextField
-              label="Date 2"
-              name="date2"
-              type="date"
-              value={newSchedule.date2}
-              onChange={handleFieldChange}
-              fullWidth
-              margin="normal"
-              InputLabelProps={{ shrink: true }}
-            />
-            <TextField
-              label="Date 3"
-              name="date3"
-              type="date"
-              value={newSchedule.date3}
-              onChange={handleFieldChange}
-              fullWidth
-              margin="normal"
-              InputLabelProps={{ shrink: true }}
-            />
-            <FormControlLabel
-              control={
-                <Switch
-                  name="isActive"
-                  checked={newSchedule.isActive}
-                  onChange={handleFieldChange}
-                />
-              }
-              label="Active"
-            />
-          </DialogContent>
-          <DialogActions>
-            <Button onClick={handleCloseEditDialog} color="primary">
-              Cancel
-            </Button>
-            <Button onClick={handleEditSchedule} color="primary">
-              Save
-            </Button>
-          </DialogActions>
-        </Dialog>
-
-        {/* Delete Confirmation Dialog */}
-        <Dialog open={deleteDialogOpen} onClose={handleCloseDeleteDialog}>
-          <DialogTitle>Confirm Deletion</DialogTitle>
-          <DialogContent>
-            Are you sure you want to delete this schedule?
-          </DialogContent>
-          <DialogActions>
-            <Button onClick={handleCloseDeleteDialog} color="primary">
-              Cancel
-            </Button>
-            <Button onClick={handleDelete} color="error">
-              Delete
-            </Button>
-          </DialogActions>
-        </Dialog>
-      </div>
-    </>
+      <Dialog open={open} onClose={handleClose}>
+        <DialogTitle>Edit Interview Schedule</DialogTitle>
+        <DialogContent>
+          <TextField
+            label="Interview Date 1"
+            type="datetime-local"
+            name="interview_date_1"
+            value={formData.interview_date_1}
+            onChange={handleChange}
+            fullWidth
+            margin="dense"
+          />
+          <TextField
+            label="Interview Date 2"
+            type="datetime-local"
+            name="interview_date_2"
+            value={formData.interview_date_2}
+            onChange={handleChange}
+            fullWidth
+            margin="dense"
+          />
+          <TextField
+            label="Interview Date 3"
+            type="datetime-local"
+            name="interview_date_3"
+            value={formData.interview_date_3}
+            onChange={handleChange}
+            fullWidth
+            margin="dense"
+          />
+          <TextField
+            label="Eligibility Criteria"
+            name="eligibility_criteria"
+            value={formData.eligibility_criteria}
+            onChange={handleChange}
+            fullWidth
+            margin="dense"
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleClose} color="primary">
+            Cancel
+          </Button>
+          <Button onClick={handleSubmit} color="primary">
+            Save
+          </Button>
+        </DialogActions>
+      </Dialog>
+    </div>
   );
 }
 

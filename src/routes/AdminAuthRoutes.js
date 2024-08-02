@@ -13,7 +13,7 @@ import CreateCurrentOpening from "../Admin/AdminChild/CurrentOpenings/CreateCurr
 import CreateInterviewSchedules from "../Admin/AdminChild/Interviews/CreateInterviewSchedules";
 import CreateAppliedCandidates from "../Admin/AdminChild/AppliedCandidates/CreateAppliedCandidates";
 import CreateVisitors from "../Admin/AdminChild/Visitors/CreateVisitors";
-
+import CreateJd from "../Admin/AdminChild/JobProfile/CreateJd";
 const UnAuthRoutes = [
   <Route
     key="AdminDashboard"
@@ -75,6 +75,11 @@ const UnAuthRoutes = [
       key="CreateVisitors"
       path="admin-visitors"
       element={<CreateVisitors />}
+    ></Route>
+    <Route
+      key="CreateJd"
+      path="admin-jd"
+      element={<CreateJd />}
     ></Route>
   </Route>,
 ];

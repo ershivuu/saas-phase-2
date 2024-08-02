@@ -29,8 +29,12 @@ import {
   Logout as LogoutIcon,
 } from "@mui/icons-material";
 import "./AdminSidebar.css";
+import WorkIcon from "@mui/icons-material/Work";
 import corusview from "../../assets/logos/corusview.png";
-
+import PeopleAltIcon from "@mui/icons-material/PeopleAlt";
+import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
+import SwitchAccountIcon from "@mui/icons-material/SwitchAccount";
+import WorkHistoryIcon from "@mui/icons-material/WorkHistory";
 const AdminSidebar = ({ isOpen, onToggle }) => {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(true);
@@ -87,23 +91,28 @@ const AdminSidebar = ({ isOpen, onToggle }) => {
           },
           {
             text: "Current Opening",
-            icon: <DashboardIcon />,
+            icon: <WorkIcon />,
             path: "/admin-dashboard/admin-current-opening",
           },
           {
             text: "Interview Schedules",
-            icon: <DashboardIcon />,
+            icon: <CalendarMonthIcon />,
             path: "/admin-dashboard/admin-interview-schedules",
           },
           {
             text: "Applied Candidates",
-            icon: <DashboardIcon />,
+            icon: <PeopleAltIcon />,
             path: "/admin-dashboard/admin-applied-candidates",
           },
           {
             text: "Visitors",
-            icon: <DashboardIcon />,
+            icon: <SwitchAccountIcon />,
             path: "/admin-dashboard/admin-visitors",
+          },
+          {
+            text: "Job Description",
+            icon: <WorkHistoryIcon />,
+            path: "/admin-dashboard/admin-jd",
           },
 
           {
