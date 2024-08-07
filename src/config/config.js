@@ -1,4 +1,4 @@
-const COMMON_URL = "http://192.168.1.6:5000";
+// const COMMON_URL = "http://192.168.1.6:5000";
 
 export const CANDIDATE_BASE_URL = "http://192.168.1.18:8090/v1/api";
 export const ADMIN_BASE_URL = "http://192.168.1.18:8090/v1/api";
