@@ -14,7 +14,9 @@ import {
   TextField,
   Box,
   Switch,
+  IconButton,
 } from "@mui/material";
+import EditIcon from "@mui/icons-material/Edit";
 import {
   getInterviewSchedule,
   updateJobProfile,
@@ -32,6 +34,10 @@ const modalStyle = {
   p: 4,
 };
 
+const truncateText = (text, length = 30) => {
+  return text.length > length ? text.substring(0, length) + "..." : text;
+};
+
 function CreateJd() {
   const [jobOpenings, setJobOpenings] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -43,19 +49,17 @@ function CreateJd() {
     highly_desirable: "",
     publish_to_job_profile: false,
   });
-
+  const fetchJobOpenings = async () => {
+    try {
+      const data = await getInterviewSchedule();
+      setJobOpenings(data);
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
   useEffect(() => {
-    const fetchJobOpenings = async () => {
-      try {
-        const data = await getInterviewSchedule();
-        setJobOpenings(data);
-      } catch (err) {
-        setError(err.message);
-      } finally {
-        setLoading(false);
-      }
-    };
-
     fetchJobOpenings();
   }, []);
 
@@ -92,6 +96,19 @@ function CreateJd() {
         )
       );
       handleCloseModal();
+    } catch (err) {
+      setError(err.message);
+    }
+  };
+
+  const handleSwitchChange = async (jobId, checked) => {
+    try {
+      await updateJobProfile(jobId, { publish_to_job_profile: checked });
+      setJobOpenings((prevOpenings) =>
+        prevOpenings.map((job) =>
+          job.id === jobId ? { ...job, publish_to_job_profile: checked } : job
+        )
+      );
     } catch (err) {
       setError(err.message);
     }
@@ -139,6 +156,7 @@ function CreateJd() {
               <TableCell>Post</TableCell>
               <TableCell>Qualification</TableCell>
               <TableCell>Desirables</TableCell>
+              <TableCell>Publish To Job Profile</TableCell>
               <TableCell>Actions</TableCell>
             </TableRow>
           </TableHead>
@@ -148,16 +166,26 @@ function CreateJd() {
                 <TableCell>{index + 1}</TableCell>
                 <TableCell>{job.departments}</TableCell>
                 <TableCell>{job.post_applied_for}</TableCell>
-                <TableCell>{job.qualification_and_experience}</TableCell>
-                <TableCell>{job.highly_desirable}</TableCell>
                 <TableCell>
-                  <Button
-                    variant="contained"
+                  {truncateText(job.qualification_and_experience)}
+                </TableCell>
+                <TableCell>{truncateText(job.highly_desirable)}</TableCell>
+                <TableCell>
+                  <Switch
+                    checked={job.publish_to_job_profile}
+                    onChange={(e) =>
+                      handleSwitchChange(job.id, e.target.checked)
+                    }
+                  />
+                </TableCell>
+
+                <TableCell>
+                  <IconButton
                     color="primary"
                     onClick={() => handleEditClick(job)}
                   >
-                    Edit
-                  </Button>
+                    <EditIcon />
+                  </IconButton>
                 </TableCell>
               </TableRow>
             ))}
@@ -194,18 +222,6 @@ function CreateJd() {
               onChange={handleInputChange}
               required
             />
-            <Box
-              sx={{ display: "flex", alignItems: "center", margin: "16px 0" }}
-            >
-              <Typography variant="body1" sx={{ marginRight: "16px" }}>
-                Publish to Job Profile
-              </Typography>
-              <Switch
-                name="publish_to_job_profile"
-                checked={formValues.publish_to_job_profile}
-                onChange={handleInputChange}
-              />
-            </Box>
             <Button type="submit" variant="contained" color="primary">
               Save
             </Button>

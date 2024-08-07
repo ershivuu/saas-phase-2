@@ -6,7 +6,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import logo from "../../../assets/logos/logo.png";
 import candidatesService from "../../candidateService";
 import Notification from "../../../Notification/Notification";
-import { getHeaderInfo } from "../../../AdminFrontend/FrontendServices";
+import { getHeaderInfo } from "../../../Admin/Services/FrontendServices";
 
 function CandidateLogin({ handleLogin }) {
   const [username, setUsername] = useState("");

@@ -36,6 +36,7 @@ import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
 import SwitchAccountIcon from "@mui/icons-material/SwitchAccount";
 import WorkHistoryIcon from "@mui/icons-material/WorkHistory";
 import FeaturedPlayListIcon from "@mui/icons-material/FeaturedPlayList";
+import CollectionsBookmarkIcon from "@mui/icons-material/CollectionsBookmark";
 const AdminSidebar = ({ isOpen, onToggle }) => {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(true);
@@ -147,6 +148,56 @@ const AdminSidebar = ({ isOpen, onToggle }) => {
               {
                 text: "Degree",
                 path: "/admin-dashboard/admin-degree",
+              },
+            ],
+          },
+          {
+            text: "White Label",
+            icon: <CollectionsBookmarkIcon />,
+            subItems: [
+              {
+                text: "Header",
+                path: "/admin-dashboard/edit-header",
+              },
+              {
+                text: "Footer",
+                path: "/admin-dashboard/edit-footer",
+              },
+              {
+                text: "Contact",
+                path: "/admin-dashboard/edit-contact",
+              },
+              {
+                text: "Interview ",
+                path: "/admin-dashboard/edit-interviews",
+              },
+              {
+                text: "FAQ",
+                path: "/admin-dashboard/edit-faq",
+              },
+              {
+                text: "Home",
+                path: "/admin-dashboard/edit-home",
+              },
+              {
+                text: "Home S1",
+                path: "/admin-dashboard/edit-section-1",
+              },
+              {
+                text: "Home S2",
+                path: "/admin-dashboard/edit-section-2",
+              },
+              {
+                text: "Home S3",
+                path: "/admin-dashboard/edit-section-3",
+              },
+              {
+                text: "Home S4",
+                path: "/admin-dashboard/edit-section-4",
+              },
+              {
+                text: "Home S5",
+                path: "/admin-dashboard/edit-section-5",
               },
             ],
           },

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { getSection2Data } from "../../../AdminFrontend/FrontendServices";
+import { getSection2Data } from "../../../Admin/Services/FrontendServices";
 import disktype from "../../../assets/logos/bullet.png";
 
 function SectionTwo() {

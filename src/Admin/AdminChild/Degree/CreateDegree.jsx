@@ -230,13 +230,6 @@ function CreateDegree() {
       <Dialog open={addDialogOpen} onClose={handleCloseAddDialog}>
         <DialogTitle>Add New Degree</DialogTitle>
         <DialogContent>
-          <TextField
-            label="Degree Name"
-            value={degreeName}
-            onChange={(e) => setDegreeName(e.target.value)}
-            fullWidth
-            margin="normal"
-          />
           <FormControl fullWidth margin="normal">
             <InputLabel>Exam Type</InputLabel>
             <Select
@@ -251,6 +244,13 @@ function CreateDegree() {
               ))}
             </Select>
           </FormControl>
+          <TextField
+            label="Degree Name"
+            value={degreeName}
+            onChange={(e) => setDegreeName(e.target.value)}
+            fullWidth
+            margin="normal"
+          />
         </DialogContent>
         <DialogActions>
           <Button onClick={handleCloseAddDialog} color="primary">
@@ -270,13 +270,6 @@ function CreateDegree() {
       <Dialog open={editDialogOpen} onClose={handleCloseEditDialog}>
         <DialogTitle>Edit Degree</DialogTitle>
         <DialogContent>
-          <TextField
-            label="Degree Name"
-            value={degreeName}
-            onChange={(e) => setDegreeName(e.target.value)}
-            fullWidth
-            margin="normal"
-          />
           <FormControl fullWidth margin="normal">
             <InputLabel>Exam Type</InputLabel>
             <Select
@@ -291,6 +284,13 @@ function CreateDegree() {
               ))}
             </Select>
           </FormControl>
+          <TextField
+            label="Degree Name"
+            value={degreeName}
+            onChange={(e) => setDegreeName(e.target.value)}
+            fullWidth
+            margin="normal"
+          />
         </DialogContent>
         <DialogActions>
           <Button onClick={handleCloseEditDialog} color="primary">

@@ -129,3 +129,12 @@ input {
 .input-error {
   border: 2px solid rgb(163, 4, 4);
 }
+
+.edit-button {
+  border: none;
+  background-color: transparent;
+}
+.edit-button img {
+  width: 20px;
+  height: 20px;
+}

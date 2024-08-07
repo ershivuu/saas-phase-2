@@ -22,7 +22,7 @@ function SuperLogin() {
     e.preventDefault();
 
     try {
-      const response = await loginSuperAdmin(username, password); // Use the API function
+      const response = await loginSuperAdmin(username, password);
 
       console.log("API Response:", response);
 

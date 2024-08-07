@@ -17,7 +17,6 @@ const getAdminToken = () => {
   if (token.startsWith('"') && token.endsWith('"')) {
     token = token.slice(1, -1);
   }
-  console.log("Cleaned Token:", token);
   return token;
 };
 export const getCategories = async () => {
@@ -881,5 +880,30 @@ export const updateJobProfile = async (id, updatedData) => {
       error.response ? error.response.data : error.message
     );
     throw error;
+  }
+};
+export const deleteJobOpening = async (jobOpeningId) => {
+  const token = getAdminToken(); // Retrieve the authentication token
+  if (!token) {
+    throw new Error("No authentication token found.");
+  }
+
+  try {
+    // Make the DELETE request to the API
+    const response = await axios.delete(
+      `${NEW_ADMIN_BASE_URL}/jobOpenings/deleteMasterJobOpenings/${jobOpeningId}`, // Adjust the endpoint path as needed
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    return response.data; // Return the response data if needed
+  } catch (error) {
+    console.error(
+      "Error deleting job opening:",
+      error.response ? error.response.data : error.message
+    );
+    throw error; // Propagate the error to be handled by the caller
   }
 };

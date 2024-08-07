@@ -4,6 +4,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Notification from "../../Notification/Notification";
 import { useNavigate, useLocation } from "react-router-dom";
 import { loginAdmin } from "../Services/AdminServices";
+import "./AdminLogin.css"
 
 function AdminLogin() {
   const [showPassword, setShowPassword] = useState(false);

@@ -3,7 +3,7 @@ import "./CandidateHeader.css";
 import medilogo from "../../../assets/logos/medi-logo.png";
 import logout from "../../../assets/logos/Logout.png";
 // import Reset from "../../../assets/logos/Reset.png";
-import { getHeaderInfo } from "../../../AdminFrontend/FrontendServices";
+import { getHeaderInfo } from "../../../Admin/Services/FrontendServices";
 
 import { useNavigate } from "react-router-dom";
 function CandidateHeader() {

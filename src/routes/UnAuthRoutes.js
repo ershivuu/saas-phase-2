@@ -26,8 +26,6 @@ import Sidenav from "../pages/TestPages/Sidenav";
 import NonAcademicForm from "../pages/CurrentOpening/NonAcademicForm/NonAcademicForm";
 import Process from "../pages/ApplicationProcess/Process";
 
-import FrontEndPanel from "../AdminFrontend/FrontEndPanel/FrontEndPanel";
-
 import TestPages from "../pages/TestPages/TestPages";
 
 import Footers from "../components/Footer/Footers";
@@ -139,11 +137,7 @@ const UnAuthRoutes = [
     path="process"
     element={<UnAuthGuards component={<Process />} />}
   ></Route>,
-  <Route
-    key="FrontEndPanel"
-    path="FrontEndPanel"
-    element={<UnAuthGuards component={<FrontEndPanel />} />}
-  ></Route>,
+
   <Route
     key="SuperLogin"
     path="superadmin"

@@ -10,7 +10,7 @@ import ScheduledAcademics from "./ScheduledAcademics/ScheduledAcademics";
 import ScheduledAdministration from "./ScheduledAdministration/ScheduledAdministration";
 import ScheduledResearch from "./ScheduledResearch/ScheduledResearch";
 import ScheduledTechnical from "./ScheduledTechnical/ScheduledTechnical";
-import { getInterviewInfo } from "../../AdminFrontend/FrontendServices";
+import { getInterviewInfo } from "../../Admin/Services/FrontendServices";
 function InterviewSchedule() {
   // ...........................Notes Data...................................
 

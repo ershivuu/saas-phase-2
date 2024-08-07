@@ -5,7 +5,7 @@ import Accordion from "react-bootstrap/Accordion";
 import "./FAQ.css";
 import mark from "../../assets/logos/mark.png";
 import axios from "axios";
-import { getFaqs } from "../../AdminFrontend/FrontendServices";
+import { getFaqs } from "../../Admin/Services/FrontendServices";
 function FAQ() {
   const [activeKey, setActiveKey] = useState(null);
   const [faqs, setFaqs] = useState([]);

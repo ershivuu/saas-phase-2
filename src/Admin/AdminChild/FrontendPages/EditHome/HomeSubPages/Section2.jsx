@@ -1,20 +1,39 @@
 import React, { useState, useEffect } from "react";
-import { updateSection2Data, getSection2Data } from "../../../FrontendServices"; // Update the path as per your file structure
-import Notification from "../../../../Notification/Notification";
-import Modal from "@material-ui/core/Modal";
-import Backdrop from "@material-ui/core/Backdrop";
-import Fade from "@material-ui/core/Fade";
-import updatebtn from "../../../../assets/logos/update.png"
+import {
+  updateSection2Data,
+  getSection2Data,
+} from "../../../../Services/FrontendServices"; // Update the path as per your file structure
+import Notification from "../../../../../Notification/Notification";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Paper,
+  Button,
+  Select,
+  MenuItem,
+  TextField,
+  InputLabel,
+  FormControl,
+  IconButton,
+  Typography,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+} from "@mui/material";
+import EditIcon from "@mui/icons-material/Edit";
 
 function Section2() {
   const [section2Info, setSection2Info] = useState();
-
   const [formData, setFormData] = useState({
-    selectedOption: "",
+    selectedOption: "heading_L1", // Default selected option
     dataInput: "",
     image: null,
   });
-
   const wordLimits = {
     heading_L1: 3,
     heading_L2: 2,
@@ -23,28 +42,31 @@ function Section2() {
     section2_box3: 25,
     section2_box4: 25,
   };
-
   const [notificationOpen, setNotificationOpen] = useState(false);
   const [notificationMessage, setNotificationMessage] = useState("");
   const [notificationSeverity, setNotificationSeverity] = useState("default");
-  const [openModal, setOpenModal] = useState(false);
+  const [openDialog, setOpenDialog] = useState(false);
   const [showImg, setShowImg] = useState({});
 
   function truncateText(text, maxWords) {
     const words = text.split(" ");
-    if (words.length > maxWords) {
-      return words.slice(0, maxWords).join(" ") + "...";
-    } else {
-      return text;
-    }
+    return words.length > maxWords
+      ? words.slice(0, maxWords).join(" ") + "..."
+      : text;
   }
 
   async function fetchSection2Info() {
     try {
       const data = await getSection2Data();
       setSection2Info(data);
-      console.log(data.section2_Image_path,"???")
-      setShowImg(data.section2_Image_path)
+      setShowImg(data.section2_Image_path);
+      // Update form data if necessary
+      if (data) {
+        setFormData({
+          ...formData,
+          dataInput: data["heading_L1"] || "",
+        });
+      }
     } catch (error) {
       console.error("Error fetching Section2 info:", error);
     }
@@ -125,14 +147,13 @@ function Section2() {
       }
 
       const response = await updateSection2Data(formDataUpload);
-      console.log("Data updated successfully");
       setFormData({ selectedOption: "", dataInput: "", image: null });
 
       setNotificationMessage(response.message || "Data updated successfully");
       setNotificationSeverity("success");
       setNotificationOpen(true);
       fetchSection2Info();
-      handleCloseModal();
+      handleCloseDialog();
     } catch (error) {
       console.error("Error updating data:", error.message);
       setNotificationMessage("Error updating data. Please try again.");
@@ -143,83 +164,76 @@ function Section2() {
 
   const showSubmitButton = formData.selectedOption !== "";
 
-  const handleEditClick = (row) => {
-    
+  const handleEditClick = () => {
     setFormData({
-      selectedOption: "",
+      selectedOption: "heading_L1", // Default selected option
       dataInput: "",
       image: null,
     });
-
-    setOpenModal(true);
+    setOpenDialog(true);
   };
 
-  const handleCloseModal = () => {
-    setOpenModal(false);
+  const handleCloseDialog = () => {
+    setOpenDialog(false);
   };
 
   return (
     <>
-    <div className="admin-list">
-      
-   
-      <div className="SCA-heading">
-        <p>Section 2</p>
-      </div>
+      <div style={{ padding: "20px" }}>
+        <Typography variant="h6" gutterBottom>
+          Section 2
+        </Typography>
 
-      <Modal
-        aria-labelledby="transition-modal-title"
-        aria-describedby="transition-modal-description"
-        className="modal"
-        open={openModal}
-        onClose={handleCloseModal}
-        closeAfterTransition
-        BackdropComponent={Backdrop}
-        BackdropProps={{
-          timeout: 500,
-        }}
-      >
-        <Fade in={openModal}>
-          <div className="modal-content">
-            <h2 id="transition-modal-title">Edit Section 2</h2>
+        <Dialog
+          open={openDialog}
+          onClose={handleCloseDialog}
+          aria-labelledby="dialog-title"
+          aria-describedby="dialog-description"
+        >
+          <DialogTitle id="dialog-title">Edit Section 2</DialogTitle>
+          <DialogContent>
             <form className="form-control" onSubmit={handleSubmit}>
-              <div>
-                <label htmlFor="selectedOption">Select Field</label>
-                <select
-                  className="form-select"
-                  id="selectedOption"
+              <FormControl fullWidth margin="normal">
+                <TextField
+                  select
+                  label="Select Field"
+                  id="headingSelect"
                   name="selectedOption"
                   value={formData.selectedOption}
                   onChange={handleChange}
+                  fullWidth
+                  margin="normal"
                 >
-                  <option value="">Select Field</option>
-                  <option value="heading_L1">Heading 1</option>
-                  <option value="heading_L2">Heading 2</option>
-                  <option value="section2_box1">Box 1 Content</option>
-                  <option value="section2_box2">Box 2 Content</option>
-                  <option value="section2_box3">Box 3 Content</option>
-                  <option value="section2_box4">Box 4 Content</option>
-                  <option value="Update Banner Image">Update Banner Image</option>
-                </select>
-              </div>
+                  <MenuItem value="heading_L1">Heading 1</MenuItem>
+                  <MenuItem value="heading_L2">Heading 2</MenuItem>
+                  <MenuItem value="section2_box1">Box 1 Content</MenuItem>
+                  <MenuItem value="section2_box2">Box 2 Content</MenuItem>
+                  <MenuItem value="section2_box3">Box 3 Content</MenuItem>
+                  <MenuItem value="section2_box4">Box 4 Content</MenuItem>
+                  <MenuItem value="Update Banner Image">
+                    Update Banner Image
+                  </MenuItem>
+                </TextField>
+              </FormControl>
+
               {formData.selectedOption !== "Update Banner Image" &&
                 formData.selectedOption && (
-                  <div>
-                    <label htmlFor="dataInput">{formData.selectedOption}</label>
-                    <input
-                      type="text"
-                      id="dataInput"
-                      name="dataInput"
-                      value={formData.dataInput}
-                      onChange={handleChange}
-                      placeholder={`Enter ${formData.selectedOption}`}
-                      required
-                    />
-                  </div>
+                  <TextField
+                    fullWidth
+                    margin="normal"
+                    id="dataInput"
+                    name="dataInput"
+                    label={formData.selectedOption}
+                    value={formData.dataInput}
+                    onChange={handleChange}
+                    placeholder={`Enter ${formData.selectedOption}`}
+                    required
+                  />
                 )}
+
               {formData.selectedOption === "Update Banner Image" && (
                 <div>
-                  <label htmlFor="image">Upload Banner Image</label>
+                  <InputLabel htmlFor="image">Upload Banner Image</InputLabel>
                   <input
                     type="file"
                     id="image"
@@ -228,60 +242,69 @@ function Section2() {
                     onChange={handleChange}
                     required
                   />
-            
-                  <span>Current image:<img src={showImg} alt="" style={{width:"100px",height:"70px"}}/></span>
+                  <div>
+                    Current image:{" "}
+                    <img
+                      src={showImg}
+                      alt=""
+                      style={{ width: "100px", height: "70px" }}
+                    />
+                  </div>
                 </div>
               )}
 
               {showSubmitButton && (
-                <div>
-                  <button className="btn btn-success" type="submit">
-                    Submit
-                  </button>
-                </div>
+                <Button
+                  variant="contained"
+                  color="success"
+                  type="submit"
+                  style={{ marginTop: "16px" }}
+                >
+                  Submit
+                </Button>
               )}
             </form>
-          </div>
-        </Fade>
-      </Modal>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={handleCloseDialog} color="primary">
+              Cancel
+            </Button>
+          </DialogActions>
+        </Dialog>
 
-      <div>
-        <div>
-          {/* <p className="Faq-heading">Current Status</p> */}
-        </div>
-        <div className="table-responsive">
-          <table className="table table-responsive">
-            <thead style={{ color: "rgba(0, 0, 0, 0.63)" }} className="thead">
-              <tr>
-                <th scope="col">S No.</th>
-                <th scope="col">Heading 1</th>
-                <th scope="col">Heading 2</th>
-                <th scope="col">Box 1 Content</th>
-                <th scope="col">Box 2 Content</th>
-                <th scope="col">Box 3 Content</th>
-                <th scope="col">Box 4 Content</th>
-                <th scope="col">Background Image</th>
-                <th scope="col">Edit</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>1</td>
-                <td>{section2Info && section2Info.heading_L1}</td>
-                <td>{section2Info && section2Info.heading_L2}</td>
-                <td>
+        <TableContainer component={Paper}>
+          <Table>
+            <TableHead>
+              <TableRow>
+                <TableCell>S No.</TableCell>
+                <TableCell>Heading 1</TableCell>
+                <TableCell>Heading 2</TableCell>
+                <TableCell>Box 1 Content</TableCell>
+                <TableCell>Box 2 Content</TableCell>
+                <TableCell>Box 3 Content</TableCell>
+                <TableCell>Box 4 Content</TableCell>
+                <TableCell>Background Image</TableCell>
+                <TableCell>Edit</TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              <TableRow>
+                <TableCell>1</TableCell>
+                <TableCell>{section2Info && section2Info.heading_L1}</TableCell>
+                <TableCell>{section2Info && section2Info.heading_L2}</TableCell>
+                <TableCell>
                   {section2Info && truncateText(section2Info.section2_box1, 2)}
-                </td>
-                <td>
+                </TableCell>
+                <TableCell>
                   {section2Info && truncateText(section2Info.section2_box2, 2)}
-                </td>
-                <td>
+                </TableCell>
+                <TableCell>
                   {section2Info && truncateText(section2Info.section2_box3, 2)}
-                </td>
-                <td>
+                </TableCell>
+                <TableCell>
                   {section2Info && truncateText(section2Info.section2_box4, 2)}
-                </td>
-                <td>
+                </TableCell>
+                <TableCell>
                   {section2Info && section2Info.section2_Image_path && (
                     <img
                       src={section2Info.section2_Image_path}
@@ -289,35 +312,24 @@ function Section2() {
                       style={{ maxWidth: "100px", maxHeight: "100px" }}
                     />
                   )}
-                  <br />
-                  {/* {section2Info && section2Info.section2_Image_path && (
-                    <span>{section2Info.original_name}</span>
-                  )} */}
-                </td>
-                <td>
-                  <button
-                className="edit-button"
-                    onClick={() => handleEditClick(section2Info)}
-                  >
-                        <img
-                            src={updatebtn}
-                            className="update-icon"
-                            alt="Update"
-                          />
-                  </button>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
+                </TableCell>
+                <TableCell>
+                  <IconButton color="primary" onClick={handleEditClick}>
+                    <EditIcon />
+                  </IconButton>
+                </TableCell>
+              </TableRow>
+            </TableBody>
+          </Table>
+        </TableContainer>
+
+        <Notification
+          open={notificationOpen}
+          handleClose={handleCloseNotification}
+          alertMessage={notificationMessage}
+          alertSeverity={notificationSeverity}
+        />
       </div>
-      </div>
-      <Notification
-        open={notificationOpen}
-        handleClose={handleCloseNotification}
-        alertMessage={notificationMessage}
-        alertSeverity={notificationSeverity}
-      />
     </>
   );
 }

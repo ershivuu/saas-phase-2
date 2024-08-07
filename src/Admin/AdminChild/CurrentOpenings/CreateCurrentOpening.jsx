@@ -21,12 +21,14 @@ import {
   IconButton,
 } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
+import DeleteIcon from "@mui/icons-material/Delete";
 import {
   getJobOpenings,
   createJobOpening,
   updateJobOpening,
   getCombineCategories,
   getDepartment,
+  deleteJobOpening,
 } from "../../Services/AdminServices";
 
 function CreateCurrentOpening() {
@@ -35,6 +37,9 @@ function CreateCurrentOpening() {
   const [departments, setDepartments] = useState([]);
   const [error, setError] = useState(null);
   const [open, setOpen] = useState(false);
+  const [deleteOpen, setDeleteOpen] = useState(false);
+  const [deleteId, setDeleteId] = useState(null);
+  const [originalEditData, setOriginalEditData] = useState({});
   const [formData, setFormData] = useState({
     category_of_appointment: "",
     post_applied_for: "",
@@ -133,27 +138,31 @@ function CreateCurrentOpening() {
   };
 
   const handleCategoryChange = (e) => {
-    const selectedCategoryId = e.target.value;
-    const category = categories.find(
-      (c) => c.category_name === selectedCategoryId
+    const selectedCategoryName = e.target.value;
+    const selectedCategory = categories.find(
+      (category) => category.category_name === selectedCategoryName
     );
-    setPosts(category ? category.posts : []);
+
+    setPosts(selectedCategory ? selectedCategory.posts : []);
     setSubposts([]);
     setFormData({
       ...formData,
-      category_of_appointment: selectedCategoryId,
+      category_of_appointment: selectedCategoryName,
       post_applied_for: "",
       sub_post_applied_for: "",
     });
   };
 
   const handlePostChange = (e) => {
-    const selectedPostId = e.target.value;
-    const post = posts.find((p) => p.post_name === selectedPostId);
-    setSubposts(post ? post.subposts : []);
+    const selectedPostName = e.target.value;
+    const selectedPost = posts.find(
+      (post) => post.post_name === selectedPostName
+    );
+
+    setSubposts(selectedPost ? selectedPost.subposts : []);
     setFormData({
       ...formData,
-      post_applied_for: selectedPostId,
+      post_applied_for: selectedPostName,
       sub_post_applied_for: "",
     });
   };
@@ -172,9 +181,9 @@ function CreateCurrentOpening() {
 
       const dataToSubmit = {
         ...formData,
-        category_of_appointment: selectedCategoryId, // Use category_id
-        post_applied_for: selectedPostId, // Use post_id
-        sub_post_applied_for: selectedSubpostId, // Use subpost_id
+        category_of_appointment: selectedCategoryId,
+        post_applied_for: selectedPostId,
+        sub_post_applied_for: selectedSubpostId,
         last_date_to_apply: formatDateForServer(formData.last_date_to_apply),
         interview_date_1: formatDateForServer(formData.interview_date_1),
         interview_date_2: formatDateForServer(formData.interview_date_2),
@@ -191,29 +200,45 @@ function CreateCurrentOpening() {
 
   // Edit Job Opening Dialog Handlers
   const handleEditClick = (job) => {
-    console.log(job);
+    const selectedCategory = categories.find(
+      (cat) => cat.category_name === job.category_of_appointment
+    );
+    const selectedPost = selectedCategory
+      ? selectedCategory.posts.find(
+          (post) => post.post_name === job.post_applied_for
+        )
+      : null;
+
+    setPosts(selectedCategory ? selectedCategory.posts : []);
+    setSubposts(selectedPost ? selectedPost.subposts : []);
     setCurrentEditId(job.id);
+
+    // Save the original data to compare later
+    setOriginalEditData({ ...job });
+
     setEditFormData({
-      category_of_appointment: job.category_of_appointment,
-      post_applied_for: job.post_applied_for,
-      sub_post_applied_for: job.sub_post_applied_for,
-      departments: job.departments,
-      qualification_and_experience: job.qualification_and_experience,
-      highly_desirable: job.highly_desirable,
-      last_date_to_apply: job.last_date_to_apply,
-      eligibility_criteria: job.eligibility_criteria,
-      interview_date_1: job.interview_date_1,
-      interview_date_2: job.interview_date_2,
-      interview_date_3: job.interview_date_3,
-      publish_to_job_profile: job.publish_to_job_profile,
-      publish_to_schedule_interview: job.publish_to_schedule_interview,
-      publish_to_vacancy: job.publish_to_vacancy,
+      ...job,
+      last_date_to_apply: formatDate(job.last_date_to_apply),
+      interview_date_1: formatDate(job.interview_date_1),
+      interview_date_2: formatDate(job.interview_date_2),
+      interview_date_3: formatDate(job.interview_date_3),
     });
     setEditOpen(true);
   };
 
   const handleEditChange = (e) => {
     const { name, value, type, checked } = e.target;
+    if (name === "category_of_appointment") {
+      const selectedCategory = categories.find(
+        (cat) => cat.category_name === value
+      );
+      setPosts(selectedCategory ? selectedCategory.posts : []);
+      setSubposts([]);
+    }
+    if (name === "post_applied_for") {
+      const selectedPost = posts.find((post) => post.post_name === value);
+      setSubposts(selectedPost ? selectedPost.subposts : []);
+    }
     setEditFormData({
       ...editFormData,
       [name]: type === "checkbox" ? checked : value,
@@ -222,6 +247,16 @@ function CreateCurrentOpening() {
 
   const handleEditSubmit = async () => {
     try {
+      // Construct the data to update, excluding unchanged fields
+      const updatedFields = {};
+
+      for (const [key, value] of Object.entries(editFormData)) {
+        if (value !== originalEditData[key]) {
+          updatedFields[key] = value;
+        }
+      }
+
+      // Map category, post, and subpost names to IDs
       const selectedCategoryId = categories.find(
         (cat) => cat.category_name === editFormData.category_of_appointment
       )?.category_name;
@@ -233,7 +268,7 @@ function CreateCurrentOpening() {
       )?.subpost_name;
 
       const dataToUpdate = {
-        ...editFormData,
+        ...updatedFields,
         category_of_appointment: selectedCategoryId,
         post_applied_for: selectedPostId,
         sub_post_applied_for: selectedSubpostId,
@@ -245,6 +280,7 @@ function CreateCurrentOpening() {
         interview_date_3: formatDateForServer(editFormData.interview_date_3),
       };
 
+      // Make the API call with dataToUpdate
       await updateJobOpening(currentEditId, dataToUpdate);
       handleCloseEdit();
       fetchJobOpenings();
@@ -273,6 +309,26 @@ function CreateCurrentOpening() {
     const day = String(date.getDate()).padStart(2, "0");
     return `${year}/${month}/${day}`;
   };
+  const handleDeleteClick = (id) => {
+    setDeleteId(id);
+    setDeleteOpen(true);
+  };
+
+  const handleDeleteClose = () => {
+    setDeleteOpen(false);
+    setDeleteId(null);
+  };
+
+  const handleDeleteConfirm = async () => {
+    try {
+      await deleteJobOpening(deleteId); // Implement deleteJobOpening in your services
+      setDeleteOpen(false);
+      setDeleteId(null);
+      fetchJobOpenings(); // Refresh the job openings
+    } catch (error) {
+      setError(error.message);
+    }
+  };
   return (
     <>
       <div style={{ padding: "20px" }}>
@@ -292,10 +348,11 @@ function CreateCurrentOpening() {
                 <TableCell>Category</TableCell>
                 <TableCell>Post</TableCell>
                 <TableCell>Subpost</TableCell>
-                <TableCell>DepartMent</TableCell>
+                <TableCell>Department</TableCell>
                 <TableCell>Last Date</TableCell>
                 <TableCell>Status</TableCell>
-                <TableCell>Actions</TableCell>
+                <TableCell>Edit</TableCell>
+                <TableCell>Delete</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -316,8 +373,19 @@ function CreateCurrentOpening() {
                     />
                   </TableCell>
                   <TableCell>
-                    <IconButton onClick={() => handleEditClick(job)}>
+                    <IconButton
+                      color="primary"
+                      onClick={() => handleEditClick(job)}
+                    >
                       <EditIcon />
+                    </IconButton>
+                  </TableCell>
+                  <TableCell>
+                    <IconButton
+                      color="error"
+                      onClick={() => handleDeleteClick(job.id)}
+                    >
+                      <DeleteIcon />
                     </IconButton>
                   </TableCell>
                 </TableRow>
@@ -326,6 +394,22 @@ function CreateCurrentOpening() {
           </Table>
         </TableContainer>
 
+        <Dialog open={deleteOpen} onClose={handleDeleteClose}>
+          <DialogTitle>Confirm Deletion</DialogTitle>
+          <DialogContent>
+            <Typography>
+              Are you sure you want to delete this job opening?
+            </Typography>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={handleDeleteClose} color="primary">
+              Cancel
+            </Button>
+            <Button onClick={handleDeleteConfirm} color="primary">
+              Delete
+            </Button>
+          </DialogActions>
+        </Dialog>
         <Dialog open={open} onClose={handleClose}>
           <DialogTitle>Create Job Opening</DialogTitle>
           <DialogContent>

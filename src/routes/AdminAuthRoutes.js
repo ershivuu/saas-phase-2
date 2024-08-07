@@ -14,6 +14,17 @@ import CreateInterviewSchedules from "../Admin/AdminChild/Interviews/CreateInter
 import CreateAppliedCandidates from "../Admin/AdminChild/AppliedCandidates/CreateAppliedCandidates";
 import CreateVisitors from "../Admin/AdminChild/Visitors/CreateVisitors";
 import CreateJd from "../Admin/AdminChild/JobProfile/CreateJd";
+import EditHeader from "../Admin/AdminChild/FrontendPages/EditHeader/EditHeader";
+import EditFooter from "../Admin/AdminChild/FrontendPages/EditFooter/EditFooter";
+import EditContact from "../Admin/AdminChild/FrontendPages/EditContact/EditContact";
+import FaqSection from "../Admin/AdminChild/FrontendPages/FaqSection/FaqSection";
+import EditInterviewSchedule from "../Admin/AdminChild/FrontendPages/EditInterviewSchedule/EditInterviewSchedule";
+import EditHome from "../Admin/AdminChild/FrontendPages/EditHome/EditHome";
+import Section1 from "../Admin/AdminChild/FrontendPages/EditHome/HomeSubPages/Section1";
+import Section2 from "../Admin/AdminChild/FrontendPages/EditHome/HomeSubPages/Section2";
+import Section3 from "../Admin/AdminChild/FrontendPages/EditHome/HomeSubPages/Section3";
+import Section4 from "../Admin/AdminChild/FrontendPages/EditHome/HomeSubPages/Section4";
+import Section5 from "../Admin/AdminChild/FrontendPages/EditHome/HomeSubPages/Section5";
 const UnAuthRoutes = [
   <Route
     key="AdminDashboard"
@@ -76,11 +87,26 @@ const UnAuthRoutes = [
       path="admin-visitors"
       element={<CreateVisitors />}
     ></Route>
+    <Route key="CreateJd" path="admin-jd" element={<CreateJd />}></Route>
+    <Route key="EditHeader" path="edit-header" element={<EditHeader />}></Route>
+    <Route key="EditFooter" path="edit-footer" element={<EditFooter />}></Route>
     <Route
-      key="CreateJd"
-      path="admin-jd"
-      element={<CreateJd />}
+      key="EditContact"
+      path="edit-contact"
+      element={<EditContact />}
     ></Route>
+    <Route
+      key="EditInterviewSchedule"
+      path="edit-interviews"
+      element={<EditInterviewSchedule />}
+    ></Route>
+    <Route key="FaqSection" path="edit-faq" element={<FaqSection />}></Route>
+    <Route key="EditHome" path="edit-home" element={<EditHome />}></Route>
+    <Route key="Section1" path="edit-section-1" element={<Section1 />}></Route>
+    <Route key="Section2" path="edit-section-2" element={<Section2 />}></Route>
+    <Route key="Section3" path="edit-section-3" element={<Section3 />}></Route>
+    <Route key="Section4" path="edit-section-4" element={<Section4 />}></Route>
+    <Route key="Section5" path="edit-section-5" element={<Section5 />}></Route>
   </Route>,
 ];
 

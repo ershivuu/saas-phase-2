@@ -172,9 +172,9 @@ function CreateCurrentOpening() {
 
       const dataToSubmit = {
         ...formData,
-        category_of_appointment: selectedCategoryId, // Use category_id
-        post_applied_for: selectedPostId, // Use post_id
-        sub_post_applied_for: selectedSubpostId, // Use subpost_id
+        category_of_appointment: selectedCategoryId,
+        post_applied_for: selectedPostId,
+        sub_post_applied_for: selectedSubpostId,
         last_date_to_apply: formatDateForServer(formData.last_date_to_apply),
         interview_date_1: formatDateForServer(formData.interview_date_1),
         interview_date_2: formatDateForServer(formData.interview_date_2),
@@ -316,7 +316,10 @@ function CreateCurrentOpening() {
                     />
                   </TableCell>
                   <TableCell>
-                    <IconButton onClick={() => handleEditClick(job)}>
+                    <IconButton
+                      color="primary"
+                      onClick={() => handleEditClick(job)}
+                    >
                       <EditIcon />
                     </IconButton>
                   </TableCell>

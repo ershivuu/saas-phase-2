@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { getSection5Data } from "../../../AdminFrontend/FrontendServices";
+import { getSection5Data } from "../../../Admin/Services/FrontendServices";
 
 function SectionFive() {
   const [loading, setLoading] = useState(true);

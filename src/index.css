@@ -31,19 +31,19 @@ select {
 }
 
 ::-webkit-scrollbar {
-  width: 5px;
-  max-width: 5px;
+  width: 0px;
+  height: 5px;
+  max-width: 0px;
 }
 ::-webkit-scrollbar-track {
+  width: 0px;
+  height: 5px;
   background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: #888;
-  border-radius: 10px;
+  background-color: rgba(0, 0, 0, 0.797);
 }
-::-webkit-scrollbar-thumb:hover {
-  background: #555;
-}
+
 .top-spacing {
   margin-top: 100px !important;
 }

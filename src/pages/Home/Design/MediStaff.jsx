@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import "./MediStaff.css";
 
-import { getSection3 } from "../../../AdminFrontend/FrontendServices";
+import { getSection3 } from "../../../Admin/Services/FrontendServices";
 import $ from "jquery";
 function MediStaff() {
   useEffect(() => {

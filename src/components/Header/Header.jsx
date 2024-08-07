@@ -3,7 +3,7 @@ import user from "../../assets/logos/user.png";
 import { Outlet, Link } from "react-router-dom";
 import axios from "axios";
 import "./Header.css";
-import { getHeaderInfo } from "../../AdminFrontend/FrontendServices";
+import { getHeaderInfo } from "../../Admin/Services/FrontendServices";
 
 function Header() {
   const [ribbonContent, setRibbonContent] = useState("");

@@ -6,7 +6,7 @@ import instagram from "../../assets/logos/instagram.png";
 import twitter from "../../assets/logos/twitter.png";
 import youtube from "../../assets/logos/youtube.png";
 import linkedin from "../../assets/logos/linkedin.png";
-import { getFooter } from "../../AdminFrontend/FrontendServices";
+import { getFooter } from "../../Admin/Services/FrontendServices";
 
 function Footers() {
   const [footerData, setFooterData] = useState({

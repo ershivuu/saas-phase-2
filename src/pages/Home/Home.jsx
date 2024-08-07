@@ -4,7 +4,7 @@ import "./Home.css";
 import {
   getBannerInfo,
   getSection5Data,
-} from "../../AdminFrontend/FrontendServices";
+} from "../../Admin/Services/FrontendServices";
 import Cards from "./Sections/Cards";
 import SectionTwo from "./Sections/SectionTwo";
 import SectionFour from "./Sections/SectionFour";

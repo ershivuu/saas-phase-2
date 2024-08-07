@@ -29,6 +29,7 @@ import {
   getCompanyData,
   createAdmin,
   getActivePlan,
+  deleteCompany,
 } from "../../SuperAdminService";
 
 function Management() {
@@ -49,6 +50,10 @@ function Management() {
   });
   const [plans, setPlans] = useState([]); // State for subscription plans
   const [selectedCompany, setSelectedCompany] = useState(null);
+
+  // New state for confirmation dialog
+  const [confirmDialogOpen, setConfirmDialogOpen] = useState(false);
+  const [companyToDelete, setCompanyToDelete] = useState(null);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -234,9 +239,6 @@ function Management() {
     setFilteredCompanies(filtered);
   }, [filter, companies, searchTerm]); // Add searchTerm to dependencies
 
-  // const handleViewClick = (company) => {
-  //   setSelectedCompany(company);
-  // };
   const navigate = useNavigate();
   const handleViewClick = (company) => {
     navigate("/admin", {
@@ -247,6 +249,33 @@ function Management() {
       },
     });
   };
+
+  // Handle opening the confirmation dialog
+  const handleDeleteClick = (adminId) => {
+    setCompanyToDelete(adminId);
+    setConfirmDialogOpen(true);
+  };
+
+  // Confirm deletion
+  const handleConfirmDelete = async () => {
+    try {
+      await deleteCompany(companyToDelete);
+      // Refresh the data
+      const data = await getCompanyData();
+      setCompanies(data.admins);
+      setFilteredCompanies(data.admins);
+      setConfirmDialogOpen(false);
+    } catch (error) {
+      console.error("Error deleting company:", error);
+    }
+  };
+
+  // Cancel deletion
+  const handleCancelDelete = () => {
+    setCompanyToDelete(null);
+    setConfirmDialogOpen(false);
+  };
+
   return (
     <>
       <div className="page-header">
@@ -341,7 +370,11 @@ function Management() {
                 </p>
               </div>
               <div className="del-buttons">
-                <IconButton color="error" aria-label="delete">
+                <IconButton
+                  color="error"
+                  aria-label="delete"
+                  onClick={() => handleDeleteClick(company.id)}
+                >
                   <DeleteIcon />
                 </IconButton>
                 <IconButton
@@ -377,54 +410,6 @@ function Management() {
           </div>
         ))}
       </div>
-      {/* <Dialog open={!!selectedCompany} onClose={() => setSelectedCompany(null)}>
-        <DialogTitle>Company Details</DialogTitle>
-        <DialogContent>
-          {selectedCompany && (
-            <div>
-              <Typography variant="h6">
-                Company Name: {selectedCompany.company_name}
-              </Typography>
-              <Typography>Email: {selectedCompany.email}</Typography>
-              <Typography>Password: {selectedCompany.password}</Typography>
-              <Typography>Contact: {selectedCompany.contact}</Typography>
-              <Typography>Subdomain: {selectedCompany.subdomain}</Typography>
-              <Typography>
-                Registration Date: {formatDate(selectedCompany.reg_date)}
-              </Typography>
-              <Typography>
-                Start Date: {formatDate(selectedCompany.start_date)}
-              </Typography>
-              <Typography>
-                End Date: {formatDate(selectedCompany.end_date)}
-              </Typography>
-              <Typography>
-                Plan Name: {selectedCompany.subscription_plan.name}
-              </Typography>
-              <Typography>
-                Plan Details: {selectedCompany.subscription_plan.details}
-              </Typography>
-              <Typography>
-                Plan Price: {selectedCompany.subscription_plan.price}
-              </Typography>
-              <Typography>
-                Plan Duration: {selectedCompany.subscription_plan.duration} days
-              </Typography>
-              <Typography>
-                Is Paid: {selectedCompany.is_paid ? "Yes" : "No"}
-              </Typography>
-              <Typography>
-                Is Active: {selectedCompany.is_active ? "Yes" : "No"}
-              </Typography>
-            </div>
-          )}
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={() => setSelectedCompany(null)} color="primary">
-            Close
-          </Button>
-        </DialogActions>
-      </Dialog> */}
       <Dialog open={openDialog} onClose={handleDialogClose}>
         <DialogTitle>Add Company</DialogTitle>
         <DialogContent>
@@ -492,6 +477,25 @@ function Management() {
         <DialogActions>
           <Button onClick={handleDialogClose} color="primary">
             Close
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      {/* Confirmation Dialog */}
+      <Dialog
+        open={confirmDialogOpen}
+        onClose={() => setConfirmDialogOpen(false)}
+      >
+        <DialogTitle>Confirm Deletion</DialogTitle>
+        <DialogContent>
+          <Typography>Are you sure you want to delete this company?</Typography>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCancelDelete} color="primary">
+            Cancel
+          </Button>
+          <Button onClick={handleConfirmDelete} color="error">
+            Delete
           </Button>
         </DialogActions>
       </Dialog>

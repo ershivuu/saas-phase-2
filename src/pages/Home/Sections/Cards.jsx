@@ -3,7 +3,7 @@ import React, { useState, useEffect } from "react";
 import logo1 from "../../../assets/logos/academic.png";
 import logo2 from "../../../assets/logos/research.png";
 import logo3 from "../../../assets/logos/administration.png";
-import { getSection1Data } from "../../../AdminFrontend/FrontendServices";
+import { getSection1Data } from "../../../Admin/Services/FrontendServices";
 import { useNavigate } from "react-router-dom";
 
 function Cards() {

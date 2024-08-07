@@ -7,7 +7,7 @@ import emaillogo from "../../assets/logos/email.png";
 import locationlogo from "../../assets/logos/location.png";
 import adminApiService from "../adminApiService";
 import { useState } from "react";
-import { getContactUs } from "../../AdminFrontend/FrontendServices";
+import { getContactUs } from "../../Admin/Services/FrontendServices";
 import Notification from "../../Notification/Notification";
 function ContactUs() {
   const [notificationOpen, setNotificationOpen] = useState(false);

@@ -27,7 +27,7 @@ import {
   Logout as LogoutIcon,
 } from "@mui/icons-material";
 import "./Sidenav.css";
-import { getHeaderInfo } from "../../AdminFrontend/FrontendServices";
+import { getHeaderInfo } from "../../Admin/Services/FrontendServices";
 import { Button } from "bootstrap";
 
 const Sidenav = ({ isOpen, onToggle }) => {
@@ -223,7 +223,7 @@ const Sidenav = ({ isOpen, onToggle }) => {
 
   return (
     <div style={{ display: "flex" }}>
-      <CssBaseline  />
+      <CssBaseline />
       <AppBar
         position="fixed"
         sx={{
@@ -264,7 +264,6 @@ const Sidenav = ({ isOpen, onToggle }) => {
           >
             <LogoutIcon />
           </IconButton>
-    
         </Toolbar>
       </AppBar>
       <nav>

@@ -1,5 +1,5 @@
 import axios from "axios";
-import { FRONTEND_URL } from "../config/config";
+import { FRONTEND_URL } from "../../config/config";
 
 // const baseURL = "http://localhost:5000";
 const baseURL = FRONTEND_URL;
@@ -211,7 +211,7 @@ export const updateFaq = async (Id, faqData) => {
   }
 };
 //Delete FAQ
-export const delteFaq = async (Id, faqData) => {
+export const deleteFaq = async (Id, faqData) => {
   try {
     const response = await axios.delete(`${baseURL}/faqs/${Id}`, faqData, {
       headers: {
