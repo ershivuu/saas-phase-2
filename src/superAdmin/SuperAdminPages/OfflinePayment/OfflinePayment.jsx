@@ -9,39 +9,58 @@ import {
   Grid,
   Paper,
 } from "@mui/material";
-import { getSubscriptionPlan } from "../../SuperAdminService";
+import { getSubscriptionPlan, getCompanyData } from "../../SuperAdminService"; // Import getCompanyData function
 
 const OfflinePayment = () => {
   const [selectedCompany, setSelectedCompany] = useState("");
   const [selectedPlan, setSelectedPlan] = useState("");
 
   const [plans, setPlans] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
+  const [loadingPlans, setLoadingPlans] = useState(true);
+  const [errorPlans, setErrorPlans] = useState("");
+
+  const [companyList, setCompanyList] = useState([]);
+  const [loadingCompanies, setLoadingCompanies] = useState(true);
+  const [errorCompanies, setErrorCompanies] = useState("");
 
   useEffect(() => {
     const fetchPlans = async () => {
       try {
         const fetchedPlans = await getSubscriptionPlan();
-        setPlans(fetchedPlans); // Assuming fetchedPlans is an array of plans
-        setLoading(false);
+        setPlans(fetchedPlans);
+        setLoadingPlans(false);
       } catch (error) {
-        setError("Failed to load plans");
-        setLoading(false);
+        setErrorPlans("Failed to load plans");
+        setLoadingPlans(false);
       }
     };
 
     fetchPlans();
   }, []);
 
-  // Handle form submission
+  useEffect(() => {
+    const fetchCompanies = async () => {
+      try {
+        const fetchedCompanies = await getCompanyData();
+        setCompanyList(
+          fetchedCompanies.admins.map((admin) => admin.company_name)
+        );
+        setLoadingCompanies(false);
+      } catch (error) {
+        setErrorCompanies("Failed to load companies");
+        setLoadingCompanies(false);
+      }
+    };
+
+    fetchCompanies();
+  }, []);
+
   const handleSubmit = (event) => {
     event.preventDefault();
     console.log("Selected Company:", selectedCompany);
     console.log("Selected Plan:", selectedPlan);
   };
 
-  // Handle form reset
   const handleReset = () => {
     setSelectedCompany("");
     setSelectedPlan("");
@@ -64,11 +83,17 @@ const OfflinePayment = () => {
                   onChange={(e) => setSelectedCompany(e.target.value)}
                   label="Select Company"
                 >
-                  {["Company A", "Company B", "Company C"].map((company) => (
-                    <MenuItem key={company} value={company}>
-                      {company}
-                    </MenuItem>
-                  ))}
+                  {loadingCompanies ? (
+                    <MenuItem disabled>Loading...</MenuItem>
+                  ) : errorCompanies ? (
+                    <MenuItem disabled>{errorCompanies}</MenuItem>
+                  ) : (
+                    companyList.map((company) => (
+                      <MenuItem key={company} value={company}>
+                        {company}
+                      </MenuItem>
+                    ))
+                  )}
                 </Select>
               </FormControl>
             </Grid>
@@ -82,12 +107,12 @@ const OfflinePayment = () => {
                   value={selectedPlan}
                   onChange={(e) => setSelectedPlan(e.target.value)}
                   label="Select Plan"
-                  disabled={loading} // Disable select if loading
+                  disabled={loadingPlans} // Disable select if loading
                 >
-                  {loading ? (
+                  {loadingPlans ? (
                     <MenuItem disabled>Loading...</MenuItem>
-                  ) : error ? (
-                    <MenuItem disabled>{error}</MenuItem>
+                  ) : errorPlans ? (
+                    <MenuItem disabled>{errorPlans}</MenuItem>
                   ) : (
                     plans.map((plan) => (
                       <MenuItem key={plan.id} value={plan.id}>

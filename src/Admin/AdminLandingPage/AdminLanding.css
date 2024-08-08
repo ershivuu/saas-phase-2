@@ -1,0 +1,13 @@
+.admin-plan-name {
+  font-family: "Open Sans", sans-serif;
+  color: white;
+  line-height: 1;
+}
+.admin-plan-name p:nth-child(1) {
+  font-size: 24px;
+  font-weight: 600;
+}
+.admin-plan-name p {
+  font-size: 18px;
+  text-transform: capitalize;
+}

@@ -245,7 +245,7 @@ function Management() {
       state: {
         email: company.email,
         password: company.password,
-        autoLogin: true, // Add autoLogin flag
+        autoLogin: true,
       },
     });
   };

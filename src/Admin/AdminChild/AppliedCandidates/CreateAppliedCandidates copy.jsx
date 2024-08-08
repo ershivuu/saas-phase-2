@@ -19,10 +19,7 @@ import {
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import FileOpenIcon from "@mui/icons-material/FileOpen";
 import DeleteIcon from "@mui/icons-material/Delete";
-import {
-  getAllApplicants,
-  deleteApplicant,
-} from "../../Services/AdminServices";
+import { getAllApplicants } from "../../Services/AdminServices";
 
 function CreateAppliedCandidates() {
   const [open, setOpen] = useState(false);
@@ -30,8 +27,6 @@ function CreateAppliedCandidates() {
   const [confirmationDialogOpen, setConfirmationDialogOpen] = useState(false);
   const [selectedCandidate, setSelectedCandidate] = useState(null);
   const [data, setData] = useState([]);
-
-  
 
   useEffect(() => {
     // Fetch data when the component mounts
@@ -78,18 +73,10 @@ function CreateAppliedCandidates() {
     }
   };
 
-  const handleConfirmDelete = async () => {
+  const handleConfirmDelete = () => {
     if (selectedCandidate) {
-      try {
-        // Perform deletion
-        await deleteApplicant(selectedCandidate.id);
-        // Update state
-        setData(data.filter((item) => item.id !== selectedCandidate.id));
-        handleClose();
-      } catch (error) {
-        console.error("Failed to delete applicant:", error);
-        handleClose(); // Close dialog even if deletion fails
-      }
+      setData(data.filter((item) => item.id !== selectedCandidate.id));
+      handleClose();
     }
   };
 
@@ -106,7 +93,7 @@ function CreateAppliedCandidates() {
                 <TableCell>S.No</TableCell>
                 <TableCell>Name</TableCell>
                 <TableCell>Email</TableCell>
-                <TableCell>Number</TableCell>
+                <TableCell>Phone Number</TableCell>
                 <TableCell>Category</TableCell>
                 <TableCell>Post</TableCell>
                 <TableCell>Specialization</TableCell>
@@ -118,251 +105,52 @@ function CreateAppliedCandidates() {
             <TableBody>
               {data.length === 0 && (
                 <TableRow>
-                  <TableCell colSpan={10}>No candidates available...</TableCell>
+                  <TableCell colSpan={8}>No candidates available...</TableCell>
                 </TableRow>
               )}
-              {data
-                .slice() // Create a shallow copy of the array to avoid mutating the original data
-                .sort((a, b) => b.id - a.id) // Sort in descending order by ID
-                .map((row, index) => (
-                  <TableRow key={row.id}>
-                    <TableCell>{index + 1}</TableCell>
-                    <TableCell>{`${row.first_name} ${row.last_name}`}</TableCell>
-                    <TableCell>
-                      <p style={{ textTransform: "lowercase" }}>{row.email}</p>
-                    </TableCell>
-                    <TableCell>{row.phone_number || "-"}</TableCell>
-                    <TableCell>{row.category_of_appointment || "-"}</TableCell>
-                    <TableCell>{row.post_applied_for || "-"}</TableCell>
-                    <TableCell>{row.specialization || "-"}</TableCell>
-                    <TableCell>
-                      <IconButton
-                        color="primary"
-                        onClick={() => handleResumeClick(row)}
-                      >
-                        <FileOpenIcon />
-                      </IconButton>
-                    </TableCell>
-                    <TableCell>
-                      <IconButton
-                        color="primary"
-                        onClick={() => handleClickOpen(row)}
-                      >
-                        <VisibilityIcon />
-                      </IconButton>
-                    </TableCell>
-                    <TableCell>
-                      <IconButton
-                        onClick={() => handleDeleteClick(row)}
-                        color="error"
-                        style={{ marginLeft: "10px" }}
-                      >
-                        <DeleteIcon />
-                      </IconButton>
-                    </TableCell>
-                  </TableRow>
-                ))}
+              {data.map((row, index) => (
+                <TableRow key={row.id}>
+                  <TableCell>{index + 1}</TableCell>
+                  <TableCell>{`${row.first_name} ${row.last_name}`}</TableCell>
+                  <TableCell>
+                    <p style={{ textTransform: "lowercase" }}>{row.email}</p>
+                  </TableCell>
+                  <TableCell>{row.phone_number}</TableCell>
+
+                  <TableCell>{row.category_of_appointment}</TableCell>
+                  <TableCell>{row.post_applied_for}</TableCell>
+                  <TableCell>{row.specialization || "-"}</TableCell>
+                  <TableCell>
+                    <IconButton
+                      color="primary"
+                      onClick={() => handleResumeClick(row)}
+                    >
+                      <FileOpenIcon />
+                    </IconButton>
+                  </TableCell>
+                  <TableCell>
+                    <IconButton
+                      color="primary"
+                      onClick={() => handleClickOpen(row)}
+                    >
+                      <VisibilityIcon />
+                    </IconButton>
+                  </TableCell>
+                  <TableCell>
+                    <IconButton
+                      onClick={() => handleDeleteClick(row)}
+                      color="error"
+                      style={{ marginLeft: "10px" }}
+                    >
+                      <DeleteIcon />
+                    </IconButton>
+                  </TableCell>
+                </TableRow>
+              ))}
             </TableBody>
           </Table>
         </TableContainer>
 
-        {selectedCandidate && (
-          <Dialog open={open} onClose={handleClose} maxWidth="md" fullWidth>
-            <DialogTitle>
-              <Typography
-                style={{ textTransform: "capitalize", fontSize: "20px" }}
-              >
-                {`${selectedCandidate.first_name} ${selectedCandidate.last_name}`}
-              </Typography>
-            </DialogTitle>
-            <DialogContent>
-              {/* Personal Information Section */}
-              <Typography
-                variant="h6"
-                gutterBottom
-                style={{ borderBottom: "2px solid black" }}
-              >
-                <strong>Personal Information</strong>
-              </Typography>
-              <Grid container spacing={2}>
-                <Grid item xs={6}>
-                  <Typography
-                    variant="body1"
-                    style={{ textTransform: "capitalize" }}
-                  >
-                    <strong>Name:</strong>{" "}
-                    {`${selectedCandidate.first_name} ${selectedCandidate.last_name}`}
-                  </Typography>
-                </Grid>
-                <Grid item xs={6}>
-                  <Typography variant="body1">
-                    <strong>Email:</strong> {`${selectedCandidate.email}`}
-                  </Typography>
-                </Grid>
-                <Grid item xs={6}>
-                  <Typography
-                    variant="body1"
-                    style={{ textTransform: "capitalize" }}
-                  >
-                    <strong>Number:</strong>
-                    {`${selectedCandidate.phone_number}`}
-                  </Typography>
-                </Grid>
-
-                <Grid item xs={6}>
-                  <Typography
-                    variant="body1"
-                    style={{ textTransform: "capitalize" }}
-                  >
-                    <strong>DOB :</strong>
-                    {`${new Date(
-                      selectedCandidate.date_of_birth
-                    ).toLocaleDateString()}`}
-                  </Typography>
-                </Grid>
-                <Grid item xs={6}>
-                  <Typography
-                    variant="body1"
-                    style={{ textTransform: "capitalize" }}
-                  >
-                    <strong>Gender:</strong> {`${selectedCandidate.gender}`}
-                  </Typography>
-                </Grid>
-                <Grid item xs={6}>
-                  <Typography
-                    variant="body1"
-                    style={{ textTransform: "capitalize" }}
-                  >
-                    <strong>Country:</strong> {`${selectedCandidate.country}`}
-                  </Typography>
-                </Grid>
-                <Grid item xs={6}>
-                  <Typography
-                    variant="body1"
-                    style={{ textTransform: "capitalize" }}
-                  >
-                    <strong>City:</strong> {`${selectedCandidate.city}`}
-                  </Typography>
-                </Grid>
-              </Grid>
-
-              {/* Job Application Information Section */}
-              <Typography
-                variant="h6"
-                gutterBottom
-                style={{ borderBottom: "2px solid black" }}
-              >
-                <strong>Job Application Information</strong>
-              </Typography>
-              <Grid container spacing={2}>
-                <Grid item xs={6}>
-                  <Typography
-                    variant="body1"
-                    style={{ textTransform: "capitalize" }}
-                  >
-                    <strong>Post Applied For:</strong>{" "}
-                    {`${selectedCandidate.post_applied_for}`}
-                  </Typography>
-                </Grid>
-                <Grid item xs={6}>
-                  <Typography
-                    variant="body1"
-                    style={{ textTransform: "capitalize" }}
-                  >
-                    <strong>Sub Post Applied For:</strong>{" "}
-                    {`${selectedCandidate.sub_post_applied_for}`}
-                  </Typography>
-                </Grid>
-                <Grid item xs={6}>
-                  <Typography
-                    variant="body1"
-                    style={{ textTransform: "capitalize" }}
-                  >
-                    <strong>Category of Appointment:</strong>{" "}
-                    {`${selectedCandidate.category_of_appointment}`}
-                  </Typography>
-                </Grid>
-                <Grid item xs={6}>
-                  <Typography
-                    variant="body1"
-                    style={{ textTransform: "capitalize" }}
-                  >
-                    <strong>Subject:</strong> {`${selectedCandidate.subject}`}
-                  </Typography>
-                </Grid>
-                <Grid item xs={6}>
-                  <Typography
-                    variant="body1"
-                    style={{ textTransform: "capitalize" }}
-                  >
-                    <strong>Exam Type:</strong>{" "}
-                    {`${selectedCandidate.exam_type}`}
-                  </Typography>
-                </Grid>
-                <Grid item xs={6}>
-                  <Typography
-                    variant="body1"
-                    style={{ textTransform: "capitalize" }}
-                  >
-                    <strong>Degree:</strong> {`${selectedCandidate.degree}`}
-                  </Typography>
-                </Grid>
-                <Grid item xs={6}>
-                  <Typography
-                    variant="body1"
-                    style={{ textTransform: "capitalize" }}
-                  >
-                    <strong>Specialization:</strong>{" "}
-                    {`${selectedCandidate.specialization}`}
-                  </Typography>
-                </Grid>
-              </Grid>
-
-              {/* Educational Qualification Section */}
-              <Typography
-                variant="h6"
-                gutterBottom
-                style={{ borderBottom: "2px solid black" }}
-              >
-                <strong>Educational Qualification</strong>
-              </Typography>
-              <Typography
-                variant="body1"
-                style={{ textTransform: "capitalize" }}
-              >
-                <strong>Highest Degree:</strong>{" "}
-                {`${selectedCandidate.highest_degree}`}
-              </Typography>
-              <Typography
-                variant="body1"
-                style={{ textTransform: "capitalize" }}
-              >
-                <strong>Percentage:</strong> {`${selectedCandidate.percentage}`}
-              </Typography>
-              <Typography
-                variant="body1"
-                style={{ textTransform: "capitalize" }}
-              >
-                <strong>University:</strong> {`${selectedCandidate.university}`}
-              </Typography>
-              <Typography
-                variant="body1"
-                style={{ textTransform: "capitalize" }}
-              >
-                <strong>Passing Year:</strong>{" "}
-                {`${selectedCandidate.passing_year}`}
-              </Typography>
-            </DialogContent>
-            <DialogActions>
-              <Button onClick={handleClose} color="primary">
-                Close
-              </Button>
-              <Button onClick={handlePrint} color="primary">
-                Print
-              </Button>
-            </DialogActions>
-          </Dialog>
-        )}
         {selectedCandidate && (
           <Dialog open={open} onClose={handleClose} maxWidth="md" fullWidth>
             <DialogTitle>

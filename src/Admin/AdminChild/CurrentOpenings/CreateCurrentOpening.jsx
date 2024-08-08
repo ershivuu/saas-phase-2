@@ -32,6 +32,7 @@ import {
 } from "../../Services/AdminServices";
 
 
+
 function CreateCurrentOpening() {
   const [jobOpenings, setJobOpenings] = useState([]);
   const [categories, setCategories] = useState([]);

@@ -907,3 +907,47 @@ export const deleteJobOpening = async (jobOpeningId) => {
     throw error; // Propagate the error to be handled by the caller
   }
 };
+export const deleteApplicant = async (applicantId) => {
+  const token = getAdminToken();
+  if (!token) {
+    throw new Error("No authentication token found.");
+  }
+
+  try {
+    await axios.delete(
+      `${NEW_ADMIN_BASE_URL}/applicants/deleteApplicant/${applicantId}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+  } catch (error) {
+    console.error(
+      "Error deleting applicant:",
+      error.response ? error.response.data : error.message
+    );
+    throw error;
+  }
+};
+export const getAdminProfile = async () => {
+  const token = getAdminToken();
+  if (!token) {
+    throw new Error("No authentication token found.");
+  }
+
+  try {
+    const response = await axios.get(`${NEW_ADMIN_BASE_URL}/admin/profile`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return response.data;
+  } catch (error) {
+    console.error(
+      "Error fetching admin data:",
+      error.response ? error.response.data : error.message
+    );
+    throw error;
+  }
+};
