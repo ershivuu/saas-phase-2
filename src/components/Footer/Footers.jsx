@@ -7,6 +7,7 @@ import twitter from "../../assets/logos/twitter.png";
 import youtube from "../../assets/logos/youtube.png";
 import linkedin from "../../assets/logos/linkedin.png";
 import { getFooter } from "../../Admin/Services/FrontendServices";
+import { Link } from "react-router-dom";
 
 function Footers() {
   const [footerData, setFooterData] = useState({
@@ -95,6 +96,12 @@ function Footers() {
                     alt=""
                   />
                 </a>
+              </div>
+              <div>
+                <Link to="/registeradmin">
+                  {" "}
+                  <button>Register Admin</button>
+                </Link>
               </div>
               {/* <div>
               <a href="/" target="_blank">

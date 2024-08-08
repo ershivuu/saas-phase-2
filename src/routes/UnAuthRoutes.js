@@ -32,6 +32,7 @@ import Footers from "../components/Footer/Footers";
 
 import SuperLogin from "../superAdmin/SuperLogin/SuperLogin";
 import AdminLogin from "../Admin/AdminLogin/AdminLogin";
+import RegisterAdmin from "../Admin/RegisterAdmin/RegisterAdmin";
 // console.log("inside UnAuthRoutes");
 const UnAuthRoutes = [
   <Route
@@ -158,6 +159,11 @@ const UnAuthRoutes = [
     key="Footers"
     path="footer"
     element={<UnAuthGuards component={<Footers />} />}
+  ></Route>,
+  <Route
+    key="registeradmin"
+    path="registeradmin"
+    element={<UnAuthGuards component={<RegisterAdmin />} />}
   ></Route>,
   <Route
     key="AdminLogin"
