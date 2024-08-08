@@ -31,6 +31,8 @@ function CreateAppliedCandidates() {
   const [selectedCandidate, setSelectedCandidate] = useState(null);
   const [data, setData] = useState([]);
 
+  
+
   useEffect(() => {
     // Fetch data when the component mounts
     const fetchData = async () => {
