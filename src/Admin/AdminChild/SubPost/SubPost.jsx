@@ -185,30 +185,33 @@ function SubPost() {
                 <TableCell colSpan={8}>No Sub Posts available...</TableCell>
               </TableRow>
             )}
-            {subPosts.map((subPost, index) => (
-              <TableRow key={subPost.id}>
-                <TableCell>{index + 1}</TableCell>
-                <TableCell>{subPost.post_name}</TableCell>
-                <TableCell>{subPost.subpost_name}</TableCell>
-                <TableCell>
-                  <Button
-                    variant="outlined"
-                    onClick={() => handleEditClick(subPost)}
-                  >
-                    Edit
-                  </Button>
-                </TableCell>
-                <TableCell>
-                  <Button
-                    variant="outlined"
-                    color="error"
-                    onClick={() => handleDeleteClick(subPost)}
-                  >
-                    Delete
-                  </Button>
-                </TableCell>
-              </TableRow>
-            ))}
+            {subPosts
+              .slice()
+              .sort((a, b) => b.id - a.id)
+              .map((subPost, index) => (
+                <TableRow key={subPost.id}>
+                  <TableCell>{index + 1}</TableCell>
+                  <TableCell>{subPost.post_name}</TableCell>
+                  <TableCell>{subPost.subpost_name}</TableCell>
+                  <TableCell>
+                    <Button
+                      variant="outlined"
+                      onClick={() => handleEditClick(subPost)}
+                    >
+                      Edit
+                    </Button>
+                  </TableCell>
+                  <TableCell>
+                    <Button
+                      variant="outlined"
+                      color="error"
+                      onClick={() => handleDeleteClick(subPost)}
+                    >
+                      Delete
+                    </Button>
+                  </TableCell>
+                </TableRow>
+              ))}
           </TableBody>
         </Table>
       </TableContainer>

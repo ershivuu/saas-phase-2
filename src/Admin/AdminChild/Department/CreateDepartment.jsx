@@ -158,29 +158,32 @@ function CreateDepartment() {
             </TableRow>
           </TableHead>
           <TableBody>
-            {departments.map((department, index) => (
-              <TableRow key={department.id}>
-                <TableCell>{index + 1}</TableCell>
-                <TableCell>{department.depart_name}</TableCell>
-                <TableCell>
-                  <Button
-                    variant="outlined"
-                    onClick={() => handleEditClick(department)}
-                  >
-                    Edit
-                  </Button>
-                </TableCell>
-                <TableCell>
-                  <Button
-                    variant="outlined"
-                    color="error"
-                    onClick={() => handleDeleteClick(department.id)}
-                  >
-                    Delete
-                  </Button>
-                </TableCell>
-              </TableRow>
-            ))}
+            {departments
+              .slice()
+              .sort((a, b) => b.id - a.id)
+              .map((department, index) => (
+                <TableRow key={department.id}>
+                  <TableCell>{index + 1}</TableCell>
+                  <TableCell>{department.depart_name}</TableCell>
+                  <TableCell>
+                    <Button
+                      variant="outlined"
+                      onClick={() => handleEditClick(department)}
+                    >
+                      Edit
+                    </Button>
+                  </TableCell>
+                  <TableCell>
+                    <Button
+                      variant="outlined"
+                      color="error"
+                      onClick={() => handleDeleteClick(department.id)}
+                    >
+                      Delete
+                    </Button>
+                  </TableCell>
+                </TableRow>
+              ))}
           </TableBody>
         </Table>
       </TableContainer>

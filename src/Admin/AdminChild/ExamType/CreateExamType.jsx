@@ -169,29 +169,32 @@ function CreateExamType() {
             </TableRow>
           </TableHead>
           <TableBody>
-            {examTypes.map((examType, index) => (
-              <TableRow key={examType.id}>
-                <TableCell>{index + 1}</TableCell>
-                <TableCell>{examType.exam_type_name}</TableCell>
-                <TableCell>
-                  <Button
-                    variant="outlined"
-                    onClick={() => handleEditClick(examType)}
-                  >
-                    Edit
-                  </Button>
-                </TableCell>
-                <TableCell>
-                  <Button
-                    variant="outlined"
-                    color="error"
-                    onClick={() => handleDeleteClick(examType)}
-                  >
-                    Delete
-                  </Button>
-                </TableCell>
-              </TableRow>
-            ))}
+            {examTypes
+              .slice()
+              .sort((a, b) => b.id - a.id)
+              .map((examType, index) => (
+                <TableRow key={examType.id}>
+                  <TableCell>{index + 1}</TableCell>
+                  <TableCell>{examType.exam_type_name}</TableCell>
+                  <TableCell>
+                    <Button
+                      variant="outlined"
+                      onClick={() => handleEditClick(examType)}
+                    >
+                      Edit
+                    </Button>
+                  </TableCell>
+                  <TableCell>
+                    <Button
+                      variant="outlined"
+                      color="error"
+                      onClick={() => handleDeleteClick(examType)}
+                    >
+                      Delete
+                    </Button>
+                  </TableCell>
+                </TableRow>
+              ))}
           </TableBody>
         </Table>
       </TableContainer>

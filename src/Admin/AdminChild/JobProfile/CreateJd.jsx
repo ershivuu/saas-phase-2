@@ -161,34 +161,36 @@ function CreateJd() {
             </TableRow>
           </TableHead>
           <TableBody>
-            {jobOpenings.map((job, index) => (
-              <TableRow key={job.id}>
-                <TableCell>{index + 1}</TableCell>
-                <TableCell>{job.departments}</TableCell>
-                <TableCell>{job.post_applied_for}</TableCell>
-                <TableCell>
-                  {truncateText(job.qualification_and_experience)}
-                </TableCell>
-                <TableCell>{truncateText(job.highly_desirable)}</TableCell>
-                <TableCell>
-                  <Switch
-                    checked={job.publish_to_job_profile}
-                    onChange={(e) =>
-                      handleSwitchChange(job.id, e.target.checked)
-                    }
-                  />
-                </TableCell>
-
-                <TableCell>
-                  <IconButton
-                    color="primary"
-                    onClick={() => handleEditClick(job)}
-                  >
-                    <EditIcon />
-                  </IconButton>
-                </TableCell>
-              </TableRow>
-            ))}
+            {jobOpenings
+              .slice()
+              .sort((a, b) => b.id - a.id)
+              .map((job, index) => (
+                <TableRow key={job.id}>
+                  <TableCell>{index + 1}</TableCell>
+                  <TableCell>{job.departments}</TableCell>
+                  <TableCell>{job.post_applied_for}</TableCell>
+                  <TableCell>
+                    {truncateText(job.qualification_and_experience)}
+                  </TableCell>
+                  <TableCell>{truncateText(job.highly_desirable)}</TableCell>
+                  <TableCell>
+                    <Switch
+                      checked={job.publish_to_job_profile}
+                      onChange={(e) =>
+                        handleSwitchChange(job.id, e.target.checked)
+                      }
+                    />
+                  </TableCell>
+                  <TableCell>
+                    <IconButton
+                      color="primary"
+                      onClick={() => handleEditClick(job)}
+                    >
+                      <EditIcon />
+                    </IconButton>
+                  </TableCell>
+                </TableRow>
+              ))}
           </TableBody>
         </Table>
       </TableContainer>

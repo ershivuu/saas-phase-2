@@ -201,30 +201,33 @@ function CreateSubjects() {
             </TableRow>
           </TableHead>
           <TableBody>
-            {subjects.map((subject, index) => (
-              <TableRow key={subject.id}>
-                <TableCell>{index + 1}</TableCell>
-                <TableCell>{subject.department_name}</TableCell>
-                <TableCell>{subject.subject_name}</TableCell>
-                <TableCell>
-                  <Button
-                    variant="outlined"
-                    onClick={() => handleEditClick(subject)}
-                  >
-                    Edit
-                  </Button>
-                </TableCell>
-                <TableCell>
-                  <Button
-                    variant="outlined"
-                    color="error"
-                    onClick={() => handleDeleteClick(subject)}
-                  >
-                    Delete
-                  </Button>
-                </TableCell>
-              </TableRow>
-            ))}
+            {subjects
+              .slice()
+              .sort((a, b) => b.id - a.id)
+              .map((subject, index) => (
+                <TableRow key={subject.id}>
+                  <TableCell>{index + 1}</TableCell>
+                  <TableCell>{subject.department_name}</TableCell>
+                  <TableCell>{subject.subject_name}</TableCell>
+                  <TableCell>
+                    <Button
+                      variant="outlined"
+                      onClick={() => handleEditClick(subject)}
+                    >
+                      Edit
+                    </Button>
+                  </TableCell>
+                  <TableCell>
+                    <Button
+                      variant="outlined"
+                      color="error"
+                      onClick={() => handleDeleteClick(subject)}
+                    >
+                      Delete
+                    </Button>
+                  </TableCell>
+                </TableRow>
+              ))}
           </TableBody>
         </Table>
       </TableContainer>

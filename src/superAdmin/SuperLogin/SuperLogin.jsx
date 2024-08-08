@@ -5,6 +5,7 @@ import Notification from "../../Notification/Notification";
 import { useNavigate } from "react-router-dom";
 import corusviewLogo from "../../assets/logos/corusview.png";
 import { loginSuperAdmin } from "../SuperAdminService";
+import "./SuperLogin.css"
 function SuperLogin() {
   const [showPassword, setShowPassword] = useState(false);
   const [username, setUsername] = useState("");

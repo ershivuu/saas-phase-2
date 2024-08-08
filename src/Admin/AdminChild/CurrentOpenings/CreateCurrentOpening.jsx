@@ -356,40 +356,43 @@ function CreateCurrentOpening() {
               </TableRow>
             </TableHead>
             <TableBody>
-              {jobOpenings.map((job, index) => (
-                <TableRow key={job.id}>
-                  <TableCell>{index + 1}</TableCell>
-                  <TableCell>{job.category_of_appointment}</TableCell>
-                  <TableCell>{job.post_applied_for}</TableCell>
-                  <TableCell>{job.sub_post_applied_for}</TableCell>
-                  <TableCell>{job.departments}</TableCell>
-                  <TableCell>{formatDate(job.last_date_to_apply)}</TableCell>
-                  <TableCell>
-                    <Switch
-                      checked={job.is_active_all}
-                      onChange={(e) =>
-                        handleSwitchChange(job.id, e.target.checked)
-                      }
-                    />
-                  </TableCell>
-                  <TableCell>
-                    <IconButton
-                      color="primary"
-                      onClick={() => handleEditClick(job)}
-                    >
-                      <EditIcon />
-                    </IconButton>
-                  </TableCell>
-                  <TableCell>
-                    <IconButton
-                      color="error"
-                      onClick={() => handleDeleteClick(job.id)}
-                    >
-                      <DeleteIcon />
-                    </IconButton>
-                  </TableCell>
-                </TableRow>
-              ))}
+              {jobOpenings
+                .slice()
+                .sort((a, b) => b.id - a.id)
+                .map((job, index) => (
+                  <TableRow key={job.id}>
+                    <TableCell>{index + 1}</TableCell>
+                    <TableCell>{job.category_of_appointment}</TableCell>
+                    <TableCell>{job.post_applied_for}</TableCell>
+                    <TableCell>{job.sub_post_applied_for}</TableCell>
+                    <TableCell>{job.departments}</TableCell>
+                    <TableCell>{formatDate(job.last_date_to_apply)}</TableCell>
+                    <TableCell>
+                      <Switch
+                        checked={job.is_active_all}
+                        onChange={(e) =>
+                          handleSwitchChange(job.id, e.target.checked)
+                        }
+                      />
+                    </TableCell>
+                    <TableCell>
+                      <IconButton
+                        color="primary"
+                        onClick={() => handleEditClick(job)}
+                      >
+                        <EditIcon />
+                      </IconButton>
+                    </TableCell>
+                    <TableCell>
+                      <IconButton
+                        color="error"
+                        onClick={() => handleDeleteClick(job.id)}
+                      >
+                        <DeleteIcon />
+                      </IconButton>
+                    </TableCell>
+                  </TableRow>
+                ))}
             </TableBody>
           </Table>
         </TableContainer>
@@ -497,15 +500,6 @@ function CreateCurrentOpening() {
             />
             <TextField
               margin="dense"
-              label="Last Date to Apply"
-              name="last_date_to_apply"
-              type="date"
-              fullWidth
-              value={formData.last_date_to_apply}
-              onChange={handleChange}
-            />
-            <TextField
-              margin="dense"
               label="Eligibility Criteria"
               name="eligibility_criteria"
               fullWidth
@@ -514,10 +508,21 @@ function CreateCurrentOpening() {
             />
             <TextField
               margin="dense"
+              label="Last Date to Apply"
+              name="last_date_to_apply"
+              type="date"
+              fullWidth
+              InputLabelProps={{ shrink: true }}
+              value={formData.last_date_to_apply}
+              onChange={handleChange}
+            />
+            <TextField
+              margin="dense"
               label="Interview Date 1"
               type="date"
               name="interview_date_1"
               fullWidth
+              InputLabelProps={{ shrink: true }}
               value={formData.interview_date_1}
               onChange={handleChange}
             />
@@ -527,6 +532,7 @@ function CreateCurrentOpening() {
               type="date"
               name="interview_date_2"
               fullWidth
+              InputLabelProps={{ shrink: true }}
               value={formData.interview_date_2}
               onChange={handleChange}
             />
@@ -536,6 +542,7 @@ function CreateCurrentOpening() {
               type="date"
               name="interview_date_3"
               fullWidth
+              InputLabelProps={{ shrink: true }}
               value={formData.interview_date_3}
               onChange={handleChange}
             />

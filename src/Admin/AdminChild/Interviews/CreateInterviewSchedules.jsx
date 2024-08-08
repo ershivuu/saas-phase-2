@@ -164,40 +164,43 @@ function CreateInterviewSchedules() {
             </TableRow>
           </TableHead>
           <TableBody>
-            {jobOpenings.map((job, index) => (
-              <TableRow key={job.id}>
-                <TableCell>{index + 1}</TableCell>
-                <TableCell>{job.category_of_appointment}</TableCell>
-                <TableCell>{job.post_applied_for}</TableCell>
-                <TableCell>{job.sub_post_applied_for}</TableCell>
-                <TableCell>{job.departments}</TableCell>
-                <TableCell>{job.eligibility_criteria}</TableCell>
-                <TableCell>
-                  {new Date(job.interview_date_1).toLocaleDateString()}
-                </TableCell>
-                <TableCell>
-                  {new Date(job.interview_date_2).toLocaleDateString()}
-                </TableCell>
-                <TableCell>
-                  {new Date(job.interview_date_3).toLocaleDateString()}
-                </TableCell>
-                <TableCell>
-                  <Switch
-                    checked={job.publish_to_schedule_interview}
-                    onChange={() => handleSwitchChange(job)} // Handle the Switch change
-                    color="primary"
-                  />
-                </TableCell>
-                <TableCell>
-                  <IconButton
-                    color="primary"
-                    onClick={() => handleEditClick(job)}
-                  >
-                    <EditIcon />
-                  </IconButton>
-                </TableCell>
-              </TableRow>
-            ))}
+            {jobOpenings
+              .slice()
+              .sort((a, b) => b.id - a.id)
+              .map((job, index) => (
+                <TableRow key={job.id}>
+                  <TableCell>{index + 1}</TableCell>
+                  <TableCell>{job.category_of_appointment}</TableCell>
+                  <TableCell>{job.post_applied_for}</TableCell>
+                  <TableCell>{job.sub_post_applied_for}</TableCell>
+                  <TableCell>{job.departments}</TableCell>
+                  <TableCell>{job.eligibility_criteria}</TableCell>
+                  <TableCell>
+                    {new Date(job.interview_date_1).toLocaleDateString()}
+                  </TableCell>
+                  <TableCell>
+                    {new Date(job.interview_date_2).toLocaleDateString()}
+                  </TableCell>
+                  <TableCell>
+                    {new Date(job.interview_date_3).toLocaleDateString()}
+                  </TableCell>
+                  <TableCell>
+                    <Switch
+                      checked={job.publish_to_schedule_interview}
+                      onChange={() => handleSwitchChange(job)} // Handle the Switch change
+                      color="primary"
+                    />
+                  </TableCell>
+                  <TableCell>
+                    <IconButton
+                      color="primary"
+                      onClick={() => handleEditClick(job)}
+                    >
+                      <EditIcon />
+                    </IconButton>
+                  </TableCell>
+                </TableRow>
+              ))}
           </TableBody>
         </Table>
       </TableContainer>

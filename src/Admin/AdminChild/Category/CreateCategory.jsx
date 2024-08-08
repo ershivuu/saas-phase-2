@@ -167,32 +167,35 @@ function CreateCategory() {
                 <TableCell colSpan={8}>No categories available...</TableCell>
               </TableRow>
             )}
-            {categories.map((category, index) => (
-              <TableRow key={category.id}>
-                <TableCell>{index + 1}</TableCell>
-                <TableCell>{category.category_name}</TableCell>
-                <TableCell>
-                  <Button
-                    variant="outlined"
-                    onClick={() => handleOpenEditDialog(category)}
-                  >
-                    Edit
-                  </Button>
-                </TableCell>
-                <TableCell>
-                  <Button
-                    variant="outlined"
-                    color="error"
-                    onClick={() => handleOpenDeleteDialog(category.id)}
-                  >
-                    Delete
-                  </Button>
-                </TableCell>
-                {/* <TableCell>
+            {categories
+              .slice()
+              .sort((a, b) => b.id - a.id)
+              .map((category, index) => (
+                <TableRow key={category.id}>
+                  <TableCell>{index + 1}</TableCell>
+                  <TableCell>{category.category_name}</TableCell>
+                  <TableCell>
+                    <Button
+                      variant="outlined"
+                      onClick={() => handleOpenEditDialog(category)}
+                    >
+                      Edit
+                    </Button>
+                  </TableCell>
+                  <TableCell>
+                    <Button
+                      variant="outlined"
+                      color="error"
+                      onClick={() => handleOpenDeleteDialog(category.id)}
+                    >
+                      Delete
+                    </Button>
+                  </TableCell>
+                  {/* <TableCell>
                   {new Date(category.created_at).toLocaleString()}
                 </TableCell> */}
-              </TableRow>
-            ))}
+                </TableRow>
+              ))}
           </TableBody>
         </Table>
       </TableContainer>

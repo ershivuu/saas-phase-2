@@ -176,30 +176,33 @@ function CreatePosts() {
                 <TableCell colSpan={8}>No posts available...</TableCell>
               </TableRow>
             )}
-            {posts.map((post, index) => (
-              <TableRow key={post.id}>
-                <TableCell>{index + 1}</TableCell>
-                <TableCell>{post.category_name}</TableCell>
-                <TableCell>{post.post_name}</TableCell>
-                <TableCell>
-                  <Button
-                    variant="outlined"
-                    onClick={() => handleEditClick(post)}
-                  >
-                    Edit
-                  </Button>
-                </TableCell>
-                <TableCell>
-                  <Button
-                    variant="outlined"
-                    color="error"
-                    onClick={() => handleDeleteClick(post)}
-                  >
-                    Delete
-                  </Button>
-                </TableCell>
-              </TableRow>
-            ))}
+            {posts
+              .slice()
+              .sort((a, b) => b.id - a.id)
+              .map((post, index) => (
+                <TableRow key={post.id}>
+                  <TableCell>{index + 1}</TableCell>
+                  <TableCell>{post.category_name}</TableCell>
+                  <TableCell>{post.post_name}</TableCell>
+                  <TableCell>
+                    <Button
+                      variant="outlined"
+                      onClick={() => handleEditClick(post)}
+                    >
+                      Edit
+                    </Button>
+                  </TableCell>
+                  <TableCell>
+                    <Button
+                      variant="outlined"
+                      color="error"
+                      onClick={() => handleDeleteClick(post)}
+                    >
+                      Delete
+                    </Button>
+                  </TableCell>
+                </TableRow>
+              ))}
           </TableBody>
         </Table>
       </TableContainer>

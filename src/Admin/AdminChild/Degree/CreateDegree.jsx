@@ -198,30 +198,33 @@ function CreateDegree() {
                 <TableCell colSpan={8}>No degrees available...</TableCell>
               </TableRow>
             )}
-            {degrees.map((degree, index) => (
-              <TableRow key={degree.id}>
-                <TableCell>{index + 1}</TableCell>
-                <TableCell>{degree.exam_type_name}</TableCell>
-                <TableCell>{degree.degree_name}</TableCell>
-                <TableCell>
-                  <Button
-                    variant="outlined"
-                    onClick={() => handleEditDegreeClick(degree)}
-                  >
-                    Edit
-                  </Button>
-                </TableCell>
-                <TableCell>
-                  <Button
-                    variant="outlined"
-                    color="error"
-                    onClick={() => handleDeleteDegreeClick(degree)}
-                  >
-                    Delete
-                  </Button>
-                </TableCell>
-              </TableRow>
-            ))}
+            {degrees
+              .slice()
+              .sort((a, b) => b.id - a.id)
+              .map((degree, index) => (
+                <TableRow key={degree.id}>
+                  <TableCell>{index + 1}</TableCell>
+                  <TableCell>{degree.exam_type_name}</TableCell>
+                  <TableCell>{degree.degree_name}</TableCell>
+                  <TableCell>
+                    <Button
+                      variant="outlined"
+                      onClick={() => handleEditDegreeClick(degree)}
+                    >
+                      Edit
+                    </Button>
+                  </TableCell>
+                  <TableCell>
+                    <Button
+                      variant="outlined"
+                      color="error"
+                      onClick={() => handleDeleteDegreeClick(degree)}
+                    >
+                      Delete
+                    </Button>
+                  </TableCell>
+                </TableRow>
+              ))}
           </TableBody>
         </Table>
       </TableContainer>
