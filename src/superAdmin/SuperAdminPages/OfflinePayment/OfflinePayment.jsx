@@ -8,8 +8,13 @@ import {
   Container,
   Grid,
   Paper,
+  Typography,
 } from "@mui/material";
-import { getSubscriptionPlan, getCompanyData } from "../../SuperAdminService"; // Import getCompanyData function
+import {
+  getSubscriptionPlan,
+  getCompanyData,
+  submitSubscriptionPlan,
+} from "../../SuperAdminService"; // Import API functions
 
 const OfflinePayment = () => {
   const [selectedCompany, setSelectedCompany] = useState("");
@@ -43,7 +48,10 @@ const OfflinePayment = () => {
       try {
         const fetchedCompanies = await getCompanyData();
         setCompanyList(
-          fetchedCompanies.admins.map((admin) => admin.company_name)
+          fetchedCompanies.admins.map((admin) => ({
+            id: admin.id, // Assuming each admin has an ID
+            name: admin.company_name,
+          }))
         );
         setLoadingCompanies(false);
       } catch (error) {
@@ -55,10 +63,17 @@ const OfflinePayment = () => {
     fetchCompanies();
   }, []);
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
-    console.log("Selected Company:", selectedCompany);
-    console.log("Selected Plan:", selectedPlan);
+    try {
+      const adminId = selectedCompany;
+      const response = await submitSubscriptionPlan(adminId, selectedPlan);
+      console.log("Response from API:", response);
+      // Handle success (e.g., show a success message)
+    } catch (error) {
+      console.error("Error submitting form:", error.message);
+      // Handle error (e.g., show an error message)
+    }
   };
 
   const handleReset = () => {
@@ -67,11 +82,21 @@ const OfflinePayment = () => {
   };
 
   return (
-    <div style={{ margin: "10px" }}>
+    <div style={{ margin: "20px" }}>
       <Container component={Paper}>
-        <form onSubmit={handleSubmit} style={{ padding: "10px" }}>
+        <Typography
+          variant="h5"
+          gutterBottom
+          sx={{ margin: "10px", paddingTop: "20px" }}
+        >
+          Offline Payments
+        </Typography>
+        <form
+          onSubmit={handleSubmit}
+          style={{ padding: "10px", paddingBottom: "80px" }}
+        >
           <Grid container spacing={2} alignItems="center">
-            <Grid item xs={12} sm={5}>
+            <Grid item xs={12} sm={6}>
               <FormControl fullWidth>
                 <InputLabel id="company-select-label">
                   Select Company
@@ -89,8 +114,8 @@ const OfflinePayment = () => {
                     <MenuItem disabled>{errorCompanies}</MenuItem>
                   ) : (
                     companyList.map((company) => (
-                      <MenuItem key={company} value={company}>
-                        {company}
+                      <MenuItem key={company.id} value={company.id}>
+                        {company.name}
                       </MenuItem>
                     ))
                   )}
@@ -98,7 +123,7 @@ const OfflinePayment = () => {
               </FormControl>
             </Grid>
 
-            <Grid item xs={12} sm={5}>
+            <Grid item xs={12} sm={6}>
               <FormControl fullWidth>
                 <InputLabel id="plan-select-label">Select Plan</InputLabel>
                 <Select
@@ -123,18 +148,12 @@ const OfflinePayment = () => {
                 </Select>
               </FormControl>
             </Grid>
-
-            <Grid item xs={12} sm={1}>
-              <Button
-                type="submit"
-                variant="contained"
-                color="primary"
-                fullWidth
-              >
-                Submit
-              </Button>
-            </Grid>
           </Grid>
+          <div style={{ float: "right", marginTop: "20px" }}>
+            <Button type="submit" variant="contained" color="primary">
+              Submit
+            </Button>
+          </div>
         </form>
       </Container>
     </div>

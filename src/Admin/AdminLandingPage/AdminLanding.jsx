@@ -10,8 +10,8 @@ function AdminLanding() {
     email: "",
     contact: "",
     subdomain: "",
-    start_date: "",
-    end_date: "",
+    start_date: null,
+    end_date: null,
     reg_date: "",
     subscription_plan: {
       plan_name: "",
@@ -46,14 +46,14 @@ function AdminLanding() {
   useEffect(() => {
     const calculateRemainingTime = () => {
       const now = new Date();
-      const endDate = new Date(adminData.end_date);
-      const diff = endDate - now;
+      const endDate = adminData.end_date ? new Date(adminData.end_date) : null;
 
-      if (diff <= 0) {
+      if (!endDate || endDate <= now) {
         setRemainingTime("00:00:00:00");
-
         return;
       }
+
+      const diff = endDate - now;
 
       const days = Math.floor(diff / (1000 * 60 * 60 * 24));
       const hours = Math.floor(
@@ -78,6 +78,8 @@ function AdminLanding() {
   }, [adminData.end_date, currentTime]);
 
   const formatDate = (date) => {
+    if (!date) return "NULL";
+
     const daysOfWeek = [
       "Sunday",
       "Monday",
@@ -111,6 +113,8 @@ function AdminLanding() {
   };
 
   const formatTime = (date) => {
+    if (!date) return "NULL";
+
     let hours = date.getHours();
     let minutes = date.getMinutes();
     let seconds = date.getSeconds();
@@ -153,19 +157,23 @@ function AdminLanding() {
             <p>Plan Details</p>
             <p>
               Name:
-              {adminData.subscription_plan.plan_name || "Buy Subscription"}
+              {adminData.subscription_plan.plan_name || " Buy Subscription"}
             </p>
-            <p>Duration: {adminData.subscription_plan.duration || "NULL"}</p>
-            <p>Price: {adminData.subscription_plan.price || "NULL"}</p>
+            <p>Duration: {adminData.subscription_plan.duration || " NULL"}</p>
+            <p>Price: {adminData.subscription_plan.price || " NULL"}</p>
             <p>
               Start Date:
-              {new Date(adminData.start_date).toLocaleDateString() || "NULL"}
+              {adminData.start_date
+                ? new Date(adminData.start_date).toLocaleDateString()
+                : " NULL"}
             </p>
             <p>
               End Date:
-              {new Date(adminData.end_date).toLocaleDateString() || "NULL"}
+              {adminData.end_date
+                ? new Date(adminData.end_date).toLocaleDateString()
+                : " NULL"}
             </p>
-            <p>Time Remaining: {remainingTime || "NULL"}</p>
+            <p>Time Remaining: {remainingTime || " NULL"}</p>
           </div>
         </div>
         <div className="total-user"></div>

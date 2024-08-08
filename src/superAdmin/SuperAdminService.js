@@ -273,3 +273,28 @@ export const deleteCompany = async (adminId) => {
     throw error;
   }
 };
+export const submitSubscriptionPlan = async (adminId, planId) => {
+  const token = getAuthToken();
+  if (!token) {
+    throw new Error("No authentication token found.");
+  }
+
+  try {
+    const response = await axios.put(
+      `${SUPER_ADMIN_BASE_URL}/superadmin/subscription-plan/${adminId}`,
+      { subscription_plan: planId },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.error(
+      "Error submitting subscription plan:",
+      error.response ? error.response.data : error.message
+    );
+    throw error;
+  }
+};
