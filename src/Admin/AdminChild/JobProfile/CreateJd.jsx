@@ -10,7 +10,10 @@ import {
   Typography,
   CircularProgress,
   Button,
-  Modal,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
   TextField,
   Box,
   Switch,
@@ -45,11 +48,16 @@ function CreateJd() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [editingJob, setEditingJob] = useState(null);
-  const [modalOpen, setModalOpen] = useState(false);
+  const [dialogOpen, setDialogOpen] = useState(false);
   const [formValues, setFormValues] = useState({
     qualification_and_experience: "",
     highly_desirable: "",
     publish_to_job_profile: false,
+  });
+
+  const [formErrors, setFormErrors] = useState({
+    qualification_and_experience: "",
+    highly_desirable: "",
   });
 
   const [notification, setNotification] = useState({
@@ -78,24 +86,46 @@ function CreateJd() {
       highly_desirable: job.highly_desirable,
       publish_to_job_profile: job.publish_to_job_profile,
     });
-    setModalOpen(true);
+    setDialogOpen(true);
   };
 
-  const handleCloseModal = () => {
-    setModalOpen(false);
+  const handleCloseDialog = () => {
+    setDialogOpen(false);
     setEditingJob(null);
   };
-
   const handleInputChange = (e) => {
     const { name, value, type, checked } = e.target;
     setFormValues((prevValues) => ({
       ...prevValues,
       [name]: type === "checkbox" ? checked : value,
     }));
+    if (value.trim() !== "") {
+      setFormErrors((prevErrors) => ({
+        ...prevErrors,
+        [name]: "",
+      }));
+    }
   };
+
+  const validateForm = () => {
+    let isValid = true;
+    let errors = {};
+    if (!formValues.qualification_and_experience.trim()) {
+      errors.qualification_and_experience = "This field is required";
+      isValid = false;
+    }
+    if (!formValues.highly_desirable.trim()) {
+      errors.highly_desirable = "This field is required";
+      isValid = false;
+    }
+    setFormErrors(errors);
+    return isValid;
+  };
+
 
   const handleFormSubmit = async (e) => {
     e.preventDefault();
+    if (!validateForm()) return;
     try {
 const response = await updateJobProfile(editingJob.id, formValues);
       setJobOpenings((prevOpenings) =>
@@ -103,7 +133,7 @@ const response = await updateJobProfile(editingJob.id, formValues);
           job.id === editingJob.id ? { ...job, ...formValues } : job
         )
       );
-      handleCloseModal();
+      handleCloseDialog();
       setNotification({
         open: true,
         message: response.message, // Assuming the API response has a 'message' field
@@ -218,16 +248,15 @@ const response = await updateJobProfile(editingJob.id, formValues);
         </Table>
       </TableContainer>
 
-      <Modal
-        open={modalOpen}
-        onClose={handleCloseModal}
-        aria-labelledby="modal-title"
-        aria-describedby="modal-description"
+    
+      <Dialog
+        open={dialogOpen}
+        onClose={handleCloseDialog}
+        aria-labelledby="dialog-title"
+        aria-describedby="dialog-description"
       >
-        <Box sx={modalStyle}>
-          <Typography id="modal-title" variant="h6" component="h2">
-            Edit Job Profile
-          </Typography>
+        <DialogTitle id="dialog-title">Edit Job Profile</DialogTitle>
+        <DialogContent>
           <form onSubmit={handleFormSubmit}>
             <TextField
               fullWidth
@@ -236,7 +265,8 @@ const response = await updateJobProfile(editingJob.id, formValues);
               label="Qualification and Experience"
               value={formValues.qualification_and_experience}
               onChange={handleInputChange}
-              required
+              error={!!formErrors.qualification_and_experience}
+              helperText={formErrors.qualification_and_experience}
             />
             <TextField
               fullWidth
@@ -245,22 +275,24 @@ const response = await updateJobProfile(editingJob.id, formValues);
               label="Highly Desirable"
               value={formValues.highly_desirable}
               onChange={handleInputChange}
-              required
+              error={!!formErrors.highly_desirable}
+              helperText={formErrors.highly_desirable}
             />
-            <Button type="submit" variant="contained" color="primary">
-              Save
-            </Button>
-            <Button
-              variant="outlined"
-              color="secondary"
-              onClick={handleCloseModal}
-              sx={{ marginLeft: "10px" }}
-            >
-              Cancel
-            </Button>
           </form>
-        </Box>
-      </Modal>
+        </DialogContent>
+        <DialogActions>
+          <Button type="submit"  color="primary" onClick={handleFormSubmit}>
+            Save
+          </Button>
+          <Button
+           
+            color="primary"
+            onClick={handleCloseDialog}
+          >
+            Cancel
+          </Button>
+        </DialogActions>
+      </Dialog>
       <Notification
         open={notification.open}
         handleClose={handleCloseNotification}

@@ -30,8 +30,7 @@ import {
   getDepartment,
   deleteJobOpening,
 } from "../../Services/AdminServices";
-
-
+import Notification from "../../../Notification/Notification";
 
 function CreateCurrentOpening() {
   const [jobOpenings, setJobOpenings] = useState([]);
@@ -59,6 +58,8 @@ function CreateCurrentOpening() {
     publish_to_vacancy: false,
   });
 
+  
+
   // States for Edit Job Opening Dialog
   const [editOpen, setEditOpen] = useState(false);
   const [currentEditId, setCurrentEditId] = useState(null);
@@ -66,7 +67,11 @@ function CreateCurrentOpening() {
     ...formData,
   });
 
- 
+  const [notification, setNotification] = useState({
+    open: false,
+    message: "",
+    severity: "success",
+  });
 
   const [posts, setPosts] = useState([]);
   const [subposts, setSubposts] = useState([]);
@@ -194,13 +199,21 @@ function CreateCurrentOpening() {
         interview_date_3: formatDateForServer(formData.interview_date_3),
       };
 
-    const response =  await createJobOpening(dataToSubmit);
+      const response = await createJobOpening(dataToSubmit);
       handleClose();
       fetchJobOpenings();
-    
+      setNotification({
+        open: true,
+        message: response.message || "Added Successfully",
+        severity: "success",
+      });
     } catch (error) {
       setError(error.message);
- 
+      setNotification({
+        open: true,
+        message: error.message,
+        severity: "error",
+      });
     }
   };
 
@@ -287,13 +300,21 @@ function CreateCurrentOpening() {
       };
 
       // Make the API call with dataToUpdate
-    const response =  await updateJobOpening(currentEditId, dataToUpdate);
+      const response = await updateJobOpening(currentEditId, dataToUpdate);
       handleCloseEdit();
       fetchJobOpenings();
-    
+      setNotification({
+        open: true,
+        message: response.message || "Updated Successfully",
+        severity: "success",
+      });
     } catch (error) {
       setError(error.message);
-     
+      setNotification({
+        open: true,
+        message: error.message,
+        severity: "error",
+      });
     }
   };
 
@@ -329,14 +350,22 @@ function CreateCurrentOpening() {
 
   const handleDeleteConfirm = async () => {
     try {
-     const response = await deleteJobOpening(deleteId); // Implement deleteJobOpening in your services
+      const response = await deleteJobOpening(deleteId); // Implement deleteJobOpening in your services
       setDeleteOpen(false);
       setDeleteId(null);
-      fetchJobOpenings(); 
-     
+      fetchJobOpenings();
+      setNotification({
+        open: true,
+        message: response.message || "Deleted Successfully",
+        severity: "success",
+      });
     } catch (error) {
       setError(error.message);
-     
+      setNotification({
+        open: true,
+        message: error.message,
+        severity: "error",
+      });
     }
   };
   return (
@@ -767,7 +796,12 @@ function CreateCurrentOpening() {
             </Button>
           </DialogActions>
         </Dialog>
-      
+        <Notification
+          open={notification.open}
+          handleClose={() => setNotification({ ...notification, open: false })}
+          alertMessage={notification.message}
+          alertSeverity={notification.severity}
+        />
       </div>
     </>
   );
