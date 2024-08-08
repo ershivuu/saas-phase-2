@@ -24,6 +24,7 @@ import {
   updateSubPost,
   deleteSubPost,
 } from "../../Services/AdminServices";
+import Notification from "../../../Notification/Notification";
 
 function SubPost() {
   const [subPosts, setSubPosts] = useState([]);
@@ -37,6 +38,16 @@ function SubPost() {
   const [subPostName, setSubPostName] = useState("");
   const [selectedPostId, setSelectedPostId] = useState("");
   const [subPostToDelete, setSubPostToDelete] = useState(null);
+  const [notification, setNotification] = useState({
+    open: false,
+    message: "",
+    severity: "success",
+  });
+
+  const [errors, setErrors] = useState({
+    postId: "",
+    subPostName: "",
+  });
 
   useEffect(() => {
     const fetchData = async () => {
@@ -62,6 +73,7 @@ function SubPost() {
     setDialogOpen(true);
     setSubPostName("");
     setSelectedPostId("");
+    setErrors({ postId: "", subPostName: "" });
   };
 
   const handleEditClick = (subPost) => {
@@ -82,6 +94,7 @@ function SubPost() {
     setSubPostName("");
     setSelectedPostId("");
     setSelectedSubPost(null);
+    setErrors({ postId: "", subPostName: "" });
   };
 
   const handleCloseDeleteDialog = () => {
@@ -89,8 +102,28 @@ function SubPost() {
     setSubPostToDelete(null);
   };
 
+  const validateFields = () => {
+    let valid = true;
+    let newErrors = { postId: "", subPostName: "" };
+
+    if (!selectedPostId) {
+      newErrors.postId = "Post selection is required.";
+      valid = false;
+    }
+    if (!subPostName) {
+      newErrors.subPostName = "Sub Post Name is required.";
+      valid = false;
+    }
+
+    setErrors(newErrors);
+    return valid;
+  };
+
   const handleSubmit = async () => {
+    if (!validateFields()) return;
+
     try {
+      let response ;
       const selectedPost = posts.find((post) => post.id === selectedPostId);
       if (!selectedPost) {
         throw new Error("Selected post not found.");
@@ -98,33 +131,53 @@ function SubPost() {
       const { category_id } = selectedPost;
 
       if (isEditing) {
-        await updateSubPost(
+     response =   await updateSubPost(
           selectedSubPost.id,
           selectedPostId,
           category_id,
           subPostName
         );
       } else {
-        await createSubPost(selectedPostId, category_id, subPostName);
+      response =   await createSubPost(selectedPostId, category_id, subPostName);
       }
       const subPostsData = await getSubPosts();
       setSubPosts(subPostsData);
       handleCloseDialog();
+      setNotification({
+        open: true,
+        message: response.message || (isEditing ? "Updated Successfully" : "Added Successfully"),
+        severity: "success",
+      });
     } catch (error) {
       setError(error.message);
+      setNotification({
+        open: true,
+        message: error.message,
+        severity: "error",
+      });
     }
   };
 
   const handleDelete = async () => {
     try {
       if (subPostToDelete) {
-        await deleteSubPost(subPostToDelete.id);
+       const response = await deleteSubPost(subPostToDelete.id);
         const subPostsData = await getSubPosts();
         setSubPosts(subPostsData);
         handleCloseDeleteDialog();
+        setNotification({
+          open: true,
+          message: response.message || "Deleted Successfully",
+          severity: "success",
+        });
       }
     } catch (error) {
       setError(error.message);
+      setNotification({
+        open: true,
+        message: error.message,
+        severity: "error",
+      });
     }
   };
 
@@ -221,9 +274,14 @@ function SubPost() {
             select
             label="Post"
             value={selectedPostId}
-            onChange={(e) => setSelectedPostId(e.target.value)}
+            onChange={(e) => {
+              setSelectedPostId(e.target.value);
+              setErrors({ ...errors, postId: "" }); // Clear error on change
+            }}
             fullWidth
             margin="normal"
+            error={!!errors.postId}
+            helperText={errors.postId}
           >
             {posts.map((post) => (
               <MenuItem key={post.id} value={post.id}>
@@ -234,9 +292,14 @@ function SubPost() {
           <TextField
             label="Sub Post Name"
             value={subPostName}
-            onChange={(e) => setSubPostName(e.target.value)}
+            onChange={(e) => {
+              setSubPostName(e.target.value);
+              setErrors({ ...errors, subPostName: "" }); // Clear error on change
+            }}
             fullWidth
             margin="normal"
+            error={!!errors.subPostName}
+            helperText={errors.subPostName}
           />
         </DialogContent>
         <DialogActions>
@@ -264,6 +327,12 @@ function SubPost() {
           </Button>
         </DialogActions>
       </Dialog>
+      <Notification
+        open={notification.open}
+        handleClose={() => setNotification({ ...notification, open: false })}
+        alertMessage={notification.message}
+        alertSeverity={notification.severity}
+      />
     </div>
   );
 }

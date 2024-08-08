@@ -21,6 +21,8 @@ import {
   getInterviewSchedule,
   updateJobProfile,
 } from "../../Services/AdminServices"; // Ensure correct path
+import Notification from "../../../Notification/Notification";
+
 
 const modalStyle = {
   position: "absolute",
@@ -48,6 +50,12 @@ function CreateJd() {
     qualification_and_experience: "",
     highly_desirable: "",
     publish_to_job_profile: false,
+  });
+
+  const [notification, setNotification] = useState({
+    open: false,
+    message: "",
+    severity: "success",
   });
   const fetchJobOpenings = async () => {
     try {
@@ -89,15 +97,26 @@ function CreateJd() {
   const handleFormSubmit = async (e) => {
     e.preventDefault();
     try {
-      await updateJobProfile(editingJob.id, formValues);
+const response = await updateJobProfile(editingJob.id, formValues);
       setJobOpenings((prevOpenings) =>
         prevOpenings.map((job) =>
           job.id === editingJob.id ? { ...job, ...formValues } : job
         )
       );
       handleCloseModal();
+      setNotification({
+        open: true,
+        message: response.message, // Assuming the API response has a 'message' field
+        severity: "success",
+      });
+
     } catch (err) {
       setError(err.message);
+      setNotification({
+        open: true,
+        message: err.message,
+        severity: "error",
+      });
     }
   };
 
@@ -112,6 +131,12 @@ function CreateJd() {
     } catch (err) {
       setError(err.message);
     }
+  };
+  const handleCloseNotification = () => {
+    setNotification((prevNotification) => ({
+      ...prevNotification,
+      open: false,
+    }));
   };
 
   if (loading)
@@ -157,7 +182,7 @@ function CreateJd() {
               <TableCell>Qualification</TableCell>
               <TableCell>Desirables</TableCell>
               <TableCell>Publish To Job Profile</TableCell>
-              <TableCell>Actions</TableCell>
+              <TableCell>Edit</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -236,6 +261,12 @@ function CreateJd() {
           </form>
         </Box>
       </Modal>
+      <Notification
+        open={notification.open}
+        handleClose={handleCloseNotification}
+        alertMessage={notification.message}
+        alertSeverity={notification.severity}
+      />
     </div>
   );
 }

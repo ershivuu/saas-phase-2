@@ -23,6 +23,9 @@ import {
   DialogTitle,
   TextField,
 } from "@mui/material";
+import Notification from "../../../Notification/Notification";
+
+
 
 function CreateCategory() {
   const [categories, setCategories] = useState([]);
@@ -35,6 +38,14 @@ function CreateCategory() {
   const [categoryToEdit, setCategoryToEdit] = useState(null);
   const [categoryNameEdit, setCategoryNameEdit] = useState("");
   const [categoryToDelete, setCategoryToDelete] = useState(null);
+  const [notification, setNotification] = useState({
+    open: false,
+    message: "",
+    severity: "success",
+  });
+
+  const [newCategoryError, setNewCategoryError] = useState("");
+  const [editCategoryError, setEditCategoryError] = useState("");
 
   useEffect(() => {
     const fetchCategories = async () => {
@@ -68,46 +79,85 @@ function CreateCategory() {
   const handleCloseDeleteDialog = () => setOpenDeleteDialog(false);
 
   const handleAddCategory = async () => {
+    if (!newCategory) {
+      setNewCategoryError("This field is required");
+      return;
+    }
     try {
-      await createCategory(newCategory);
+   const response =   await createCategory(newCategory);
       setNewCategory("");
       handleCloseAddDialog();
       // Optionally refetch categories here
       const data = await getCategories();
       setCategories(data);
+      setNotification({
+        open: true,
+        message: response.message || "Added Successfully",
+        severity: "success",
+      });
     } catch (error) {
       setError(error.message);
+      setNotification({
+        open: true,
+        message: error.message,
+        severity: "error",
+      });
     }
   };
 
   const handleEditCategory = async () => {
+    if (!categoryNameEdit) {
+      setEditCategoryError("This field is required");
+      return;
+    }
     try {
       if (categoryToEdit) {
-        await updateCategory(categoryToEdit, categoryNameEdit);
+       const response = await updateCategory(categoryToEdit, categoryNameEdit);
         setCategoryToEdit(null);
         setCategoryNameEdit("");
         handleCloseEditDialog();
         // Optionally refetch categories here
         const data = await getCategories();
         setCategories(data);
+        setNotification({
+          open: true,
+          message: response.message || "Edited Successfully",
+          severity: "success",
+        });
       }
     } catch (error) {
       setError(error.message);
+      setNotification({
+        open: true,
+        message: error.message,
+        severity: "error",
+      });
     }
   };
 
   const handleDeleteCategory = async () => {
     try {
       if (categoryToDelete) {
-        await deleteCategory(categoryToDelete);
+       const response = await deleteCategory(categoryToDelete);
         setCategoryToDelete(null);
         handleCloseDeleteDialog();
         // Optionally refetch categories here
         const data = await getCategories();
         setCategories(data);
+        // setNotification({
+        //   open: true,
+        //   message: response.message || "Deleted Successfully",
+        //   severity: "success",
+        // });
       }
     } catch (error) {
       setError(error.message);
+      // setNotification({
+      //   open: true,
+      //   message: error.message,
+      //   severity: "error",
+      // });
+
     }
   };
 
@@ -127,7 +177,7 @@ function CreateCategory() {
                 <TableCell>S.No</TableCell>
                 <TableCell>Category Name</TableCell>
                 <TableCell>Edit</TableCell>
-                <TableCell>Delete</TableCell>
+                {/* <TableCell>Delete</TableCell> */}
               </TableRow>
             </TableHead>
             <TableBody>
@@ -209,7 +259,12 @@ function CreateCategory() {
             fullWidth
             variant="outlined"
             value={newCategory}
-            onChange={(e) => setNewCategory(e.target.value)}
+            onChange={(e) => {
+              setNewCategory(e.target.value);
+              if (e.target.value) setNewCategoryError("");
+            }}
+            error={!!newCategoryError}
+            helperText={newCategoryError}
           />
         </DialogContent>
         <DialogActions>
@@ -234,7 +289,12 @@ function CreateCategory() {
             fullWidth
             variant="outlined"
             value={categoryNameEdit}
-            onChange={(e) => setCategoryNameEdit(e.target.value)}
+            onChange={(e) => {
+              setCategoryNameEdit(e.target.value);
+              if (e.target.value) setEditCategoryError("");
+            }}
+            error={!!editCategoryError}
+            helperText={editCategoryError}
           />
         </DialogContent>
         <DialogActions>
@@ -264,6 +324,12 @@ function CreateCategory() {
           </Button>
         </DialogActions>
       </Dialog>
+      <Notification
+        open={notification.open}
+        handleClose={() => setNotification({ ...notification, open: false })}
+        alertMessage={notification.message}
+        alertSeverity={notification.severity}
+      />
     </div>
   );
 }

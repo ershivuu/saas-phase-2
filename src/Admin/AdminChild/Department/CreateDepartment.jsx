@@ -22,6 +22,7 @@ import {
   updateDepartment,
   deleteDepartment, // Import delete function
 } from "../../Services/AdminServices"; // Adjust the path as needed
+import Notification from "../../../Notification/Notification";
 
 function CreateDepartment() {
   const [departments, setDepartments] = useState([]);
@@ -31,6 +32,12 @@ function CreateDepartment() {
   const [editDialogOpen, setEditDialogOpen] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [departmentName, setDepartmentName] = useState("");
+  const [departmentNameError, setDepartmentNameError] = useState(""); 
+  const [notification, setNotification] = useState({
+    open: false,
+    message: "",
+    severity: "success",
+  });
   const [currentDepartmentId, setCurrentDepartmentId] = useState(null);
 
   useEffect(() => {
@@ -55,6 +62,7 @@ function CreateDepartment() {
   const handleEditClick = (department) => {
     setCurrentDepartmentId(department.id);
     setDepartmentName(department.depart_name);
+    setDepartmentNameError("");
     setEditDialogOpen(true);
   };
 
@@ -68,43 +76,94 @@ function CreateDepartment() {
     setEditDialogOpen(false);
     setDeleteDialogOpen(false);
     setDepartmentName("");
+    setDepartmentNameError("");
     setCurrentDepartmentId(null);
   };
 
+  const validateFields = () => {
+    let isValid = true;
+    if (departmentName.trim() === "") {
+      setDepartmentNameError("Department Name is required");
+      isValid = false;
+    } else {
+      setDepartmentNameError("");
+    }
+    return isValid;
+  };
+
   const handleAddSubmit = async () => {
+    if (!validateFields()) return;
     try {
-      await createDepartment(departmentName);
+     const response = await createDepartment(departmentName);
       const data = await getDepartment();
       setDepartments(data);
       handleCloseDialog();
+      setNotification({
+        open: true,
+        message: response.message || "Added Successfully",
+        severity: "success",
+      });
     } catch (error) {
       setError(error.message);
+      setNotification({
+        open: true,
+        message: error.message,
+        severity: "error",
+      });
     }
   };
 
   const handleEditSubmit = async () => {
+    if (!validateFields()) return;
     try {
       if (currentDepartmentId !== null) {
-        await updateDepartment(currentDepartmentId, departmentName);
+      const response =  await updateDepartment(currentDepartmentId, departmentName);
         const data = await getDepartment();
         setDepartments(data);
         handleCloseDialog();
+        setNotification({
+          open: true,
+          message: response.message || "Edited Successfully",
+          severity: "success",
+        });
       }
     } catch (error) {
       setError(error.message);
+      setNotification({
+        open: true,
+        message: error.message,
+        severity: "error",
+      });
     }
   };
 
   const handleDeleteSubmit = async () => {
     try {
       if (currentDepartmentId !== null) {
-        await deleteDepartment(currentDepartmentId);
+       const response = await deleteDepartment(currentDepartmentId);
         const data = await getDepartment();
         setDepartments(data);
         handleCloseDialog();
+        setNotification({
+          open: true,
+          message: response.message || "Deleted Successfully",
+          severity: "success",
+        });
       }
     } catch (error) {
       setError(error.message);
+      setNotification({
+        open: true,
+        message: error.message,
+        severity: "error",
+      });
+    }
+  };
+
+  const handleDepartmentNameChange = (e) => {
+    setDepartmentName(e.target.value);
+    if (departmentNameError) {
+      setDepartmentNameError("");
     }
   };
 
@@ -191,9 +250,11 @@ function CreateDepartment() {
           <TextField
             label="Department Name"
             value={departmentName}
-            onChange={(e) => setDepartmentName(e.target.value)}
+            onChange={handleDepartmentNameChange}
             fullWidth
             margin="normal"
+            error={!!departmentNameError}
+            helperText={departmentNameError}
           />
         </DialogContent>
         <DialogActions>
@@ -212,9 +273,11 @@ function CreateDepartment() {
           <TextField
             label="Department Name"
             value={departmentName}
-            onChange={(e) => setDepartmentName(e.target.value)}
+            onChange={handleDepartmentNameChange}
             fullWidth
             margin="normal"
+            error={!!departmentNameError}
+            helperText={departmentNameError}
           />
         </DialogContent>
         <DialogActions>
@@ -243,6 +306,12 @@ function CreateDepartment() {
           </Button>
         </DialogActions>
       </Dialog>
+      <Notification
+        open={notification.open}
+        handleClose={() => setNotification({ ...notification, open: false })}
+        alertMessage={notification.message}
+        alertSeverity={notification.severity}
+      />
     </div>
   );
 }

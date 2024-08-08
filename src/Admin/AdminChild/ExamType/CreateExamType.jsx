@@ -22,6 +22,7 @@ import {
   deleteExamType,
   updateExamType,
 } from "../../Services/AdminServices"; // Adjust the path as needed
+import Notification from "../../../Notification/Notification";
 
 function CreateExamType() {
   const [examTypes, setExamTypes] = useState([]);
@@ -34,6 +35,16 @@ function CreateExamType() {
   const [examTypeToEdit, setExamTypeToEdit] = useState(null);
   const [examTypeToDelete, setExamTypeToDelete] = useState(null);
   const [editedExamTypeName, setEditedExamTypeName] = useState("");
+  
+  const [notification, setNotification] = useState({
+    open: false,
+    message: "",
+    severity: "success",
+  });
+  const [errors, setErrors] = useState({
+    examTypeName: false,
+    editedExamTypeName: false,
+  });
 
   useEffect(() => {
     const fetchExamTypes = async () => {
@@ -57,16 +68,32 @@ function CreateExamType() {
   const handleCloseDialog = () => {
     setDialogOpen(false);
     setExamTypeName("");
+    setErrors({ ...errors, examTypeName: false });
   };
 
   const handleAddSubmit = async () => {
+    if (examTypeName.trim() === "") {
+      setErrors({ ...errors, examTypeName: true });
+      return;
+    }
+
     try {
-      await createExamType(examTypeName);
+     const response = await createExamType(examTypeName);
       const data = await getExamType(); // Refresh the list of exam types
       setExamTypes(data);
       handleCloseDialog();
+      setNotification({
+        open: true,
+        message: response.message || "Added Successfully",
+        severity: "success",
+      });
     } catch (error) {
       setError(error.message);
+      setNotification({
+        open: true,
+        message: error.message,
+        severity: "error",
+      });
     }
   };
 
@@ -80,18 +107,33 @@ function CreateExamType() {
     setEditDialogOpen(false);
     setExamTypeToEdit(null);
     setEditedExamTypeName("");
+    setErrors({ ...errors, editedExamTypeName: false });
   };
 
   const handleEditSubmit = async () => {
+    if (editedExamTypeName.trim() === "") {
+      setErrors({ ...errors, editedExamTypeName: true });
+      return;
+    }
     try {
       if (examTypeToEdit) {
-        await updateExamType(examTypeToEdit.id, editedExamTypeName);
+      const response =  await updateExamType(examTypeToEdit.id, editedExamTypeName);
         const data = await getExamType(); // Refresh the list of exam types
         setExamTypes(data);
         handleEditCloseDialog();
+        setNotification({
+          open: true,
+          message: response.message || "Updated Successfully",
+          severity: "success",
+        });
       }
     } catch (error) {
       setError(error.message);
+      setNotification({
+        open: true,
+        message: error.message,
+        severity: "error",
+      });
     }
   };
 
@@ -108,13 +150,23 @@ function CreateExamType() {
   const handleDeleteSubmit = async () => {
     try {
       if (examTypeToDelete) {
-        await deleteExamType(examTypeToDelete.id);
+      const response =  await deleteExamType(examTypeToDelete.id);
         const data = await getExamType(); // Refresh the list of exam types
         setExamTypes(data);
         handleDeleteCloseDialog();
+        setNotification({
+          open: true,
+          message: response.message || "Deleted Successfully",
+          severity: "success",
+        });
       }
     } catch (error) {
       setError(error.message);
+      setNotification({
+        open: true,
+        message: error.message,
+        severity: "error",
+      });
     }
   };
 
@@ -203,9 +255,14 @@ function CreateExamType() {
           <TextField
             label="Exam Type Name"
             value={examTypeName}
-            onChange={(e) => setExamTypeName(e.target.value)}
+            onChange={(e) => {
+              setExamTypeName(e.target.value);
+              setErrors({ ...errors, examTypeName: false });
+            }}
             fullWidth
             margin="normal"
+            error={errors.examTypeName}
+            helperText={errors.examTypeName ? "This feild is required" : ""}
           />
         </DialogContent>
         <DialogActions>
@@ -225,7 +282,14 @@ function CreateExamType() {
           <TextField
             label="Exam Type Name"
             value={editedExamTypeName}
-            onChange={(e) => setEditedExamTypeName(e.target.value)}
+            onChange={(e) => {
+              setEditedExamTypeName(e.target.value);
+              setErrors({ ...errors, editedExamTypeName: false });
+            }}
+            error={errors.editedExamTypeName}
+            helperText={
+              errors.editedExamTypeName ? "This feild is required" : ""
+            }
             fullWidth
             margin="normal"
           />
@@ -257,6 +321,12 @@ function CreateExamType() {
           </Button>
         </DialogActions>
       </Dialog>
+      <Notification
+        open={notification.open}
+        handleClose={() => setNotification({ ...notification, open: false })}
+        alertMessage={notification.message}
+        alertSeverity={notification.severity}
+      />
     </div>
   );
 }

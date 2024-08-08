@@ -23,6 +23,7 @@ import {
   updateInterviewSchedule,
 } from "../../Services/AdminServices";
 import EditIcon from "@mui/icons-material/Edit";
+import Notification from "../../../Notification/Notification";
 
 function CreateInterviewSchedules() {
   const [jobOpenings, setJobOpenings] = useState([]);
@@ -35,6 +36,11 @@ function CreateInterviewSchedules() {
     interview_date_2: "",
     interview_date_3: "",
     eligibility_criteria: "",
+  });
+  const [notification, setNotification] = useState({
+    open: false,
+    message: "",
+    severity: "success",
   });
 
   useEffect(() => {
@@ -102,15 +108,25 @@ function CreateInterviewSchedules() {
 
   const handleSubmit = async () => {
     try {
-      await updateInterviewSchedule(currentJob.id, {
+   const response =   await updateInterviewSchedule(currentJob.id, {
         ...formData,
         publish_to_schedule_interview: currentJob.publish_to_schedule_interview,
       });
       const data = await getInterviewSchedule();
       setJobOpenings(data);
       handleClose();
+      setNotification({
+        open: true,
+        message: response.message || "Updated Successfully",
+        severity: "success",
+      });
     } catch (error) {
       setError("Error updating interview schedule: " + error.message);
+      setNotification({
+        open: true,
+        message: error.message,
+        severity: "error",
+      });
     }
   };
 
@@ -250,6 +266,12 @@ function CreateInterviewSchedules() {
           </Button>
         </DialogActions>
       </Dialog>
+      <Notification
+        open={notification.open}
+        handleClose={() => setNotification({ ...notification, open: false })}
+        alertMessage={notification.message}
+        alertSeverity={notification.severity}
+      />
     </div>
   );
 }

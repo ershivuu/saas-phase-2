@@ -31,6 +31,7 @@ import {
   deleteJobOpening,
 } from "../../Services/AdminServices";
 
+
 function CreateCurrentOpening() {
   const [jobOpenings, setJobOpenings] = useState([]);
   const [categories, setCategories] = useState([]);
@@ -63,6 +64,8 @@ function CreateCurrentOpening() {
   const [editFormData, setEditFormData] = useState({
     ...formData,
   });
+
+ 
 
   const [posts, setPosts] = useState([]);
   const [subposts, setSubposts] = useState([]);
@@ -190,11 +193,13 @@ function CreateCurrentOpening() {
         interview_date_3: formatDateForServer(formData.interview_date_3),
       };
 
-      await createJobOpening(dataToSubmit);
+    const response =  await createJobOpening(dataToSubmit);
       handleClose();
       fetchJobOpenings();
+    
     } catch (error) {
       setError(error.message);
+ 
     }
   };
 
@@ -281,11 +286,13 @@ function CreateCurrentOpening() {
       };
 
       // Make the API call with dataToUpdate
-      await updateJobOpening(currentEditId, dataToUpdate);
+    const response =  await updateJobOpening(currentEditId, dataToUpdate);
       handleCloseEdit();
       fetchJobOpenings();
+    
     } catch (error) {
       setError(error.message);
+     
     }
   };
 
@@ -321,12 +328,14 @@ function CreateCurrentOpening() {
 
   const handleDeleteConfirm = async () => {
     try {
-      await deleteJobOpening(deleteId); // Implement deleteJobOpening in your services
+     const response = await deleteJobOpening(deleteId); // Implement deleteJobOpening in your services
       setDeleteOpen(false);
       setDeleteId(null);
-      fetchJobOpenings(); // Refresh the job openings
+      fetchJobOpenings(); 
+     
     } catch (error) {
       setError(error.message);
+     
     }
   };
   return (
@@ -338,7 +347,7 @@ function CreateCurrentOpening() {
           </Button>
         </div>
         <Typography variant="h5" gutterBottom>
-          Currenr Openings
+          Current Openings
         </Typography>
         <TableContainer component={Paper}>
           <Table>
@@ -503,6 +512,7 @@ function CreateCurrentOpening() {
               fullWidth
               value={formData.last_date_to_apply}
               onChange={handleChange}
+              InputLabelProps={{ shrink: true }}
             />
             <TextField
               margin="dense"
@@ -520,6 +530,7 @@ function CreateCurrentOpening() {
               fullWidth
               value={formData.interview_date_1}
               onChange={handleChange}
+              InputLabelProps={{ shrink: true }}
             />
             <TextField
               margin="dense"
@@ -529,6 +540,7 @@ function CreateCurrentOpening() {
               fullWidth
               value={formData.interview_date_2}
               onChange={handleChange}
+              InputLabelProps={{ shrink: true }}
             />
             <TextField
               margin="dense"
@@ -538,6 +550,7 @@ function CreateCurrentOpening() {
               fullWidth
               value={formData.interview_date_3}
               onChange={handleChange}
+              InputLabelProps={{ shrink: true }}
             />
             <FormControlLabel
               control={
@@ -673,6 +686,7 @@ function CreateCurrentOpening() {
               fullWidth
               value={editFormData.last_date_to_apply}
               onChange={handleEditChange}
+              InputLabelProps={{ shrink: true }}
             />
             <TextField
               margin="dense"
@@ -690,6 +704,7 @@ function CreateCurrentOpening() {
               fullWidth
               value={editFormData.interview_date_1}
               onChange={handleEditChange}
+              InputLabelProps={{ shrink: true }}
             />
             <TextField
               margin="dense"
@@ -699,6 +714,7 @@ function CreateCurrentOpening() {
               fullWidth
               value={editFormData.interview_date_2}
               onChange={handleEditChange}
+              InputLabelProps={{ shrink: true }}
             />
             <TextField
               margin="dense"
@@ -708,6 +724,7 @@ function CreateCurrentOpening() {
               fullWidth
               value={editFormData.interview_date_3}
               onChange={handleEditChange}
+              InputLabelProps={{ shrink: true }}
             />
             <FormControlLabel
               control={
@@ -749,6 +766,7 @@ function CreateCurrentOpening() {
             </Button>
           </DialogActions>
         </Dialog>
+      
       </div>
     </>
   );

@@ -27,6 +27,7 @@ import {
   updateDegree,
   deleteDegree,
 } from "../../Services/AdminServices"; // Adjust the path as needed
+import Notification from "../../../Notification/Notification";
 
 function CreateDegree() {
   const [degrees, setDegrees] = useState([]);
@@ -41,6 +42,15 @@ function CreateDegree() {
   const [dialogLoading, setDialogLoading] = useState(false);
   const [degreeToEdit, setDegreeToEdit] = useState(null);
   const [degreeToDelete, setDegreeToDelete] = useState(null);
+  const [notification, setNotification] = useState({
+    open: false,
+    message: "",
+    severity: "success",
+  });
+  const [errors, setErrors] = useState({
+    degreeName: false,
+    selectedExamType: false,
+  });
 
   useEffect(() => {
     const fetchData = async () => {
@@ -62,14 +72,18 @@ function CreateDegree() {
   const handleAddDegreeClick = () => {
     setDegreeName("");
     setSelectedExamType("");
+    setErrors({ degreeName: false, selectedExamType: false });
     setAddDialogOpen(true);
+    
   };
 
   const handleEditDegreeClick = (degree) => {
     setDegreeName(degree.degree_name);
     setSelectedExamType(degree.exam_type_id);
     setDegreeToEdit(degree);
+    setErrors({ degreeName: false, selectedExamType: false });
     setEditDialogOpen(true);
+    
   };
 
   const handleDeleteDegreeClick = (degree) => {
@@ -95,31 +109,66 @@ function CreateDegree() {
     setDegreeToDelete(null);
   };
 
+  const validateFields = () => {
+    const newErrors = {
+      degreeName: !degreeName.trim(),
+      selectedExamType: !selectedExamType,
+    };
+    setErrors(newErrors);
+    return !Object.values(newErrors).some((error) => error);
+  };
+
   const handleAddDegreeSubmit = async () => {
+    if (!validateFields()) return;
     setDialogLoading(true);
     try {
-      await createDegree(degreeName, selectedExamType);
+      const response = await createDegree(degreeName, selectedExamType);
       const data = await getDegree(); // Refresh the list of degrees
       setDegrees(data);
       handleCloseAddDialog();
+      setNotification({
+        open: true,
+        message: response.message || "Added Successfully",
+        severity: "success",
+      });
     } catch (error) {
       setError(error.message);
+      setNotification({
+        open: true,
+        message: error.message,
+        severity: "error",
+      });
     } finally {
       setDialogLoading(false);
     }
   };
 
   const handleEditDegreeSubmit = async () => {
+    if (!validateFields()) return;
     setDialogLoading(true);
     try {
       if (degreeToEdit) {
-        await updateDegree(degreeToEdit.id, degreeName, selectedExamType);
+        const response = await updateDegree(
+          degreeToEdit.id,
+          degreeName,
+          selectedExamType
+        );
         const data = await getDegree(); // Refresh the list of degrees
         setDegrees(data);
         handleCloseEditDialog();
+        setNotification({
+          open: true,
+          message: response.message || "Edited Successfully",
+          severity: "success",
+        });
       }
     } catch (error) {
       setError(error.message);
+      setNotification({
+        open: true,
+        message: error.message,
+        severity: "error",
+      });
     } finally {
       setDialogLoading(false);
     }
@@ -129,13 +178,23 @@ function CreateDegree() {
     setDialogLoading(true);
     try {
       if (degreeToDelete) {
-        await deleteDegree(degreeToDelete.id);
+        const response = await deleteDegree(degreeToDelete.id);
         const data = await getDegree(); // Refresh the list of degrees
         setDegrees(data);
         handleCloseDeleteDialog();
+        setNotification({
+          open: true,
+          message: response.message || "Deleted Successfully",
+          severity: "success",
+        });
       }
     } catch (error) {
       setError(error.message);
+      setNotification({
+        open: true,
+        message: error.message,
+        severity: "error",
+      });
     } finally {
       setDialogLoading(false);
     }
@@ -234,7 +293,10 @@ function CreateDegree() {
             <InputLabel>Exam Type</InputLabel>
             <Select
               value={selectedExamType}
-              onChange={(e) => setSelectedExamType(e.target.value)}
+              onChange={(e) => {
+                setSelectedExamType(e.target.value);
+                setErrors({ ...errors, selectedExamType: false });
+              }}
               label="Exam Type"
             >
               {examTypes.map((examType) => (
@@ -243,6 +305,12 @@ function CreateDegree() {
                 </MenuItem>
               ))}
             </Select>
+            {errors.selectedExamType && (
+              <Typography color="error" variant="body2">
+                Exam type is required
+              </Typography>
+            )}
+
           </FormControl>
           <TextField
             label="Degree Name"
@@ -274,7 +342,10 @@ function CreateDegree() {
             <InputLabel>Exam Type</InputLabel>
             <Select
               value={selectedExamType}
-              onChange={(e) => setSelectedExamType(e.target.value)}
+              onChange={(e) => {
+                setSelectedExamType(e.target.value);
+                setErrors({ ...errors, selectedExamType: false });
+              }}
               label="Exam Type"
             >
               {examTypes.map((examType) => (
@@ -283,6 +354,11 @@ function CreateDegree() {
                 </MenuItem>
               ))}
             </Select>
+            {errors.selectedExamType && (
+              <Typography color="error" variant="body2">
+                Exam type is required
+              </Typography>
+            )}
           </FormControl>
           <TextField
             label="Degree Name"
@@ -328,6 +404,12 @@ function CreateDegree() {
           </Button>
         </DialogActions>
       </Dialog>
+      <Notification
+        open={notification.open}
+        handleClose={() => setNotification({ ...notification, open: false })}
+        alertMessage={notification.message}
+        alertSeverity={notification.severity}
+      />
     </div>
   );
 }

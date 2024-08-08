@@ -20,6 +20,7 @@ import VisibilityIcon from "@mui/icons-material/Visibility";
 import FileOpenIcon from "@mui/icons-material/FileOpen";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { getAllApplicants } from "../../Services/AdminServices";
+import Notification from "../../../Notification/Notification"
 
 function CreateAppliedCandidates() {
   const [open, setOpen] = useState(false);
@@ -27,6 +28,8 @@ function CreateAppliedCandidates() {
   const [confirmationDialogOpen, setConfirmationDialogOpen] = useState(false);
   const [selectedCandidate, setSelectedCandidate] = useState(null);
   const [data, setData] = useState([]);
+
+  
 
   useEffect(() => {
     // Fetch data when the component mounts
