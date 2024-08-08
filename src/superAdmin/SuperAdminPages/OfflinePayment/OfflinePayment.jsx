@@ -12,7 +12,7 @@ import {
 } from "@mui/material";
 import {
   getSubscriptionPlan,
-  getCompanyData,
+  getExpiredCompany,
   submitSubscriptionPlan,
 } from "../../SuperAdminService"; // Import API functions
 
@@ -46,11 +46,11 @@ const OfflinePayment = () => {
   useEffect(() => {
     const fetchCompanies = async () => {
       try {
-        const fetchedCompanies = await getCompanyData();
+        const fetchedCompanies = await getExpiredCompany();
         setCompanyList(
-          fetchedCompanies.admins.map((admin) => ({
-            id: admin.id, // Assuming each admin has an ID
-            name: admin.company_name,
+          fetchedCompanies.map((company) => ({
+            id: company.id, // Adjust according to your data
+            name: company.company_name,
           }))
         );
         setLoadingCompanies(false);

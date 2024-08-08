@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Table,
   TableBody,
@@ -17,53 +17,34 @@ import {
 } from "@mui/material";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import DeleteIcon from "@mui/icons-material/Delete";
-
-// Dummy data
-const dummyData = [
-  {
-    id: 1,
-    name: "John Doe",
-    email: "john.doe@example.com",
-    phoneNumber: "+1234567890",
-    message:
-      "Another long message here that will also be truncated. Click to see the full message.",
-  },
-  {
-    id: 2,
-    name: "Jane Smith",
-    email: "jane.smith@example.com",
-    phoneNumber: "+0987654321",
-    message:
-      "Another long message here that will also be truncated. Click to see the full message.",
-  },
-  {
-    id: 3,
-    name: "Alice Johnson",
-    email: "alice.johnson@example.com",
-    phoneNumber: "+1122334455",
-    message:
-      "Another long message here that will also be truncated. Click to see the full message.",
-  },
-];
+import { getAllVisitors, deleteVisitor } from "../../Services/AdminServices";
 
 function CreateVisitors() {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [selectedMessage, setSelectedMessage] = useState("");
-  const [selectedName, setSelectedName] = useState(""); // New state for visitor name
+  const [selectedName, setSelectedName] = useState("");
   const [selectedId, setSelectedId] = useState(null);
-  const [visitors, setVisitors] = useState(dummyData);
+  const [visitors, setVisitors] = useState([]);
+
+  useEffect(() => {
+    const getVisitors = async () => {
+      const data = await getAllVisitors();
+      setVisitors(data);
+    };
+    getVisitors();
+  }, []);
 
   const handleClickOpen = (message, name) => {
     setSelectedMessage(message);
-    setSelectedName(name); // Set the visitor's name
+    setSelectedName(name);
     setDialogOpen(true);
   };
 
   const handleClose = () => {
     setDialogOpen(false);
     setSelectedMessage("");
-    setSelectedName(""); // Clear the name
+    setSelectedName("");
   };
 
   const handleDeleteClick = (id) => {
@@ -76,11 +57,16 @@ function CreateVisitors() {
     setSelectedId(null);
   };
 
-  const handleDelete = () => {
-    setVisitors((prevVisitors) =>
-      prevVisitors.filter((visitor) => visitor.id !== selectedId)
-    );
-    handleCloseDeleteDialog();
+  const handleDelete = async () => {
+    try {
+      await deleteVisitor(selectedId); // Call the delete function
+      setVisitors((prevVisitors) =>
+        prevVisitors.filter((visitor) => visitor.id !== selectedId)
+      );
+      handleCloseDeleteDialog();
+    } catch (error) {
+      console.error("Failed to delete visitor", error);
+    }
   };
 
   return (
@@ -109,7 +95,7 @@ function CreateVisitors() {
                   <TableCell>{index + 1}</TableCell>
                   <TableCell>{visitor.name}</TableCell>
                   <TableCell>{visitor.email}</TableCell>
-                  <TableCell>{visitor.phoneNumber}</TableCell>
+                  <TableCell>{visitor.phone}</TableCell>
                   <TableCell>
                     {visitor.message.length > 20 ? (
                       <>{visitor.message.substring(0, 20)}...</>
@@ -145,8 +131,7 @@ function CreateVisitors() {
 
         {/* Full Message Dialog */}
         <Dialog open={dialogOpen} onClose={handleClose}>
-          <DialogTitle>{`Message from ${selectedName}`}</DialogTitle>{" "}
-          {/* Updated title */}
+          <DialogTitle>{`Message from ${selectedName}`}</DialogTitle>
           <DialogContent>
             <Typography variant="body1">{selectedMessage}</Typography>
           </DialogContent>

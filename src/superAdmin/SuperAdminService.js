@@ -298,3 +298,28 @@ export const submitSubscriptionPlan = async (adminId, planId) => {
     throw error;
   }
 };
+
+export const getExpiredCompany = async () => {
+  const token = getAuthToken();
+  if (!token) {
+    throw new Error("No authentication token found.");
+  }
+
+  try {
+    const response = await axios.get(
+      `${SUPER_ADMIN_BASE_URL}/superadmin/get-expired-admins`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    return response.data; // Assuming the data is directly the list of companies
+  } catch (error) {
+    console.error(
+      "Error fetching company data:",
+      error.response ? error.response.data : error.message
+    );
+    throw error;
+  }
+};

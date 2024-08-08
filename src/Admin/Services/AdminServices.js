@@ -950,10 +950,9 @@ export const getAdminProfile = async () => {
     );
     throw error;
   }
-  
 };
 
-export const registerAdmin = async (email, password,contact,company_name) => {
+export const registerAdmin = async (email, password, contact, company_name) => {
   try {
     const response = await axios.post(`${NEW_ADMIN_BASE_URL}/admin/register`, {
       email,
@@ -964,5 +963,48 @@ export const registerAdmin = async (email, password,contact,company_name) => {
     return response;
   } catch (error) {
     throw error;
+  }
+};
+export const getAllVisitors = async () => {
+  const token = getAdminToken(); // Retrieve the token
+  if (!token) {
+    throw new Error("No authentication token found.");
+  }
+
+  try {
+    const response = await axios.get(
+      `${NEW_ADMIN_BASE_URL}/visitors/getAllVisitors`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json", // Optional, depending on API requirements
+        },
+      }
+    );
+    return response.data.data; // Adjust according to your API response structure
+  } catch (error) {
+    console.error(
+      "Error fetching visitors:",
+      error.response ? error.response.data : error.message
+    );
+    throw error; // Re-throw the error for handling in the calling code
+  }
+};
+export const deleteVisitor = async (id) => {
+  const token = getAdminToken(); // Retrieve the token
+  try {
+    const response = await axios.delete(
+      `${NEW_ADMIN_BASE_URL}/visitors/deleteVisitors/${id}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json", // Optional, depending on API requirements
+        },
+      }
+    );
+    return response.data; // Return the response data
+  } catch (error) {
+    console.error("Error deleting visitor:", error);
+    throw error; // Propagate the error
   }
 };
