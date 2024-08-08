@@ -23,6 +23,7 @@ import {
   getAllApplicants,
   deleteApplicant,
 } from "../../Services/AdminServices";
+import Notification from "../../../Notification/Notification";
 
 function CreateAppliedCandidates() {
   const [open, setOpen] = useState(false);
@@ -31,7 +32,11 @@ function CreateAppliedCandidates() {
   const [selectedCandidate, setSelectedCandidate] = useState(null);
   const [data, setData] = useState([]);
 
-  
+  const [notification, setNotification] = useState({
+    open: false,
+    message: "",
+    severity: "success",
+  });
 
   useEffect(() => {
     // Fetch data when the component mounts
@@ -82,16 +87,63 @@ function CreateAppliedCandidates() {
     if (selectedCandidate) {
       try {
         // Perform deletion
-        await deleteApplicant(selectedCandidate.id);
+        const response = await deleteApplicant(selectedCandidate.id);
+  
+        // Ensure response is defined and has a message property
+        const message = response?.message || "Deleted successfully";
+  
         // Update state
         setData(data.filter((item) => item.id !== selectedCandidate.id));
+  
+        // Close dialog and set notification
         handleClose();
+        setNotification({
+          open: true,
+          message: message,
+          severity: "success",
+        });
       } catch (error) {
         console.error("Failed to delete applicant:", error);
-        handleClose(); // Close dialog even if deletion fails
+  
+        // Close dialog even if deletion fails
+        handleClose();
+  
+        // Handle error and set notification
+        setNotification({
+          open: true,
+          message: error.message || "Failed to delete applicant",
+          severity: "error",
+        });
       }
     }
   };
+  
+
+  // const handleConfirmDelete = async () => {
+  //   if (selectedCandidate) {
+  //     try {
+  //       // Perform deletion
+  //      const response = await deleteApplicant(selectedCandidate.id);
+  //       // Update state
+  //       setData(data.filter((item) => item.id !== selectedCandidate.id));
+      
+  //       handleClose();
+  //       setNotification({
+  //         open: true,
+  //         message: response.message || "Deleted  Successfully",
+  //         severity: "success",
+  //       });
+  //     } catch (error) {
+  //       console.error("Failed to delete applicant:", error);
+
+  //       setNotification({
+  //         open: true,
+  //         message: error.message,
+  //         severity: "error",
+  //       });
+  //     }
+  //   }
+  // };
 
   return (
     <>
@@ -888,7 +940,14 @@ function CreateAppliedCandidates() {
               </Button>
             </DialogActions>
           </Dialog>
+          
         )}
+           <Notification
+        open={notification.open}
+        handleClose={() => setNotification({ ...notification, open: false })}
+        alertMessage={notification.message}
+        alertSeverity={notification.severity}
+      />
       </div>
     </>
   );

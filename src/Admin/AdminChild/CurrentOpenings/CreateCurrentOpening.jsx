@@ -30,6 +30,7 @@ import {
   getDepartment,
   deleteJobOpening,
 } from "../../Services/AdminServices";
+import Notification from "../../../Notification/Notification";
 
 function CreateCurrentOpening() {
   const [jobOpenings, setJobOpenings] = useState([]);
@@ -57,11 +58,19 @@ function CreateCurrentOpening() {
     publish_to_vacancy: false,
   });
 
+  
+
   // States for Edit Job Opening Dialog
   const [editOpen, setEditOpen] = useState(false);
   const [currentEditId, setCurrentEditId] = useState(null);
   const [editFormData, setEditFormData] = useState({
     ...formData,
+  });
+
+  const [notification, setNotification] = useState({
+    open: false,
+    message: "",
+    severity: "success",
   });
 
   const [posts, setPosts] = useState([]);
@@ -193,8 +202,18 @@ function CreateCurrentOpening() {
       const response = await createJobOpening(dataToSubmit);
       handleClose();
       fetchJobOpenings();
+      setNotification({
+        open: true,
+        message: response.message || "Added Successfully",
+        severity: "success",
+      });
     } catch (error) {
       setError(error.message);
+      setNotification({
+        open: true,
+        message: error.message,
+        severity: "error",
+      });
     }
   };
 
@@ -284,8 +303,18 @@ function CreateCurrentOpening() {
       const response = await updateJobOpening(currentEditId, dataToUpdate);
       handleCloseEdit();
       fetchJobOpenings();
+      setNotification({
+        open: true,
+        message: response.message || "Updated Successfully",
+        severity: "success",
+      });
     } catch (error) {
       setError(error.message);
+      setNotification({
+        open: true,
+        message: error.message,
+        severity: "error",
+      });
     }
   };
 
@@ -325,8 +354,18 @@ function CreateCurrentOpening() {
       setDeleteOpen(false);
       setDeleteId(null);
       fetchJobOpenings();
+      setNotification({
+        open: true,
+        message: response.message || "Deleted Successfully",
+        severity: "success",
+      });
     } catch (error) {
       setError(error.message);
+      setNotification({
+        open: true,
+        message: error.message,
+        severity: "error",
+      });
     }
   };
   return (
@@ -770,6 +809,12 @@ function CreateCurrentOpening() {
             </Button>
           </DialogActions>
         </Dialog>
+        <Notification
+          open={notification.open}
+          handleClose={() => setNotification({ ...notification, open: false })}
+          alertMessage={notification.message}
+          alertSeverity={notification.severity}
+        />
       </div>
     </>
   );

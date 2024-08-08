@@ -90,41 +90,44 @@ function CreateVisitors() {
               </TableRow>
             </TableHead>
             <TableBody>
-              {visitors.map((visitor, index) => (
-                <TableRow key={visitor.id}>
-                  <TableCell>{index + 1}</TableCell>
-                  <TableCell>{visitor.name}</TableCell>
-                  <TableCell>{visitor.email}</TableCell>
-                  <TableCell>{visitor.phone}</TableCell>
-                  <TableCell>
-                    {visitor.message.length > 20 ? (
-                      <>{visitor.message.substring(0, 20)}...</>
-                    ) : (
-                      visitor.message
-                    )}
-                  </TableCell>
-                  <TableCell>
-                    {visitor.message.length > 20 && (
+              {visitors
+                .slice()
+                .sort((a, b) => b.id - a.id)
+                .map((visitor, index) => (
+                  <TableRow key={visitor.id}>
+                    <TableCell>{index + 1}</TableCell>
+                    <TableCell>{visitor.name}</TableCell>
+                    <TableCell>{visitor.email}</TableCell>
+                    <TableCell>{visitor.phone}</TableCell>
+                    <TableCell>
+                      {visitor.message.length > 20 ? (
+                        <>{visitor.message.substring(0, 20)}...</>
+                      ) : (
+                        visitor.message
+                      )}
+                    </TableCell>
+                    <TableCell>
+                      {visitor.message.length > 20 && (
+                        <IconButton
+                          onClick={() =>
+                            handleClickOpen(visitor.message, visitor.name)
+                          }
+                          color="primary"
+                        >
+                          <VisibilityIcon />
+                        </IconButton>
+                      )}
+                    </TableCell>
+                    <TableCell>
                       <IconButton
-                        onClick={() =>
-                          handleClickOpen(visitor.message, visitor.name)
-                        }
-                        color="primary"
+                        onClick={() => handleDeleteClick(visitor.id)}
+                        color="error"
                       >
-                        <VisibilityIcon />
+                        <DeleteIcon />
                       </IconButton>
-                    )}
-                  </TableCell>
-                  <TableCell>
-                    <IconButton
-                      onClick={() => handleDeleteClick(visitor.id)}
-                      color="error"
-                    >
-                      <DeleteIcon />
-                    </IconButton>
-                  </TableCell>
-                </TableRow>
-              ))}
+                    </TableCell>
+                  </TableRow>
+                ))}
             </TableBody>
           </Table>
         </TableContainer>

@@ -37,6 +37,12 @@ function CreateInterviewSchedules() {
     interview_date_3: "",
     eligibility_criteria: "",
   });
+  const [formErrors, setFormErrors] = useState({
+    interview_date_1: "",
+    interview_date_2: "",
+    interview_date_3: "",
+    eligibility_criteria: "",
+  });
   const [notification, setNotification] = useState({
     open: false,
     message: "",
@@ -85,13 +91,32 @@ function CreateInterviewSchedules() {
     setOpen(false);
   };
 
+ 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({
       ...formData,
       [name]: value,
     });
+
+    // Clear the error when the user starts typing
+    setFormErrors({
+      ...formErrors,
+      [name]: "",
+    });
   };
+
+  const validateForm = () => {
+    const errors = {};
+    if (!formData.interview_date_1) errors.interview_date_1 = "Interview Date 1 is required";
+    if (!formData.interview_date_2) errors.interview_date_2 = "Interview Date 2 is required";
+    if (!formData.interview_date_3) errors.interview_date_3 = "Interview Date 3 is required";
+    if (!formData.eligibility_criteria) errors.eligibility_criteria = "Eligibility Criteria is required";
+
+    setFormErrors(errors);
+    return Object.keys(errors).length === 0;
+  };
+
 
   const handleSwitchChange = async (job) => {
     try {
@@ -107,6 +132,7 @@ function CreateInterviewSchedules() {
   };
 
   const handleSubmit = async () => {
+    if (!validateForm()) return;
     try {
    const response =   await updateInterviewSchedule(currentJob.id, {
         ...formData,
@@ -232,6 +258,8 @@ function CreateInterviewSchedules() {
             onChange={handleChange}
             fullWidth
             margin="dense"
+            error={!!formErrors.interview_date_1}
+            helperText={formErrors.interview_date_1}
           />
           <TextField
             label="Interview Date 2"
@@ -241,6 +269,8 @@ function CreateInterviewSchedules() {
             onChange={handleChange}
             fullWidth
             margin="dense"
+            error={!!formErrors.interview_date_2}
+            helperText={formErrors.interview_date_2}
           />
           <TextField
             label="Interview Date 3"
@@ -250,6 +280,8 @@ function CreateInterviewSchedules() {
             onChange={handleChange}
             fullWidth
             margin="dense"
+            error={!!formErrors.interview_date_3}
+            helperText={formErrors.interview_date_3}
           />
           <TextField
             label="Eligibility Criteria"
@@ -258,6 +290,8 @@ function CreateInterviewSchedules() {
             onChange={handleChange}
             fullWidth
             margin="dense"
+            error={!!formErrors.eligibility_criteria}
+            helperText={formErrors.eligibility_criteria}
           />
         </DialogContent>
         <DialogActions>
