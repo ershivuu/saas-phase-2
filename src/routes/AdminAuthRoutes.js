@@ -25,6 +25,7 @@ import Section2 from "../Admin/AdminChild/FrontendPages/EditHome/HomeSubPages/Se
 import Section3 from "../Admin/AdminChild/FrontendPages/EditHome/HomeSubPages/Section3";
 import Section4 from "../Admin/AdminChild/FrontendPages/EditHome/HomeSubPages/Section4";
 import Section5 from "../Admin/AdminChild/FrontendPages/EditHome/HomeSubPages/Section5";
+import UpgradePlan from "../Admin/UpgradePlan/UpgradePlan";
 const UnAuthRoutes = [
   <Route
     key="AdminDashboard"
@@ -107,6 +108,11 @@ const UnAuthRoutes = [
     <Route key="Section3" path="edit-section-3" element={<Section3 />}></Route>
     <Route key="Section4" path="edit-section-4" element={<Section4 />}></Route>
     <Route key="Section5" path="edit-section-5" element={<Section5 />}></Route>
+    <Route
+      key="UpgradePlan"
+      path="upgrade-plan"
+      element={<UpgradePlan />}
+    ></Route>
   </Route>,
 ];
 
