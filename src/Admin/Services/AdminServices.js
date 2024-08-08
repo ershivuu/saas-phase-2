@@ -950,4 +950,19 @@ export const getAdminProfile = async () => {
     );
     throw error;
   }
+  
+};
+
+export const registerAdmin = async (email, password,contact,company_name) => {
+  try {
+    const response = await axios.post(`${NEW_ADMIN_BASE_URL}/admin/register`, {
+      email,
+      password,
+      contact,
+      company_name,
+    });
+    return response;
+  } catch (error) {
+    throw error;
+  }
 };
