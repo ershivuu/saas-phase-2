@@ -1008,3 +1008,25 @@ export const deleteVisitor = async (id) => {
     throw error; // Propagate the error
   }
 };
+export const getFilteredJobOpenings = async (filters, page, limit) => {
+  const token = getAdminToken();
+  try {
+    const response = await axios.get(
+      `${NEW_ADMIN_BASE_URL}/jobOpenings/getFilteredMasterJobOpenings`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        params: {
+          ...filters,
+          page,
+          limit,
+        },
+      }
+    );
+    return response.data;
+  } catch (error) {
+    throw new Error(error.message);
+  }
+};
