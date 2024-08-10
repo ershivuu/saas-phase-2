@@ -77,7 +77,9 @@ function CreateCurrentOpening() {
 
   const [posts, setPosts] = useState([]);
   const [subposts, setSubposts] = useState([]);
-
+  const [page, setPage] = useState(1);
+  const [limit, setLimit] = useState(10);
+  const [totalPages, setTotalPages] = useState(1);
   const [filters, setFilters] = useState({
     category_of_appointment: "",
     post_applied_for: "",
@@ -392,8 +394,9 @@ function CreateCurrentOpening() {
   const fetchFilteredJobOpenings = async () => {
     setLoading(true);
     try {
-      const data = await getFilteredJobOpenings(filters);
+      const data = await getFilteredJobOpenings(filters, page, limit);
       setJobOpenings(data.jobOpenings);
+      setTotalPages(data.totalPages);
     } catch (error) {
       setError(error.message);
     } finally {
@@ -403,7 +406,11 @@ function CreateCurrentOpening() {
 
   useEffect(() => {
     fetchFilteredJobOpenings();
-  }, [filters]);
+  }, [filters, page, limit]);
+
+  const handlePageChange = (event, value) => {
+    setPage(value);
+  };
 
   const handleFilterChange = (e) => {
     const { name, value } = e.target;
@@ -418,6 +425,7 @@ function CreateCurrentOpening() {
         const selectedCategory = categories.find(
           (category) => category.category_name === value
         );
+
         setPosts(selectedCategory ? selectedCategory.posts : []);
         setSubposts([]);
 
@@ -442,6 +450,7 @@ function CreateCurrentOpening() {
       return updatedFilters;
     });
   };
+
   return (
     <>
       <div style={{ padding: "20px" }}>
@@ -453,8 +462,8 @@ function CreateCurrentOpening() {
         <Typography variant="h5" gutterBottom>
           Current Openings
         </Typography>
-        <Grid container spacing={2} sx={{ marginBottom: "20px" }}>
-          <Grid item xs={12} sm={3}>
+        <Grid container spacing={2}>
+          <Grid item xs={12} sm={4}>
             <TextField
               margin="dense"
               label="Category"
@@ -474,7 +483,7 @@ function CreateCurrentOpening() {
               ))}
             </TextField>
           </Grid>
-          <Grid item xs={12} sm={3}>
+          <Grid item xs={12} sm={4}>
             <TextField
               margin="dense"
               label="post"
@@ -491,7 +500,7 @@ function CreateCurrentOpening() {
               ))}
             </TextField>
           </Grid>
-          <Grid item xs={12} sm={3}>
+          <Grid item xs={12} sm={4}>
             <TextField
               margin="dense"
               label="Department"
@@ -539,7 +548,7 @@ function CreateCurrentOpening() {
                     .sort((a, b) => b.id - a.id)
                     .map((job, index) => (
                       <TableRow key={job.id}>
-                        <TableCell>{index + 1}</TableCell>
+                        <TableCell>{index + 1 + (page - 1) * limit}</TableCell>
                         <TableCell>{job.category_of_appointment}</TableCell>
                         <TableCell>{job.post_applied_for}</TableCell>
                         <TableCell>{job.sub_post_applied_for}</TableCell>
@@ -576,6 +585,20 @@ function CreateCurrentOpening() {
                 </TableBody>
               </Table>
             </TableContainer>
+            <div style={{ marginTop: "20px" }}>
+              <Grid container alignItems="center" justifyContent="flex-end">
+                <Grid item>
+                  <Pagination
+                    count={totalPages}
+                    page={page}
+                    onChange={handlePageChange}
+                    shape="rounded"
+                    color="primary"
+                    variant="outlined"
+                  />
+                </Grid>
+              </Grid>
+            </div>
           </>
         )}
         <Dialog open={deleteOpen} onClose={handleDeleteClose}>

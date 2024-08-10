@@ -77,10 +77,11 @@ function CreateCurrentOpening() {
 
   const [posts, setPosts] = useState([]);
   const [subposts, setSubposts] = useState([]);
-
+  const [page, setPage] = useState(1);
+  const [limit, setLimit] = useState(10);
+  const [totalPages, setTotalPages] = useState(1);
   const [filters, setFilters] = useState({
     category_of_appointment: "",
-    post_applied_for: "",
     departments: "",
   });
   const fetchJobOpenings = async () => {
@@ -392,8 +393,9 @@ function CreateCurrentOpening() {
   const fetchFilteredJobOpenings = async () => {
     setLoading(true);
     try {
-      const data = await getFilteredJobOpenings(filters);
+      const data = await getFilteredJobOpenings(filters, page, limit);
       setJobOpenings(data.jobOpenings);
+      setTotalPages(data.totalPages);
     } catch (error) {
       setError(error.message);
     } finally {
@@ -403,43 +405,19 @@ function CreateCurrentOpening() {
 
   useEffect(() => {
     fetchFilteredJobOpenings();
-  }, [filters]);
-
+  }, [filters, page, limit]);
+  const handlePageChange = (event, value) => {
+    setPage(value);
+  };
+  const handleLimitChange = (e) => {
+    setLimit(e.target.value);
+    setPage(1); // Reset to first page when limit changes
+  };
   const handleFilterChange = (e) => {
     const { name, value } = e.target;
-
-    setFilters((prevFilters) => {
-      const updatedFilters = {
-        ...prevFilters,
-        [name]: value,
-      };
-
-      if (name === "category_of_appointment") {
-        const selectedCategory = categories.find(
-          (category) => category.category_name === value
-        );
-        setPosts(selectedCategory ? selectedCategory.posts : []);
-        setSubposts([]);
-
-        setFormData((prevFormData) => ({
-          ...prevFormData,
-          category_of_appointment: value,
-          post_applied_for: "",
-          sub_post_applied_for: "",
-        }));
-      } else if (name === "post_applied_for") {
-        const selectedPost = posts.find((post) => post.post_name === value);
-
-        setSubposts(selectedPost ? selectedPost.subposts : []);
-
-        setFormData((prevFormData) => ({
-          ...prevFormData,
-          post_applied_for: value,
-          sub_post_applied_for: "",
-        }));
-      }
-
-      return updatedFilters;
+    setFilters({
+      ...filters,
+      [name]: value,
     });
   };
   return (
@@ -453,8 +431,8 @@ function CreateCurrentOpening() {
         <Typography variant="h5" gutterBottom>
           Current Openings
         </Typography>
-        <Grid container spacing={2} sx={{ marginBottom: "20px" }}>
-          <Grid item xs={12} sm={3}>
+        <Grid container spacing={2}>
+          <Grid item xs={12} sm={4}>
             <TextField
               margin="dense"
               label="Category"
@@ -474,24 +452,8 @@ function CreateCurrentOpening() {
               ))}
             </TextField>
           </Grid>
-          <Grid item xs={12} sm={3}>
-            <TextField
-              margin="dense"
-              label="post"
-              name="post_applied_for"
-              select
-              fullWidth
-              value={filters.post_applied_for}
-              onChange={handleFilterChange}
-            >
-              {posts.map((post) => (
-                <MenuItem key={post.post_id} value={post.post_name}>
-                  {post.post_name}
-                </MenuItem>
-              ))}
-            </TextField>
-          </Grid>
-          <Grid item xs={12} sm={3}>
+
+          <Grid item xs={12} sm={4}>
             <TextField
               margin="dense"
               label="Department"
@@ -539,7 +501,7 @@ function CreateCurrentOpening() {
                     .sort((a, b) => b.id - a.id)
                     .map((job, index) => (
                       <TableRow key={job.id}>
-                        <TableCell>{index + 1}</TableCell>
+                        <TableCell>{index + 1 + (page - 1) * limit}</TableCell>
                         <TableCell>{job.category_of_appointment}</TableCell>
                         <TableCell>{job.post_applied_for}</TableCell>
                         <TableCell>{job.sub_post_applied_for}</TableCell>
@@ -576,6 +538,36 @@ function CreateCurrentOpening() {
                 </TableBody>
               </Table>
             </TableContainer>
+            <div style={{ marginTop: "20px" }}>
+              <Grid
+                container
+                alignItems="center"
+                justifyContent="space-between"
+              >
+                <Grid item>
+                  <TextField
+                    type="number"
+                    value={limit}
+                    onChange={handleLimitChange}
+                    style={{ marginLeft: "10px" }}
+                    label="Items per page"
+                    variant="outlined"
+                    size="small"
+                    InputProps={{ inputProps: { min: 1 } }}
+                  />
+                </Grid>
+                <Grid item>
+                  <Pagination
+                    count={totalPages}
+                    page={page}
+                    shape="rounded"
+                    onChange={handlePageChange}
+                    color="primary"
+                    variant="outlined"
+                  />
+                </Grid>
+              </Grid>
+            </div>
           </>
         )}
         <Dialog open={deleteOpen} onClose={handleDeleteClose}>
