@@ -15,6 +15,8 @@ import {
   Typography,
   Grid,
   IconButton,
+  TextField,
+  MenuItem,
 } from "@mui/material";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import FileOpenIcon from "@mui/icons-material/FileOpen";
@@ -22,16 +24,25 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import {
   getAllApplicants,
   deleteApplicant,
+  getCombineCategories,
 } from "../../Services/AdminServices";
 import Notification from "../../../Notification/Notification";
-
+import * as XLSX from "xlsx";
 function CreateAppliedCandidates() {
   const [open, setOpen] = useState(false);
   const [resumeDialogOpen, setResumeDialogOpen] = useState(false);
   const [confirmationDialogOpen, setConfirmationDialogOpen] = useState(false);
   const [selectedCandidate, setSelectedCandidate] = useState(null);
   const [data, setData] = useState([]);
-
+  const [categories, setCategories] = useState([]);
+  const [posts, setPosts] = useState([]);
+  const [subposts, setSubposts] = useState([]);
+  const [error, setError] = useState(null);
+  const [filteredData, setFilteredData] = useState([]);
+  const [formData, setFormData] = useState({
+    category_of_appointment: "",
+    post_applied_for: "",
+  });
   const [notification, setNotification] = useState({
     open: false,
     message: "",
@@ -77,24 +88,18 @@ function CreateAppliedCandidates() {
     window.print();
   };
 
-  const handleDownload = () => {
-    if (selectedCandidate && selectedCandidate.resumePath) {
-      window.location.href = selectedCandidate.resumePath;
-    }
-  };
-
   const handleConfirmDelete = async () => {
     if (selectedCandidate) {
       try {
         // Perform deletion
         const response = await deleteApplicant(selectedCandidate.id);
-  
+
         // Ensure response is defined and has a message property
         const message = response?.message || "Deleted successfully";
-  
+
         // Update state
         setData(data.filter((item) => item.id !== selectedCandidate.id));
-  
+
         // Close dialog and set notification
         handleClose();
         setNotification({
@@ -104,10 +109,10 @@ function CreateAppliedCandidates() {
         });
       } catch (error) {
         console.error("Failed to delete applicant:", error);
-  
+
         // Close dialog even if deletion fails
         handleClose();
-  
+
         // Handle error and set notification
         setNotification({
           open: true,
@@ -117,33 +122,102 @@ function CreateAppliedCandidates() {
       }
     }
   };
-  
+  const fetchCategories = async () => {
+    try {
+      const data = await getCombineCategories();
+      setCategories(data);
 
-  // const handleConfirmDelete = async () => {
-  //   if (selectedCandidate) {
-  //     try {
-  //       // Perform deletion
-  //      const response = await deleteApplicant(selectedCandidate.id);
-  //       // Update state
-  //       setData(data.filter((item) => item.id !== selectedCandidate.id));
-      
-  //       handleClose();
-  //       setNotification({
-  //         open: true,
-  //         message: response.message || "Deleted  Successfully",
-  //         severity: "success",
-  //       });
-  //     } catch (error) {
-  //       console.error("Failed to delete applicant:", error);
+      // Build maps for quick lookup
+      const catMap = new Map();
+      const postMap = new Map();
+      const subpostMap = new Map();
+      data.forEach((category) => {
+        catMap.set(category.category_id, category.category_name);
+        category.posts.forEach((post) => {
+          postMap.set(post.post_id, post.post_name);
+          post.subposts.forEach((subpost) => {
+            subpostMap.set(subpost.subpost_id, subpost.subpost_name);
+          });
+        });
+      });
+    } catch (error) {
+      setError(error.message);
+    }
+  };
+  const handleCategoryChange = (e) => {
+    const selectedCategoryName = e.target.value;
 
-  //       setNotification({
-  //         open: true,
-  //         message: error.message,
-  //         severity: "error",
-  //       });
-  //     }
-  //   }
-  // };
+    if (selectedCategoryName === "All") {
+      setPosts([]);
+      setSubposts([]);
+      setFormData({
+        ...formData,
+        category_of_appointment: "",
+        post_applied_for: "",
+        sub_post_applied_for: "",
+      });
+    } else {
+      const selectedCategory = categories.find(
+        (category) => category.category_name === selectedCategoryName
+      );
+
+      setPosts(selectedCategory ? selectedCategory.posts : []);
+      setSubposts([]);
+      setFormData({
+        ...formData,
+        category_of_appointment: selectedCategoryName,
+        post_applied_for: "",
+        sub_post_applied_for: "",
+      });
+    }
+  };
+
+  const handlePostChange = (e) => {
+    const selectedPostName = e.target.value;
+
+    if (selectedPostName === "All") {
+      setSubposts([]);
+      setFormData({
+        ...formData,
+        post_applied_for: "",
+        sub_post_applied_for: "",
+      });
+    } else {
+      const selectedPost = posts.find(
+        (post) => post.post_name === selectedPostName
+      );
+
+      setSubposts(selectedPost ? selectedPost.subposts : []);
+      setFormData({
+        ...formData,
+        post_applied_for: selectedPostName,
+        sub_post_applied_for: "",
+      });
+    }
+  };
+
+  useEffect(() => {
+    let newData = data;
+
+    if (formData.category_of_appointment) {
+      newData = newData.filter(
+        (item) =>
+          item.category_of_appointment === formData.category_of_appointment
+      );
+    }
+
+    if (formData.post_applied_for) {
+      newData = newData.filter(
+        (item) => item.post_applied_for === formData.post_applied_for
+      );
+    }
+
+    setFilteredData(newData);
+  }, [data, formData.category_of_appointment, formData.post_applied_for]);
+
+  useEffect(() => {
+    fetchCategories();
+  }, []);
 
   return (
     <>
@@ -151,6 +225,49 @@ function CreateAppliedCandidates() {
         <Typography variant="h5" gutterBottom>
           Applied Candidates
         </Typography>
+
+        <Grid container spacing={2} sx={{ marginBottom: "20px" }}>
+          <Grid item xs={12} sm={3}>
+            <TextField
+              margin="dense"
+              label="Category"
+              name="category_of_appointment"
+              select
+              fullWidth
+              value={formData.category_of_appointment || "All"}
+              onChange={handleCategoryChange}
+            >
+              <MenuItem value="All">All</MenuItem>
+              {categories.map((category) => (
+                <MenuItem
+                  key={category.category_id}
+                  value={category.category_name}
+                >
+                  {category.category_name}
+                </MenuItem>
+              ))}
+            </TextField>
+          </Grid>
+          <Grid item xs={12} sm={3}>
+            <TextField
+              margin="dense"
+              label="Post"
+              name="post_applied_for"
+              select
+              fullWidth
+              value={formData.post_applied_for || "All"}
+              onChange={handlePostChange}
+            >
+              <MenuItem value="All">All</MenuItem>
+              {posts.map((post) => (
+                <MenuItem key={post.post_id} value={post.post_name}>
+                  {post.post_name}
+                </MenuItem>
+              ))}
+            </TextField>
+          </Grid>
+        </Grid>
+
         <TableContainer component={Paper}>
           <Table>
             <TableHead>
@@ -168,14 +285,14 @@ function CreateAppliedCandidates() {
               </TableRow>
             </TableHead>
             <TableBody>
-              {data.length === 0 && (
+              {filteredData.length === 0 && (
                 <TableRow>
                   <TableCell colSpan={10}>No candidates available...</TableCell>
                 </TableRow>
               )}
-              {data
-                .slice() // Create a shallow copy of the array to avoid mutating the original data
-                .sort((a, b) => b.id - a.id) // Sort in descending order by ID
+              {filteredData
+                .slice()
+                .sort((a, b) => b.id - a.id)
                 .map((row, index) => (
                   <TableRow key={row.id}>
                     <TableCell>{index + 1}</TableCell>
@@ -228,204 +345,6 @@ function CreateAppliedCandidates() {
               </Typography>
             </DialogTitle>
             <DialogContent>
-              {/* Personal Information Section */}
-              <Typography
-                variant="h6"
-                gutterBottom
-                style={{ borderBottom: "2px solid black" }}
-              >
-                <strong>Personal Information</strong>
-              </Typography>
-              <Grid container spacing={2}>
-                <Grid item xs={6}>
-                  <Typography
-                    variant="body1"
-                    style={{ textTransform: "capitalize" }}
-                  >
-                    <strong>Name:</strong>{" "}
-                    {`${selectedCandidate.first_name} ${selectedCandidate.last_name}`}
-                  </Typography>
-                </Grid>
-                <Grid item xs={6}>
-                  <Typography variant="body1">
-                    <strong>Email:</strong> {`${selectedCandidate.email}`}
-                  </Typography>
-                </Grid>
-                <Grid item xs={6}>
-                  <Typography
-                    variant="body1"
-                    style={{ textTransform: "capitalize" }}
-                  >
-                    <strong>Number:</strong>
-                    {`${selectedCandidate.phone_number}`}
-                  </Typography>
-                </Grid>
-
-                <Grid item xs={6}>
-                  <Typography
-                    variant="body1"
-                    style={{ textTransform: "capitalize" }}
-                  >
-                    <strong>DOB :</strong>
-                    {`${new Date(
-                      selectedCandidate.date_of_birth
-                    ).toLocaleDateString()}`}
-                  </Typography>
-                </Grid>
-                <Grid item xs={6}>
-                  <Typography
-                    variant="body1"
-                    style={{ textTransform: "capitalize" }}
-                  >
-                    <strong>Gender:</strong> {`${selectedCandidate.gender}`}
-                  </Typography>
-                </Grid>
-                <Grid item xs={6}>
-                  <Typography
-                    variant="body1"
-                    style={{ textTransform: "capitalize" }}
-                  >
-                    <strong>Country:</strong> {`${selectedCandidate.country}`}
-                  </Typography>
-                </Grid>
-                <Grid item xs={6}>
-                  <Typography
-                    variant="body1"
-                    style={{ textTransform: "capitalize" }}
-                  >
-                    <strong>City:</strong> {`${selectedCandidate.city}`}
-                  </Typography>
-                </Grid>
-              </Grid>
-
-              {/* Job Application Information Section */}
-              <Typography
-                variant="h6"
-                gutterBottom
-                style={{ borderBottom: "2px solid black" }}
-              >
-                <strong>Job Application Information</strong>
-              </Typography>
-              <Grid container spacing={2}>
-                <Grid item xs={6}>
-                  <Typography
-                    variant="body1"
-                    style={{ textTransform: "capitalize" }}
-                  >
-                    <strong>Post Applied For:</strong>{" "}
-                    {`${selectedCandidate.post_applied_for}`}
-                  </Typography>
-                </Grid>
-                <Grid item xs={6}>
-                  <Typography
-                    variant="body1"
-                    style={{ textTransform: "capitalize" }}
-                  >
-                    <strong>Sub Post Applied For:</strong>{" "}
-                    {`${selectedCandidate.sub_post_applied_for}`}
-                  </Typography>
-                </Grid>
-                <Grid item xs={6}>
-                  <Typography
-                    variant="body1"
-                    style={{ textTransform: "capitalize" }}
-                  >
-                    <strong>Category of Appointment:</strong>{" "}
-                    {`${selectedCandidate.category_of_appointment}`}
-                  </Typography>
-                </Grid>
-                <Grid item xs={6}>
-                  <Typography
-                    variant="body1"
-                    style={{ textTransform: "capitalize" }}
-                  >
-                    <strong>Subject:</strong> {`${selectedCandidate.subject}`}
-                  </Typography>
-                </Grid>
-                <Grid item xs={6}>
-                  <Typography
-                    variant="body1"
-                    style={{ textTransform: "capitalize" }}
-                  >
-                    <strong>Exam Type:</strong>{" "}
-                    {`${selectedCandidate.exam_type}`}
-                  </Typography>
-                </Grid>
-                <Grid item xs={6}>
-                  <Typography
-                    variant="body1"
-                    style={{ textTransform: "capitalize" }}
-                  >
-                    <strong>Degree:</strong> {`${selectedCandidate.degree}`}
-                  </Typography>
-                </Grid>
-                <Grid item xs={6}>
-                  <Typography
-                    variant="body1"
-                    style={{ textTransform: "capitalize" }}
-                  >
-                    <strong>Specialization:</strong>{" "}
-                    {`${selectedCandidate.specialization}`}
-                  </Typography>
-                </Grid>
-              </Grid>
-
-              {/* Educational Qualification Section */}
-              <Typography
-                variant="h6"
-                gutterBottom
-                style={{ borderBottom: "2px solid black" }}
-              >
-                <strong>Educational Qualification</strong>
-              </Typography>
-              <Typography
-                variant="body1"
-                style={{ textTransform: "capitalize" }}
-              >
-                <strong>Highest Degree:</strong>{" "}
-                {`${selectedCandidate.highest_degree}`}
-              </Typography>
-              <Typography
-                variant="body1"
-                style={{ textTransform: "capitalize" }}
-              >
-                <strong>Percentage:</strong> {`${selectedCandidate.percentage}`}
-              </Typography>
-              <Typography
-                variant="body1"
-                style={{ textTransform: "capitalize" }}
-              >
-                <strong>University:</strong> {`${selectedCandidate.university}`}
-              </Typography>
-              <Typography
-                variant="body1"
-                style={{ textTransform: "capitalize" }}
-              >
-                <strong>Passing Year:</strong>{" "}
-                {`${selectedCandidate.passing_year}`}
-              </Typography>
-            </DialogContent>
-            <DialogActions>
-              <Button onClick={handleClose} color="primary">
-                Close
-              </Button>
-              <Button onClick={handlePrint} color="primary">
-                Print
-              </Button>
-            </DialogActions>
-          </Dialog>
-        )}
-        {selectedCandidate && (
-          <Dialog open={open} onClose={handleClose} maxWidth="md" fullWidth>
-            <DialogTitle>
-              <Typography
-                style={{ textTransform: "capitalize", fontSize: "20px" }}
-              >
-                {`${selectedCandidate.first_name} ${selectedCandidate.last_name}`}
-              </Typography>
-            </DialogTitle>
-            <DialogContent>
-              {/* Personal Information Section */}
               <Typography
                 variant="h6"
                 gutterBottom
@@ -940,14 +859,13 @@ function CreateAppliedCandidates() {
               </Button>
             </DialogActions>
           </Dialog>
-          
         )}
-           <Notification
-        open={notification.open}
-        handleClose={() => setNotification({ ...notification, open: false })}
-        alertMessage={notification.message}
-        alertSeverity={notification.severity}
-      />
+        <Notification
+          open={notification.open}
+          handleClose={() => setNotification({ ...notification, open: false })}
+          alertMessage={notification.message}
+          alertSeverity={notification.severity}
+        />
       </div>
     </>
   );

@@ -17,18 +17,14 @@ import {
   Switch,
   Typography,
   CircularProgress,
-  Grid,
-  MenuItem,
 } from "@mui/material";
 import {
   getInterviewSchedule,
   updateInterviewSchedule,
-  getCombineCategories,
-  getDepartment,
 } from "../../Services/AdminServices";
 import EditIcon from "@mui/icons-material/Edit";
 import Notification from "../../../Notification/Notification";
-import LockResetRoundedIcon from "@mui/icons-material/LockResetRounded";
+
 function CreateInterviewSchedules() {
   const [jobOpenings, setJobOpenings] = useState([]);
   const [open, setOpen] = useState(false);
@@ -95,6 +91,7 @@ function CreateInterviewSchedules() {
     setOpen(false);
   };
 
+ 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({
@@ -111,18 +108,15 @@ function CreateInterviewSchedules() {
 
   const validateForm = () => {
     const errors = {};
-    if (!formData.interview_date_1)
-      errors.interview_date_1 = "Interview Date 1 is required";
-    if (!formData.interview_date_2)
-      errors.interview_date_2 = "Interview Date 2 is required";
-    if (!formData.interview_date_3)
-      errors.interview_date_3 = "Interview Date 3 is required";
-    if (!formData.eligibility_criteria)
-      errors.eligibility_criteria = "Eligibility Criteria is required";
+    if (!formData.interview_date_1) errors.interview_date_1 = "Interview Date 1 is required";
+    if (!formData.interview_date_2) errors.interview_date_2 = "Interview Date 2 is required";
+    if (!formData.interview_date_3) errors.interview_date_3 = "Interview Date 3 is required";
+    if (!formData.eligibility_criteria) errors.eligibility_criteria = "Eligibility Criteria is required";
 
     setFormErrors(errors);
     return Object.keys(errors).length === 0;
   };
+
 
   const handleSwitchChange = async (job) => {
     try {
@@ -140,7 +134,7 @@ function CreateInterviewSchedules() {
   const handleSubmit = async () => {
     if (!validateForm()) return;
     try {
-      const response = await updateInterviewSchedule(currentJob.id, {
+   const response =   await updateInterviewSchedule(currentJob.id, {
         ...formData,
         publish_to_schedule_interview: currentJob.publish_to_schedule_interview,
       });
@@ -161,113 +155,7 @@ function CreateInterviewSchedules() {
       });
     }
   };
-  // ------------------------------------------------------------------------------------------------
-  const [categories, setCategories] = useState([]);
-  const [departments, setDepartments] = useState([]);
-  const [posts, setPosts] = useState([]);
-  const [subposts, setSubposts] = useState([]);
-  const [filters, setFilters] = useState({
-    category_of_appointment: "",
-    post_applied_for: "",
-    departments: "",
-  });
-  const fetchCategories = async () => {
-    try {
-      const data = await getCombineCategories();
-      setCategories(data);
 
-      // Build maps for quick lookup
-      const catMap = new Map();
-      const postMap = new Map();
-      const subpostMap = new Map();
-      data.forEach((category) => {
-        catMap.set(category.category_id, category.category_name);
-        category.posts.forEach((post) => {
-          postMap.set(post.post_id, post.post_name);
-          post.subposts.forEach((subpost) => {
-            subpostMap.set(subpost.subpost_id, subpost.subpost_name);
-          });
-        });
-      });
-    } catch (error) {
-      setError(error.message);
-    }
-  };
-  const fetchDepartments = async () => {
-    try {
-      const data = await getDepartment();
-      setDepartments(data);
-    } catch (error) {
-      setError(error.message);
-    }
-  };
-  const handleFilterChange = (e) => {
-    const { name, value } = e.target;
-
-    setFilters((prevFilters) => {
-      const updatedFilters = {
-        ...prevFilters,
-        [name]: value,
-      };
-
-      console.log(updatedFilters); // Debug log
-
-      if (name === "category_of_appointment") {
-        const selectedCategory = categories.find(
-          (category) => category.category_name === value
-        );
-        setPosts(selectedCategory ? selectedCategory.posts : []);
-        setSubposts([]);
-
-        setFormData((prevFormData) => ({
-          ...prevFormData,
-          category_of_appointment: value,
-          post_applied_for: "",
-          sub_post_applied_for: "",
-        }));
-      } else if (name === "post_applied_for") {
-        const selectedPost = posts.find((post) => post.post_name === value);
-
-        setSubposts(selectedPost ? selectedPost.subposts : []);
-
-        setFormData((prevFormData) => ({
-          ...prevFormData,
-          post_applied_for: value,
-          sub_post_applied_for: "",
-        }));
-      }
-
-      return updatedFilters;
-    });
-  };
-
-  const handleReset = () => {
-    setFilters({
-      category_of_appointment: "",
-      post_applied_for: "",
-      departments: "",
-    });
-  };
-  const filteredJobOpenings = jobOpenings.filter((job) => {
-    // Apply filters based on selected values
-    const categoryMatch =
-      filters.category_of_appointment === "" ||
-      job.category_of_appointment === filters.category_of_appointment;
-
-    const postMatch =
-      filters.post_applied_for === "" ||
-      job.post_applied_for === filters.post_applied_for;
-
-    const departmentMatch =
-      filters.departments === "" || job.departments === filters.departments;
-
-    return categoryMatch && postMatch && departmentMatch;
-  });
-  useEffect(() => {
-    fetchCategories();
-    fetchDepartments();
-  }, []);
-  // ------------------------------------------------------------------------------------------------
   if (loading)
     return (
       <div className="loading-process">
@@ -300,77 +188,6 @@ function CreateInterviewSchedules() {
       <Typography variant="h5" gutterBottom>
         Interview Schedule
       </Typography>
-      <Grid container spacing={2} sx={{ marginBottom: "20px" }}>
-        <Grid item xs={12} sm={3}>
-          <TextField
-            margin="dense"
-            label="Category"
-            name="category_of_appointment"
-            select
-            fullWidth
-            value={filters.category_of_appointment}
-            onChange={handleFilterChange}
-          >
-            {categories.map((category) => (
-              <MenuItem
-                key={category.category_id}
-                value={category.category_name}
-              >
-                {category.category_name}
-              </MenuItem>
-            ))}
-          </TextField>
-        </Grid>
-        <Grid item xs={12} sm={3}>
-          <TextField
-            margin="dense"
-            label="post"
-            name="post_applied_for"
-            select
-            fullWidth
-            value={filters.post_applied_for}
-            onChange={handleFilterChange}
-          >
-            {posts.map((post) => (
-              <MenuItem key={post.post_id} value={post.post_name}>
-                {post.post_name}
-              </MenuItem>
-            ))}
-          </TextField>
-        </Grid>
-        <Grid item xs={12} sm={3}>
-          <TextField
-            margin="dense"
-            label="Department"
-            name="departments"
-            select
-            fullWidth
-            value={filters.departments}
-            onChange={handleFilterChange}
-          >
-            {departments.map((department) => (
-              <MenuItem
-                key={department.department_id}
-                value={department.depart_name}
-              >
-                {department.depart_name}
-              </MenuItem>
-            ))}
-          </TextField>
-        </Grid>
-        <Grid
-          item
-          xs={12}
-          sm={3}
-          container
-          alignItems="center"
-          justifyContent="flex-start"
-        >
-          <IconButton color="error" onClick={handleReset}>
-            <LockResetRoundedIcon />
-          </IconButton>
-        </Grid>
-      </Grid>
       <TableContainer component={Paper}>
         <Table>
           <TableHead>
@@ -389,7 +206,7 @@ function CreateInterviewSchedules() {
             </TableRow>
           </TableHead>
           <TableBody>
-            {filteredJobOpenings
+            {jobOpenings
               .slice()
               .sort((a, b) => b.id - a.id)
               .map((job, index) => (

@@ -51,29 +51,6 @@ function LoginLogs() {
   const handleCompanyChange = (event) => {
     setSelectedCompany(event.target.value);
   };
-  const formatDate = (dateString) => {
-    const date = new Date(dateString);
-
-    // Subtract 5 hours and 30 minutes
-    date.setHours(date.getHours() - 5);
-    date.setMinutes(date.getMinutes() - 30);
-
-    // Extracting date parts
-    const month = String(date.getMonth() + 1).padStart(2, "0");
-    const day = String(date.getDate()).padStart(2, "0");
-    const year = date.getFullYear();
-
-    // Extracting time parts
-    let hours = date.getHours();
-    const minutes = String(date.getMinutes()).padStart(2, "0");
-    const ampm = hours >= 12 ? "PM" : "AM";
-
-    hours = hours % 12;
-    hours = hours ? hours : 12; // the hour '0' should be '12'
-    hours = String(hours).padStart(2, "0");
-
-    return `${month}/${day}/${year}, ${hours}:${minutes} ${ampm}`;
-  };
 
   if (loading) return <div>Loading...</div>;
   if (error) return <div>Error: {error}</div>;
@@ -109,8 +86,8 @@ function LoginLogs() {
               <TableRow>
                 <TableCell>ID</TableCell>
                 <TableCell>Company Name</TableCell>
-                <TableCell>Last Login (IST)</TableCell>
-                <TableCell>Last Logout (IST)</TableCell>
+                <TableCell>Last Login</TableCell>
+                <TableCell>Last Logout</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -118,10 +95,16 @@ function LoginLogs() {
                 <TableRow key={log.id}>
                   <TableCell>{index + 1}</TableCell>
                   <TableCell>{log.company_name}</TableCell>
-                  {/* <TableCell>{log.last_login}</TableCell>
-                  <TableCell>{log.last_logout}</TableCell> */}
-                  <TableCell>{formatDate(log.last_login)}</TableCell>
-                  <TableCell>{formatDate(log.last_logout)}</TableCell>
+                  <TableCell>
+                    {log.last_login
+                      ? new Date(log.last_login).toLocaleString()
+                      : "-"}
+                  </TableCell>
+                  <TableCell>
+                    {log.last_logout
+                      ? new Date(log.last_logout).toLocaleString()
+                      : "-"}
+                  </TableCell>
                 </TableRow>
               ))}
             </TableBody>

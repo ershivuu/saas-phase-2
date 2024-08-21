@@ -2,61 +2,50 @@ import React, { useEffect, useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { ApiDataProvider } from "../context/CandidateContext";
 
-const AdminAuthGaurd = ({ component }) => {
+const AdminAuthGuard = ({ component }) => {
   const [status, setStatus] = useState(false);
   const navigate = useNavigate();
   const [userData, setUserData] = useState(null);
 
   const checkToken = useCallback(() => {
-    let Token = sessionStorage.getItem("Token");
-    let admin = "";
-    if (Token && Token.length) {
-      Token = JSON.parse(Token);
-      const splitToken = Token.token.split(".");
-      const base64EncodedPayload = splitToken[1];
-      const decodedPayload = atob(base64EncodedPayload);
-      admin = JSON.parse(decodedPayload).admin_id
-        ? JSON.parse(decodedPayload).admin_id
-        : false;
-      // console.log("admin", admin, decodedPayload);
-      const loginData = {
-        roleName: JSON.parse(decodedPayload).roleName,
-        fullName: `${JSON.parse(decodedPayload).first_name} ${
-          JSON.parse(decodedPayload).last_name
-        }`,
-      };
-      setUserData(loginData);
+    const token = sessionStorage.getItem("Token");
+    if (token) {
+      try {
+        const parsedToken = JSON.parse(token);
+        const splitToken = parsedToken.token.split(".");
+        const base64EncodedPayload = splitToken[1];
+        const decodedPayload = atob(base64EncodedPayload);
+        const payload = JSON.parse(decodedPayload);
+
+        if (payload.admin_id) {
+          const loginData = {
+            roleName: payload.roleName,
+            fullName: `${payload.first_name} ${payload.last_name}`,
+          };
+          setUserData(loginData);
+          setStatus(true);
+          return true;
+        }
+      } catch (e) {
+        console.error("Failed to parse token", e);
+      }
     }
-    if (!Token) {
-      setStatus(false);
-      navigate(`/`);
-      sessionStorage.removeItem("Token");
-      return;
-    } else if (Token && !admin) {
-      setStatus(false);
-      navigate(`/`);
-      sessionStorage.removeItem("Token");
-      return;
-    } else {
-      setStatus(true);
-      return;
-    }
+
+    setStatus(false);
+    navigate(`/`);
+    sessionStorage.removeItem("Token");
+    return false;
   }, [navigate]);
 
   useEffect(() => {
-    const userData = checkToken();
-    if (userData) {
-      setStatus(true);
-    }
-  }, [component, checkToken]);
+    checkToken();
+  }, [checkToken]);
 
   return status ? (
-    <React.Fragment>
-      <ApiDataProvider userData={userData}>{component}</ApiDataProvider>
-    </React.Fragment>
+    <ApiDataProvider userData={userData}>{component}</ApiDataProvider>
   ) : (
     <React.Fragment></React.Fragment>
   );
 };
 
-export default AdminAuthGaurd;
+export default AdminAuthGuard;

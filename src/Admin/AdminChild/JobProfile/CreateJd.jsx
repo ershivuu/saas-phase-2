@@ -26,7 +26,6 @@ import {
 } from "../../Services/AdminServices"; // Ensure correct path
 import Notification from "../../../Notification/Notification";
 
-
 const modalStyle = {
   position: "absolute",
   top: "50%",
@@ -122,12 +121,11 @@ function CreateJd() {
     return isValid;
   };
 
-
   const handleFormSubmit = async (e) => {
     e.preventDefault();
     if (!validateForm()) return;
     try {
-const response = await updateJobProfile(editingJob.id, formValues);
+      const response = await updateJobProfile(editingJob.id, formValues);
       setJobOpenings((prevOpenings) =>
         prevOpenings.map((job) =>
           job.id === editingJob.id ? { ...job, ...formValues } : job
@@ -139,7 +137,6 @@ const response = await updateJobProfile(editingJob.id, formValues);
         message: response.message, // Assuming the API response has a 'message' field
         severity: "success",
       });
-
     } catch (err) {
       setError(err.message);
       setNotification({
@@ -211,7 +208,7 @@ const response = await updateJobProfile(editingJob.id, formValues);
               <TableCell>Post</TableCell>
               <TableCell>Qualification</TableCell>
               <TableCell>Desirables</TableCell>
-              <TableCell>Publish To Job Profile</TableCell>
+              <TableCell>Publish To JD</TableCell>
               <TableCell>Edit</TableCell>
             </TableRow>
           </TableHead>
@@ -250,7 +247,6 @@ const response = await updateJobProfile(editingJob.id, formValues);
         </Table>
       </TableContainer>
 
-    
       <Dialog
         open={dialogOpen}
         onClose={handleCloseDialog}
@@ -283,14 +279,10 @@ const response = await updateJobProfile(editingJob.id, formValues);
           </form>
         </DialogContent>
         <DialogActions>
-          <Button type="submit"  color="primary" onClick={handleFormSubmit}>
+          <Button type="submit" color="primary" onClick={handleFormSubmit}>
             Save
           </Button>
-          <Button
-           
-            color="primary"
-            onClick={handleCloseDialog}
-          >
+          <Button color="primary" onClick={handleCloseDialog}>
             Cancel
           </Button>
         </DialogActions>

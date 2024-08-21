@@ -5,6 +5,7 @@ import bluebag from "../../../assets/logos/superadmin/blue.png";
 import greenbag from "../../../assets/logos/superadmin/green.png";
 import redbag from "../../../assets/logos/superadmin/red.png";
 import yellowbag from "../../../assets/logos/superadmin/yellow.png";
+import user from "../../../assets/images/user.png";
 import DeleteIcon from "@mui/icons-material/Delete";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import IconButton from "@mui/material/IconButton";
@@ -353,62 +354,65 @@ function Management() {
         </div>
       </div>
       <div className="company-list" style={companyListStyle}>
-        {filteredCompanies.map((company) => (
-          <div className="company-details" key={company.id}>
-            <div className="all-details">
-              <div className="company-logo">
-                <img src={bluebag} alt="" />
+        {filteredCompanies
+          .slice()
+          .sort((a, b) => b.id - a.id)
+          .map((company) => (
+            <div className="company-details" key={company.id}>
+              <div className="all-details">
+                <div className="company-logo">
+                  <img src={user} alt="" />
+                </div>
+                <div className="company-other-details">
+                  <p>Name: {company.company_name}</p>
+                  <p>Subdomain: {company.subdomain}</p>
+                  <p>
+                    Duration: <span>{company.subscription_plan.duration}</span>
+                  </p>
+                  <p>
+                    Reg.Date: <span>{formatDate(company.reg_date)}</span>
+                  </p>
+                </div>
+                <div className="del-buttons">
+                  <IconButton
+                    color="error"
+                    aria-label="delete"
+                    onClick={() => handleDeleteClick(company.id)}
+                  >
+                    <DeleteIcon />
+                  </IconButton>
+                  <IconButton
+                    color="primary"
+                    aria-label="view"
+                    onClick={() => handleViewClick(company)}
+                  >
+                    <VisibilityIcon />
+                  </IconButton>
+                </div>
               </div>
-              <div className="company-other-details">
-                <p>Name: {company.company_name}</p>
-                <p>Subdomain: {company.subdomain}</p>
-                <p>
-                  Duration: <span>{company.subscription_plan.duration}</span>
-                </p>
-                <p>
-                  Reg.Date: <span>{formatDate(company.reg_date)}</span>
-                </p>
-              </div>
-              <div className="del-buttons">
-                <IconButton
-                  color="error"
-                  aria-label="delete"
-                  onClick={() => handleDeleteClick(company.id)}
-                >
-                  <DeleteIcon />
-                </IconButton>
-                <IconButton
-                  color="primary"
-                  aria-label="view"
-                  onClick={() => handleViewClick(company)}
-                >
-                  <VisibilityIcon />
-                </IconButton>
+              <div className="current-plan">
+                <div>
+                  {company.subscription_plan.name ? (
+                    <>
+                      <p>{company.subscription_plan.name}</p>
+                      <p>Plan Name</p>
+                      <div>
+                        <p>
+                          {timeRemaining[company.id] ||
+                            calculateTimeRemaining(company.end_date)}
+                        </p>
+                        <p>Time Remaining</p>
+                      </div>
+                    </>
+                  ) : (
+                    <>
+                      <p>No Plan</p>
+                    </>
+                  )}
+                </div>
               </div>
             </div>
-            <div className="current-plan">
-              <div>
-                {company.subscription_plan.name ? (
-                  <>
-                    <p>{company.subscription_plan.name}</p>
-                    <p>Plan Name</p>
-                    <div>
-                      <p>
-                        {timeRemaining[company.id] ||
-                          calculateTimeRemaining(company.end_date)}
-                      </p>
-                      <p>Time Remaining</p>
-                    </div>
-                  </>
-                ) : (
-                  <>
-                    <p>No Plan</p>
-                  </>
-                )}
-              </div>
-            </div>
-          </div>
-        ))}
+          ))}
       </div>
       <Dialog open={openDialog} onClose={handleDialogClose}>
         <DialogTitle>Add Company</DialogTitle>
@@ -469,16 +473,21 @@ function Management() {
                 ))}
               </Select>
             </FormControl>
-            <Button type="submit" variant="contained" color="primary">
-              Add Company
-            </Button>
+
+            <DialogActions>
+              <Button
+                onClick={handleDialogClose}
+                variant="outlined"
+                color="error"
+              >
+                Close
+              </Button>
+              <Button type="submit" variant="outlined" color="primary">
+                Add Company
+              </Button>
+            </DialogActions>
           </form>
         </DialogContent>
-        <DialogActions>
-          <Button onClick={handleDialogClose} color="primary">
-            Close
-          </Button>
-        </DialogActions>
       </Dialog>
 
       {/* Confirmation Dialog */}

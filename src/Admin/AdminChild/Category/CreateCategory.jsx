@@ -25,8 +25,6 @@ import {
 } from "@mui/material";
 import Notification from "../../../Notification/Notification";
 
-
-
 function CreateCategory() {
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);

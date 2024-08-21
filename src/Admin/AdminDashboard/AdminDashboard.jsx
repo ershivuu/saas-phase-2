@@ -21,7 +21,6 @@ function AdminDashboard() {
           margin: 0,
           height: "100%",
           width: "100%",
-          // background: "#f7f8f6",
         }}
       >
         <div

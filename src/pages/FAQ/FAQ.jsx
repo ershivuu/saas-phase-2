@@ -26,14 +26,6 @@ function FAQ() {
   const handleAccordionToggle = (eventKey) => {
     setActiveKey(eventKey === activeKey ? null : eventKey);
   };
-  // const sections = [
-  //   {
-  //     summary:
-  //       "Lorem ipsum, dolor sit amet consectetur adipisicing elit.Blanditiis, velit.",
-  //     detail:
-  //       " Lorem ipsum dolor sit amet consectetur adipisicing elit.Explicabo eligendi voluptatum consequuntur consequatur quia?Quaerat, debitis, ducimus suscipit ipsum at illum, expedita iurepariatur harum ipsam fugit. Fugit, soluta ipsum.",
-  //   }
-  // ];
 
   return (
     <>

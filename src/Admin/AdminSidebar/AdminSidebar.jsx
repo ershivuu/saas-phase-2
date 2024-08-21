@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
+import { logoutAdmin } from "../Services/AdminServices";
 import {
   Drawer,
   List,
@@ -18,28 +19,25 @@ import {
 import {
   Menu,
   Dashboard as DashboardIcon,
-  Work as WorkIcon,
-  CalendarMonth as CalendarMonthIcon,
-  WorkHistory as WorkHistoryIcon,
-  PeopleAlt as PeopleAltIcon,
-  SwitchAccount as SwitchAccountIcon,
-  FeaturedPlayList as FeaturedPlayListIcon,
-  CollectionsBookmark as CollectionsBookmarkIcon,
   ExpandLess,
   ExpandMore,
   Logout as LogoutIcon,
 } from "@mui/icons-material";
-import { getAdminProfile } from "../Services/AdminServices";
 import "./AdminSidebar.css";
+import WorkIcon from "@mui/icons-material/Work";
 import corusview from "../../assets/logos/corusview.png";
-
+import PeopleAltIcon from "@mui/icons-material/PeopleAlt";
+import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
+import SwitchAccountIcon from "@mui/icons-material/SwitchAccount";
+import WorkHistoryIcon from "@mui/icons-material/WorkHistory";
+import FeaturedPlayListIcon from "@mui/icons-material/FeaturedPlayList";
+import CollectionsBookmarkIcon from "@mui/icons-material/CollectionsBookmark";
 const AdminSidebar = ({ isOpen, onToggle }) => {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [openDropdown, setOpenDropdown] = useState("");
-  const [planStatus, setPlanStatus] = useState(true); // Default to true
-  const [loading, setLoading] = useState(true); // Loading state
-  const navigate = useNavigate();
+
+  const [imageUrl, setImageUrl] = useState("");
 
   useEffect(() => {
     if (!sidebarOpen) {
@@ -47,19 +45,7 @@ const AdminSidebar = ({ isOpen, onToggle }) => {
     }
   }, [sidebarOpen]);
 
-  useEffect(() => {
-    const fetchProfile = async () => {
-      try {
-        const profileData = await getAdminProfile();
-        setPlanStatus(profileData.subscription_plan.plan_status);
-        setLoading(false);
-      } catch (error) {
-        console.error("Failed to fetch profile", error);
-        setLoading(false);
-      }
-    };
-    fetchProfile();
-  }, []);
+  const navigate = useNavigate();
 
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
@@ -82,186 +68,192 @@ const AdminSidebar = ({ isOpen, onToggle }) => {
     setOpenDropdown(openDropdown === item ? "" : item);
   };
 
-  const handleLogout = () => {
-    sessionStorage.removeItem("Token");
-    sessionStorage.removeItem("isLoggedIn");
-    navigate("/");
+  // const handleLogout = () => {
+  //   sessionStorage.removeItem("Token");
+  //   sessionStorage.removeItem("isLoggedIn");
+  //   localStorage.removeItem("Token");
+  //   localStorage.removeItem("isLoggedIn");
+  //   navigate("/");
+  // };
+  const handleLogout = async () => {
+    try {
+      // Call the API to log out
+      await logoutAdmin();
+    } catch (error) {
+      // Optionally handle the error (e.g., show a notification)
+    } finally {
+      // Clear session and local storage
+      sessionStorage.removeItem("Token");
+      sessionStorage.removeItem("isLoggedIn");
+      localStorage.removeItem("Token");
+      localStorage.removeItem("isLoggedIn");
+      // Navigate to login or home page
+      navigate("/");
+    }
   };
-
   const drawer = (
     <div>
       <List sx={{ mt: 10 }}>
-        {loading ? (
-          <div>Loading...</div>
-        ) : !planStatus ? (
-          <ListItem
-            button
-            onClick={() => navigate("/admin-dashboard/upgrade-plan")}
-          >
-            <ListItemText primary="Upgrade Plan" />
-          </ListItem>
-        ) : (
-          [
-            {
-              text: "Dashboard",
-              icon: <DashboardIcon />,
-              path: "/admin-dashboard/admin-page",
-            },
-            {
-              text: "Current Opening",
-              icon: <WorkIcon />,
-              path: "/admin-dashboard/admin-current-opening",
-            },
-            {
-              text: "Interview Schedules",
-              icon: <CalendarMonthIcon />,
-              path: "/admin-dashboard/admin-interview-schedules",
-            },
-            {
-              text: "Job Description",
-              icon: <WorkHistoryIcon />,
-              path: "/admin-dashboard/admin-jd",
-            },
-            {
-              text: "Applied Candidates",
-              icon: <PeopleAltIcon />,
-              path: "/admin-dashboard/admin-applied-candidates",
-            },
-            {
-              text: "Visitors",
-              icon: <SwitchAccountIcon />,
-              path: "/admin-dashboard/admin-visitors",
-            },
+        {[
+          {
+            text: "Dashboard",
+            icon: <DashboardIcon />,
+            path: "/admin-dashboard/admin-page",
+          },
+          {
+            text: "Current Opening",
+            icon: <WorkIcon />,
+            path: "/admin-dashboard/admin-current-opening",
+          },
+          {
+            text: "Interview Schedules",
+            icon: <CalendarMonthIcon />,
+            path: "/admin-dashboard/admin-interview-schedules",
+          },
+          {
+            text: "Job Description",
+            icon: <WorkHistoryIcon />,
+            path: "/admin-dashboard/admin-jd",
+          },
+          {
+            text: "Applied Candidates",
+            icon: <PeopleAltIcon />,
+            path: "/admin-dashboard/admin-applied-candidates",
+          },
+          {
+            text: "Visitors",
+            icon: <SwitchAccountIcon />,
+            path: "/admin-dashboard/admin-visitors",
+          },
 
-            {
-              text: "Master List",
-              icon: <FeaturedPlayListIcon />,
-              subItems: [
-                {
-                  text: "Category",
-                  path: "/admin-dashboard/admin-category",
-                },
-                {
-                  text: "Post",
-                  path: "/admin-dashboard/admin-posts",
-                },
-                {
-                  text: "Sub Post",
-                  path: "/admin-dashboard/admin-subpost",
-                },
-                {
-                  text: "Department",
-                  path: "/admin-dashboard/admin-department",
-                },
-                {
-                  text: "Subjects",
-                  path: "/admin-dashboard/admin-subject",
-                },
-                {
-                  text: "Exam Type",
-                  path: "/admin-dashboard/admin-examtype",
-                },
-                {
-                  text: "Degree",
-                  path: "/admin-dashboard/admin-degree",
-                },
-              ],
-            },
-            {
-              text: "White Label",
-              icon: <CollectionsBookmarkIcon />,
-              subItems: [
-                {
-                  text: "Header",
-                  path: "/admin-dashboard/edit-header",
-                },
-                {
-                  text: "Footer",
-                  path: "/admin-dashboard/edit-footer",
-                },
-                {
-                  text: "Contact",
-                  path: "/admin-dashboard/edit-contact",
-                },
-                {
-                  text: "Interview ",
-                  path: "/admin-dashboard/edit-interviews",
-                },
-                {
-                  text: "FAQ",
-                  path: "/admin-dashboard/edit-faq",
-                },
-                {
-                  text: "Home",
-                  path: "/admin-dashboard/edit-home",
-                },
-                {
-                  text: "Home S1",
-                  path: "/admin-dashboard/edit-section-1",
-                },
-                {
-                  text: "Home S2",
-                  path: "/admin-dashboard/edit-section-2",
-                },
-                {
-                  text: "Home S3",
-                  path: "/admin-dashboard/edit-section-3",
-                },
-                {
-                  text: "Home S4",
-                  path: "/admin-dashboard/edit-section-4",
-                },
-                {
-                  text: "Home S5",
-                  path: "/admin-dashboard/edit-section-5",
-                },
-              ],
-            },
-          ].map((item, index) => (
-            <div key={item.text}>
-              <ListItem
-                button
-                onClick={() => item.subItems && handleDropdownToggle(item.text)}
-                component={NavLink}
-                to={item.path}
-                exact
+          {
+            text: "Master List",
+            icon: <FeaturedPlayListIcon />,
+            subItems: [
+              {
+                text: "Category",
+                path: "/admin-dashboard/admin-category",
+              },
+              {
+                text: "Post",
+                path: "/admin-dashboard/admin-posts",
+              },
+              {
+                text: "Sub Post",
+                path: "/admin-dashboard/admin-subpost",
+              },
+              {
+                text: "Department",
+                path: "/admin-dashboard/admin-department",
+              },
+              {
+                text: "Subjects",
+                path: "/admin-dashboard/admin-subject",
+              },
+              {
+                text: "Exam Type",
+                path: "/admin-dashboard/admin-examtype",
+              },
+              {
+                text: "Degree",
+                path: "/admin-dashboard/admin-degree",
+              },
+            ],
+          },
+          {
+            text: "White Label",
+            icon: <CollectionsBookmarkIcon />,
+            subItems: [
+              {
+                text: "Header",
+                path: "/admin-dashboard/edit-header",
+              },
+              {
+                text: "Footer",
+                path: "/admin-dashboard/edit-footer",
+              },
+              {
+                text: "Contact",
+                path: "/admin-dashboard/edit-contact",
+              },
+              {
+                text: "Interview ",
+                path: "/admin-dashboard/edit-interviews",
+              },
+              {
+                text: "FAQ",
+                path: "/admin-dashboard/edit-faq",
+              },
+              {
+                text: "Home",
+                path: "/admin-dashboard/edit-home",
+              },
+              {
+                text: "Home S1",
+                path: "/admin-dashboard/edit-section-1",
+              },
+              {
+                text: "Home S2",
+                path: "/admin-dashboard/edit-section-2",
+              },
+              {
+                text: "Home S3",
+                path: "/admin-dashboard/edit-section-3",
+              },
+              {
+                text: "Home S4",
+                path: "/admin-dashboard/edit-section-4",
+              },
+              {
+                text: "Home S5",
+                path: "/admin-dashboard/edit-section-5",
+              },
+            ],
+          },
+        ].map((item, index) => (
+          <div key={item.text}>
+            <ListItem
+              button
+              onClick={() => item.subItems && handleDropdownToggle(item.text)}
+              component={NavLink}
+              to={item.path}
+              exact
+            >
+              <ListItemIcon onClick={handleSidebarOpen}>
+                {item.icon}
+              </ListItemIcon>
+              {sidebarOpen && <ListItemText primary={item.text} />}
+              {item.subItems ? (
+                openDropdown === item.text ? (
+                  <ExpandLess />
+                ) : (
+                  <ExpandMore />
+                )
+              ) : null}
+            </ListItem>
+            {item.subItems && (
+              <Collapse
+                in={openDropdown === item.text}
+                timeout="auto"
+                unmountOnExit
               >
-                <ListItemIcon onClick={handleSidebarOpen}>
-                  {item.icon}
-                </ListItemIcon>
-                {sidebarOpen && <ListItemText primary={item.text} />}
-                {item.subItems ? (
-                  openDropdown === item.text ? (
-                    <ExpandLess />
-                  ) : (
-                    <ExpandMore />
-                  )
-                ) : null}
-              </ListItem>
-              {item.subItems && (
-                <Collapse
-                  in={openDropdown === item.text}
-                  timeout="auto"
-                  unmountOnExit
-                >
-                  <List component="div" disablePadding>
-                    {item.subItems.map((subItem) => (
-                      <ListItem
-                        button
-                        key={subItem.text}
-                        component={NavLink}
-                        to={subItem.path}
-                        sx={{ pl: 4 }}
-                      >
-                        <ListItemText primary={subItem.text} />
-                      </ListItem>
-                    ))}
-                  </List>
-                </Collapse>
-              )}
-            </div>
-          ))
-        )}
+                <List component="div" disablePadding>
+                  {item.subItems.map((subItem) => (
+                    <ListItem
+                      button
+                      key={subItem.text}
+                      component={NavLink}
+                      to={subItem.path}
+                      sx={{ pl: 4 }}
+                    >
+                      <ListItemText primary={subItem.text} />
+                    </ListItem>
+                  ))}
+                </List>
+              </Collapse>
+            )}
+          </div>
+        ))}
       </List>
       <Divider />
     </div>
@@ -278,6 +270,7 @@ const AdminSidebar = ({ isOpen, onToggle }) => {
           color: "black",
         }}
       >
+        {isOpen ? "" : ""}
         <Toolbar>
           <IconButton
             color="inherit"

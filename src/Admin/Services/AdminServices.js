@@ -1030,3 +1030,67 @@ export const getFilteredJobOpenings = async (filters, page, limit) => {
     throw new Error(error.message);
   }
 };
+
+export const HeaderData = async () => {
+  const token = getAdminToken();
+  if (!token) {
+    throw new Error("No authentication token found.");
+  }
+
+  try {
+    const response = await axios.get(`${NEW_ADMIN_BASE_URL}/header/getHeader`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+    });
+    return response.data;
+  } catch (error) {
+    console.error(
+      "Error fetching header data:",
+      error.response ? error.response.data : error.message
+    );
+    throw error;
+  }
+};
+export const updateHeader = async (data) => {
+  const token = getAdminToken();
+  if (!token) {
+    throw new Error("No authentication token found.");
+  }
+  try {
+    const response = await axios.put(
+      `${NEW_ADMIN_BASE_URL}/header/updateHeader`,
+      data,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Error updating header:", error);
+    throw error;
+  }
+};
+export const logoutAdmin = async () => {
+  const token = getAdminToken();
+  if (!token) {
+    throw new Error("No authentication token found.");
+  }
+  try {
+    await axios.post(
+      `${NEW_ADMIN_BASE_URL}/admin/logout`,
+      {},
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+  } catch (error) {
+    console.error("Error logging out:", error);
+    throw error;
+  }
+};

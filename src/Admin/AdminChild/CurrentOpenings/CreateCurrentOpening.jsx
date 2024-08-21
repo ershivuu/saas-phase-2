@@ -20,11 +20,10 @@ import {
   MenuItem,
   IconButton,
   Grid,
-  Pagination,
-  Stack,
 } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
+import LockResetRoundedIcon from "@mui/icons-material/LockResetRounded";
 import {
   getJobOpenings,
   createJobOpening,
@@ -442,6 +441,13 @@ function CreateCurrentOpening() {
       return updatedFilters;
     });
   };
+  const handleReset = () => {
+    setFilters({
+      category_of_appointment: "",
+      post_applied_for: "",
+      departments: "",
+    });
+  };
   return (
     <>
       <div style={{ padding: "20px" }}>
@@ -510,6 +516,18 @@ function CreateCurrentOpening() {
                 </MenuItem>
               ))}
             </TextField>
+          </Grid>
+          <Grid
+            item
+            xs={12}
+            sm={3}
+            container
+            alignItems="center"
+            justifyContent="flex-start"
+          >
+            <IconButton color="error" onClick={handleReset}>
+              <LockResetRoundedIcon />
+            </IconButton>
           </Grid>
         </Grid>
         {loading ? (
