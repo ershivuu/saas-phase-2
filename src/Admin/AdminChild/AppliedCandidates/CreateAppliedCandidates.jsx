@@ -27,7 +27,7 @@ import {
   getCombineCategories,
 } from "../../Services/AdminServices";
 import Notification from "../../../Notification/Notification";
-import * as XLSX from "xlsx";
+
 function CreateAppliedCandidates() {
   const [open, setOpen] = useState(false);
   const [resumeDialogOpen, setResumeDialogOpen] = useState(false);

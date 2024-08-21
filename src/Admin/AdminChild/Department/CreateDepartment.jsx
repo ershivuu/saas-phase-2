@@ -86,7 +86,7 @@ function CreateDepartment() {
   const validateFields = () => {
     let isValid = true;
     if (departmentName.trim() === "") {
-      setDepartmentNameError("Department Name is required");
+      setDepartmentNameError("This feild is required");
       isValid = false;
     } else {
       setDepartmentNameError("");

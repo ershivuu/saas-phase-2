@@ -12,6 +12,7 @@ import IconButton from "@mui/material/IconButton";
 import ViewListIcon from "@mui/icons-material/ViewList";
 import ViewModuleIcon from "@mui/icons-material/ViewModule";
 import SearchIcon from "@mui/icons-material/Search";
+import Notification from "../../../Notification/Notification";
 import {
   Typography,
   InputBase,
@@ -25,6 +26,7 @@ import {
   InputLabel,
   Select,
   MenuItem,
+  FormHelperText,
 } from "@mui/material";
 import {
   getCompanyData,
@@ -41,6 +43,11 @@ function Management() {
   const [filter, setFilter] = useState("all");
   const [timeRemaining, setTimeRemaining] = useState({});
   const [openDialog, setOpenDialog] = useState(false);
+  const [notification, setNotification] = useState({
+    open: false,
+    message: "",
+    severity: "success",
+  });
   const [formValues, setFormValues] = useState({
     company_name: "",
     email: "",
@@ -51,6 +58,7 @@ function Management() {
   });
   const [plans, setPlans] = useState([]); // State for subscription plans
   const [selectedCompany, setSelectedCompany] = useState(null);
+  const [errors, setErrors] = useState({});
 
   // New state for confirmation dialog
   const [confirmDialogOpen, setConfirmDialogOpen] = useState(false);
@@ -179,12 +187,62 @@ function Management() {
       ...formValues,
       [name]: value,
     });
+
+
+     // Clear errors for the field being updated
+     setErrors({
+      ...errors,
+      [name]: "",
+    });
   };
+
+  const validateForm = () => {
+    const newErrors = {};
+    
+    // Validate company name
+    if (!formValues.company_name) newErrors.company_name = "Company name is required";
+    
+    // Validate email
+    if (!formValues.email) {
+        newErrors.email = "Email is required";
+    } else if (!/\S+@\S+\.\S+/.test(formValues.email)) {
+        newErrors.email = "Email is invalid";
+    }
+    
+    // Validate password
+    if (!formValues.password) {
+        newErrors.password = "Password is required";
+    } else if (formValues.password.length < 6) {
+        newErrors.password = "Password must be at least 6 characters long";
+    }
+    
+    // Validate contact
+    if (!formValues.contact) {
+        newErrors.contact = "Contact is required";
+    } else if (!/^\d{10}$/.test(formValues.contact)) {
+        newErrors.contact = "Contact must be a 10-digit number";
+    }
+    
+    // Validate subdomain
+    if (!formValues.subdomain) newErrors.subdomain = "Subdomain is required";
+    
+    // Validate subscription plan
+    if (!formValues.subscription_plan) newErrors.subscription_plan = "Subscription plan is required";
+  
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0; // Return true if there are no errors
+};
+
 
   const handleFormSubmit = async (e) => {
     e.preventDefault();
+
+    if (!validateForm()) {
+      return; // If validation fails, do not submit the form
+    }
+
     try {
-      await createAdmin(formValues);
+    const response =  await createAdmin(formValues);
       setFormValues({
         company_name: "",
         email: "",
@@ -194,12 +252,22 @@ function Management() {
         subdomain: "",
       });
       handleDialogClose();
+      setNotification({
+        open: true,
+        message: response.message || "Admin Created Successfully",
+        severity: "success",
+      });
       // Optionally refresh the data
       const data = await getCompanyData();
       setCompanies(data.admins);
       setFilteredCompanies(data.admins);
     } catch (error) {
       console.error("Error creating admin:", error);
+      setNotification({
+        open: true,
+        message: error.message,
+        severity: "error",
+      });
     }
   };
 
@@ -260,14 +328,25 @@ function Management() {
   // Confirm deletion
   const handleConfirmDelete = async () => {
     try {
-      await deleteCompany(companyToDelete);
+    const response =  await deleteCompany(companyToDelete);
       // Refresh the data
       const data = await getCompanyData();
       setCompanies(data.admins);
       setFilteredCompanies(data.admins);
       setConfirmDialogOpen(false);
+      setNotification({
+        open: true,
+        message: response.message || "Admin Deleted Successfully",
+        severity: "success",
+      });
     } catch (error) {
       console.error("Error deleting company:", error);
+      setNotification({
+        open: true,
+        message: error.message,
+        severity: "error",
+      });
+
     }
   };
 
@@ -414,6 +493,8 @@ function Management() {
             </div>
           ))}
       </div>
+
+       {/* Add company  */}
       <Dialog open={openDialog} onClose={handleDialogClose}>
         <DialogTitle>Add Company</DialogTitle>
         <DialogContent>
@@ -425,6 +506,8 @@ function Management() {
               onChange={handleInputChange}
               fullWidth
               margin="normal"
+              error={!!errors.company_name}
+              helperText={errors.company_name}
             />
             <TextField
               label="Email"
@@ -433,6 +516,8 @@ function Management() {
               onChange={handleInputChange}
               fullWidth
               margin="normal"
+              error={!!errors.email}
+              helperText={errors.email}
             />
             <TextField
               label="Password"
@@ -442,6 +527,8 @@ function Management() {
               onChange={handleInputChange}
               fullWidth
               margin="normal"
+              error={!!errors.password}
+              helperText={errors.password}
             />
             <TextField
               label="Contact"
@@ -450,6 +537,8 @@ function Management() {
               onChange={handleInputChange}
               fullWidth
               margin="normal"
+              error={!!errors.contact}
+              helperText={errors.contact}
             />
             <TextField
               label="Subdomain"
@@ -458,6 +547,8 @@ function Management() {
               onChange={handleInputChange}
               fullWidth
               margin="normal"
+              error={!!errors.subdomain}
+              helperText={errors.subdomain}
             />
             <FormControl fullWidth margin="normal">
               <InputLabel>Subscription Plan</InputLabel>
@@ -472,6 +563,7 @@ function Management() {
                   </MenuItem>
                 ))}
               </Select>
+              <FormHelperText>{errors.subscription_plan}</FormHelperText>
             </FormControl>
 
             <DialogActions>
@@ -508,6 +600,12 @@ function Management() {
           </Button>
         </DialogActions>
       </Dialog>
+      <Notification
+        open={notification.open}
+        handleClose={() => setNotification({ ...notification, open: false })}
+        alertMessage={notification.message}
+        alertSeverity={notification.severity}
+      />
     </>
   );
 }

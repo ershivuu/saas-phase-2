@@ -272,12 +272,6 @@ function CreateDegree() {
                       onClick={() => handleEditDegreeClick(degree)}
                     >
                       Edit
-<<<<<<< HEAD
-                    </Button>
-                  </TableCell>
-                  <TableCell>
-                    <Button
-=======
                     </Button> */}
                     <IconButton
                       color="primary"
@@ -288,7 +282,6 @@ function CreateDegree() {
                   </TableCell>
                   <TableCell>
                     {/* <Button
->>>>>>> 152449f2627f04294a77c9995d5e063a39e5efc7
                       variant="outlined"
                       color="error"
                       onClick={() => handleDeleteDegreeClick(degree)}
@@ -330,16 +323,21 @@ function CreateDegree() {
             </Select>
             {errors.selectedExamType && (
               <Typography color="error" variant="body2">
-                Exam type is required
+                This feild is required
               </Typography>
             )}
           </FormControl>
           <TextField
             label="Degree Name"
             value={degreeName}
-            onChange={(e) => setDegreeName(e.target.value)}
+            onChange={(e) => {
+              setDegreeName(e.target.value);
+              setErrors({ ...errors, degreeName: false });
+            }}
             fullWidth
             margin="normal"
+            error={errors.degreeName}
+            helperText={errors.degreeName ? "This field is required" : ""}
           />
         </DialogContent>
         <DialogActions>
@@ -378,16 +376,22 @@ function CreateDegree() {
             </Select>
             {errors.selectedExamType && (
               <Typography color="error" variant="body2">
-                Exam type is required
+              This feild is required
               </Typography>
             )}
           </FormControl>
           <TextField
             label="Degree Name"
             value={degreeName}
-            onChange={(e) => setDegreeName(e.target.value)}
+   
+            onChange={(e) => {
+              setDegreeName(e.target.value);
+              setErrors({ ...errors, degreeName: false });
+            }}
             fullWidth
             margin="normal"
+            error={errors.degreeName}
+            helperText={errors.degreeName ? "This field is required" : ""}
           />
         </DialogContent>
         <DialogActions>

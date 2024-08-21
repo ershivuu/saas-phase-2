@@ -15,6 +15,7 @@ import {
   getExpiredCompany,
   submitSubscriptionPlan,
 } from "../../SuperAdminService"; // Import API functions
+import Notification from "../../../Notification/Notification";
 
 const OfflinePayment = () => {
   const [selectedCompany, setSelectedCompany] = useState("");
@@ -27,6 +28,12 @@ const OfflinePayment = () => {
   const [companyList, setCompanyList] = useState([]);
   const [loadingCompanies, setLoadingCompanies] = useState(true);
   const [errorCompanies, setErrorCompanies] = useState("");
+
+  const [notification, setNotification] = useState({
+    open: false,
+    message: "",
+    severity: "success",
+  });
 
   useEffect(() => {
     const fetchPlans = async () => {
@@ -70,9 +77,19 @@ const OfflinePayment = () => {
       const response = await submitSubscriptionPlan(adminId, selectedPlan);
       console.log("Response from API:", response);
       // Handle success (e.g., show a success message)
+      setNotification({
+        open: true,
+        message: response.message || "SubscriptionPlan submitted successfully",
+        severity: "success",
+      });
     } catch (error) {
       console.error("Error submitting form:", error.message);
       // Handle error (e.g., show an error message)
+      setNotification({
+        open: true,
+        message: error.message,
+        severity: "error",
+      });
     }
   };
 
@@ -156,7 +173,14 @@ const OfflinePayment = () => {
           </div>
         </form>
       </Container>
+      <Notification
+        open={notification.open}
+        handleClose={() => setNotification({ ...notification, open: false })}
+        alertMessage={notification.message}
+        alertSeverity={notification.severity}
+      />
     </div>
+    
   );
 };
 
