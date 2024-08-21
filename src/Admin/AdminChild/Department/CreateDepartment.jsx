@@ -15,6 +15,7 @@ import {
   DialogContent,
   DialogTitle,
   TextField,
+  IconButton,
 } from "@mui/material";
 import {
   getDepartment,
@@ -23,6 +24,8 @@ import {
   deleteDepartment, // Import delete function
 } from "../../Services/AdminServices"; // Adjust the path as needed
 import Notification from "../../../Notification/Notification";
+import EditIcon from "@mui/icons-material/Edit";
+import DeleteIcon from "@mui/icons-material/Delete";
 
 function CreateDepartment() {
   const [departments, setDepartments] = useState([]);
@@ -32,7 +35,7 @@ function CreateDepartment() {
   const [editDialogOpen, setEditDialogOpen] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [departmentName, setDepartmentName] = useState("");
-  const [departmentNameError, setDepartmentNameError] = useState(""); 
+  const [departmentNameError, setDepartmentNameError] = useState("");
   const [notification, setNotification] = useState({
     open: false,
     message: "",
@@ -94,7 +97,7 @@ function CreateDepartment() {
   const handleAddSubmit = async () => {
     if (!validateFields()) return;
     try {
-     const response = await createDepartment(departmentName);
+      const response = await createDepartment(departmentName);
       const data = await getDepartment();
       setDepartments(data);
       handleCloseDialog();
@@ -117,7 +120,10 @@ function CreateDepartment() {
     if (!validateFields()) return;
     try {
       if (currentDepartmentId !== null) {
-      const response =  await updateDepartment(currentDepartmentId, departmentName);
+        const response = await updateDepartment(
+          currentDepartmentId,
+          departmentName
+        );
         const data = await getDepartment();
         setDepartments(data);
         handleCloseDialog();
@@ -140,7 +146,7 @@ function CreateDepartment() {
   const handleDeleteSubmit = async () => {
     try {
       if (currentDepartmentId !== null) {
-       const response = await deleteDepartment(currentDepartmentId);
+        const response = await deleteDepartment(currentDepartmentId);
         const data = await getDepartment();
         setDepartments(data);
         handleCloseDialog();
@@ -225,21 +231,33 @@ function CreateDepartment() {
                   <TableCell>{index + 1}</TableCell>
                   <TableCell>{department.depart_name}</TableCell>
                   <TableCell>
-                    <Button
+                    {/* <Button
                       variant="outlined"
                       onClick={() => handleEditClick(department)}
                     >
                       Edit
-                    </Button>
+                    </Button> */}
+                    <IconButton
+                      color="primary"
+                      onClick={() => handleEditClick(department)}
+                    >
+                      <EditIcon />
+                    </IconButton>
                   </TableCell>
                   <TableCell>
-                    <Button
+                    {/* <Button
                       variant="outlined"
                       color="error"
                       onClick={() => handleDeleteClick(department.id)}
                     >
                       Delete
-                    </Button>
+                    </Button> */}
+                    <IconButton
+                      color="error"
+                      onClick={() => handleDeleteClick(department.id)}
+                    >
+                      <DeleteIcon />
+                    </IconButton>
                   </TableCell>
                 </TableRow>
               ))}

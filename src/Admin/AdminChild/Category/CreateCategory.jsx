@@ -22,8 +22,11 @@ import {
   DialogContent,
   DialogTitle,
   TextField,
+  IconButton
 } from "@mui/material";
 import Notification from "../../../Notification/Notification";
+import EditIcon from "@mui/icons-material/Edit";
+import DeleteIcon from "@mui/icons-material/Delete";
 
 
 
@@ -225,21 +228,33 @@ function CreateCategory() {
                   <TableCell>{index + 1}</TableCell>
                   <TableCell>{category.category_name}</TableCell>
                   <TableCell>
-                    <Button
+                    {/* <Button
                       variant="outlined"
                       onClick={() => handleOpenEditDialog(category)}
                     >
                       Edit
-                    </Button>
+                    </Button> */}
+                    <IconButton
+                            color="primary"
+                            onClick={() => handleOpenEditDialog(category)}
+                          >
+                            <EditIcon />
+                          </IconButton>
                   </TableCell>
                   <TableCell>
-                    <Button
+                    {/* <Button
                       variant="outlined"
                       color="error"
                       onClick={() => handleOpenDeleteDialog(category.id)}
                     >
                       Delete
-                    </Button>
+                    </Button> */}
+                    <IconButton
+                            color="error"
+                            onClick={() => handleOpenDeleteDialog(category.id)}
+                          >
+                            <DeleteIcon />
+                          </IconButton>
                   </TableCell>
                   {/* <TableCell>
                   {new Date(category.created_at).toLocaleString()}

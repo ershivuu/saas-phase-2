@@ -7,183 +7,426 @@ import {
   TableHead,
   TableRow,
   Paper,
+  CircularProgress,
   Typography,
   Button,
   Dialog,
   DialogActions,
   DialogContent,
   DialogTitle,
+  TextField,
+  MenuItem,
+  Select,
+  InputLabel,
+  FormControl,
   IconButton,
-  CircularProgress, // Import CircularProgress
 } from "@mui/material";
-import VisibilityIcon from "@mui/icons-material/Visibility";
+import {
+  getDegree,
+  getExamType,
+  createDegree,
+  updateDegree,
+  deleteDegree,
+} from "../../Services/AdminServices"; // Adjust the path as needed
+import Notification from "../../../Notification/Notification";
+import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
-import { getAllVisitors, deleteVisitor } from "../../Services/AdminServices";
 
-function CreateVisitors() {
-  const [dialogOpen, setDialogOpen] = useState(false);
+function CreateDegree() {
+  const [degrees, setDegrees] = useState([]);
+  const [examTypes, setExamTypes] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [addDialogOpen, setAddDialogOpen] = useState(false);
+  const [editDialogOpen, setEditDialogOpen] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
-  const [selectedMessage, setSelectedMessage] = useState("");
-  const [selectedName, setSelectedName] = useState("");
-  const [selectedId, setSelectedId] = useState(null);
-  const [visitors, setVisitors] = useState([]);
-  const [loading, setLoading] = useState(true); // Add loading state
+  const [degreeName, setDegreeName] = useState("");
+  const [selectedExamType, setSelectedExamType] = useState("");
+  const [dialogLoading, setDialogLoading] = useState(false);
+  const [degreeToEdit, setDegreeToEdit] = useState(null);
+  const [degreeToDelete, setDegreeToDelete] = useState(null);
+  const [notification, setNotification] = useState({
+    open: false,
+    message: "",
+    severity: "success",
+  });
+  const [errors, setErrors] = useState({
+    degreeName: false,
+    selectedExamType: false,
+  });
 
   useEffect(() => {
-    const getVisitors = async () => {
+    const fetchData = async () => {
       try {
-        const data = await getAllVisitors();
-        setVisitors(data);
+        const degreesData = await getDegree();
+        setDegrees(degreesData);
+        const examTypesData = await getExamType();
+        setExamTypes(examTypesData);
       } catch (error) {
-        console.error("Failed to fetch visitors", error);
+        setError(error.message);
       } finally {
-        setLoading(false); // Set loading to false after data is fetched
+        setLoading(false);
       }
     };
-    getVisitors();
+
+    fetchData();
   }, []);
 
-  const handleClickOpen = (message, name) => {
-    setSelectedMessage(message);
-    setSelectedName(name);
-    setDialogOpen(true);
+  const handleAddDegreeClick = () => {
+    setDegreeName("");
+    setSelectedExamType("");
+    setErrors({ degreeName: false, selectedExamType: false });
+    setAddDialogOpen(true);
   };
 
-  const handleClose = () => {
-    setDialogOpen(false);
-    setSelectedMessage("");
-    setSelectedName("");
+  const handleEditDegreeClick = (degree) => {
+    setDegreeName(degree.degree_name);
+    setSelectedExamType(degree.exam_type_id);
+    setDegreeToEdit(degree);
+    setErrors({ degreeName: false, selectedExamType: false });
+    setEditDialogOpen(true);
   };
 
-  const handleDeleteClick = (id) => {
-    setSelectedId(id);
+  const handleDeleteDegreeClick = (degree) => {
+    setDegreeToDelete(degree);
     setDeleteDialogOpen(true);
+  };
+
+  const handleCloseAddDialog = () => {
+    setAddDialogOpen(false);
+    setDegreeName("");
+    setSelectedExamType("");
+  };
+
+  const handleCloseEditDialog = () => {
+    setEditDialogOpen(false);
+    setDegreeName("");
+    setSelectedExamType("");
+    setDegreeToEdit(null);
   };
 
   const handleCloseDeleteDialog = () => {
     setDeleteDialogOpen(false);
-    setSelectedId(null);
+    setDegreeToDelete(null);
   };
 
-  const handleDelete = async () => {
+  const validateFields = () => {
+    const newErrors = {
+      degreeName: !degreeName.trim(),
+      selectedExamType: !selectedExamType,
+    };
+    setErrors(newErrors);
+    return !Object.values(newErrors).some((error) => error);
+  };
+
+  const handleAddDegreeSubmit = async () => {
+    if (!validateFields()) return;
+    setDialogLoading(true);
     try {
-      await deleteVisitor(selectedId); // Call the delete function
-      setVisitors((prevVisitors) =>
-        prevVisitors.filter((visitor) => visitor.id !== selectedId)
-      );
-      handleCloseDeleteDialog();
+      const response = await createDegree(degreeName, selectedExamType);
+      const data = await getDegree(); // Refresh the list of degrees
+      setDegrees(data);
+      handleCloseAddDialog();
+      setNotification({
+        open: true,
+        message: response.message || "Added Successfully",
+        severity: "success",
+      });
     } catch (error) {
-      console.error("Failed to delete visitor", error);
+      setError(error.message);
+      setNotification({
+        open: true,
+        message: error.message,
+        severity: "error",
+      });
+    } finally {
+      setDialogLoading(false);
     }
   };
 
-  if (loading) {
+  const handleEditDegreeSubmit = async () => {
+    if (!validateFields()) return;
+    setDialogLoading(true);
+    try {
+      if (degreeToEdit) {
+        const response = await updateDegree(
+          degreeToEdit.id,
+          degreeName,
+          selectedExamType
+        );
+        const data = await getDegree(); // Refresh the list of degrees
+        setDegrees(data);
+        handleCloseEditDialog();
+        setNotification({
+          open: true,
+          message: response.message || "Edited Successfully",
+          severity: "success",
+        });
+      }
+    } catch (error) {
+      setError(error.message);
+      setNotification({
+        open: true,
+        message: error.message,
+        severity: "error",
+      });
+    } finally {
+      setDialogLoading(false);
+    }
+  };
+
+  const handleDeleteDegreeSubmit = async () => {
+    setDialogLoading(true);
+    try {
+      if (degreeToDelete) {
+        const response = await deleteDegree(degreeToDelete.id);
+        const data = await getDegree(); // Refresh the list of degrees
+        setDegrees(data);
+        handleCloseDeleteDialog();
+        setNotification({
+          open: true,
+          message: response.message || "Deleted Successfully",
+          severity: "success",
+        });
+      }
+    } catch (error) {
+      setError(error.message);
+      setNotification({
+        open: true,
+        message: error.message,
+        severity: "error",
+      });
+    } finally {
+      setDialogLoading(false);
+    }
+  };
+
+  if (loading)
     return (
       <div className="loading-process">
         <CircularProgress />
       </div>
     );
-  }
 
-  return (
-    <>
+  if (error)
+    return (
       <div style={{ padding: "20px" }}>
-        <Typography variant="h5" gutterBottom>
-          Visitors
-        </Typography>
-
         <TableContainer component={Paper}>
           <Table>
             <TableHead>
               <TableRow>
-                <TableCell>Sr.No</TableCell>
-                <TableCell>Name</TableCell>
-                <TableCell>Email</TableCell>
-                <TableCell>Phone Number</TableCell>
-                <TableCell>Message</TableCell>
-                <TableCell>View</TableCell>
+                <TableCell>ID</TableCell>
+                <TableCell>Degree Name</TableCell>
+                <TableCell>Edit</TableCell>
                 <TableCell>Delete</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
-              {visitors.length === 0 && (
-                <TableRow>
-                  <TableCell colSpan={7}>No visitors available...</TableCell>
-                </TableRow>
-              )}
-              {visitors
-                .slice()
-                .sort((a, b) => b.id - a.id)
-                .map((visitor, index) => (
-                  <TableRow key={visitor.id}>
-                    <TableCell>{index + 1}</TableCell>
-                    <TableCell>{visitor.name}</TableCell>
-                    <TableCell>{visitor.email}</TableCell>
-                    <TableCell>{visitor.phone}</TableCell>
-                    <TableCell>
-                      {visitor.message.length > 20 ? (
-                        <>{visitor.message.substring(0, 20)}...</>
-                      ) : (
-                        visitor.message
-                      )}
-                    </TableCell>
-                    <TableCell>
-                      {visitor.message.length > 20 && (
-                        <IconButton
-                          onClick={() =>
-                            handleClickOpen(visitor.message, visitor.name)
-                          }
-                          color="primary"
-                        >
-                          <VisibilityIcon />
-                        </IconButton>
-                      )}
-                    </TableCell>
-                    <TableCell>
-                      <IconButton
-                        onClick={() => handleDeleteClick(visitor.id)}
-                        color="error"
-                      >
-                        <DeleteIcon />
-                      </IconButton>
-                    </TableCell>
-                  </TableRow>
-                ))}
+              <Typography color="error" sx={{ padding: "10px" }}>
+                Error: {error}
+              </Typography>
             </TableBody>
           </Table>
         </TableContainer>
-
-        {/* Full Message Dialog */}
-        <Dialog open={dialogOpen} onClose={handleClose}>
-          <DialogTitle>{`Message from ${selectedName}`}</DialogTitle>
-          <DialogContent>
-            <Typography variant="body1">{selectedMessage}</Typography>
-          </DialogContent>
-          <DialogActions>
-            <Button onClick={handleClose} color="primary">
-              Close
-            </Button>
-          </DialogActions>
-        </Dialog>
-
-        {/* Delete Confirmation Dialog */}
-        <Dialog open={deleteDialogOpen} onClose={handleCloseDeleteDialog}>
-          <DialogTitle>Confirm Deletion</DialogTitle>
-          <DialogContent>
-            Are you sure you want to delete this visitor?
-          </DialogContent>
-          <DialogActions>
-            <Button onClick={handleCloseDeleteDialog} color="primary">
-              Cancel
-            </Button>
-            <Button onClick={handleDelete} color="error">
-              Delete
-            </Button>
-          </DialogActions>
-        </Dialog>
       </div>
-    </>
+    );
+
+  return (
+    <div style={{ padding: "20px" }}>
+      <div style={{ float: "right", marginBottom: "20px" }}>
+        <Button variant="contained" onClick={handleAddDegreeClick}>
+          Add Degree
+        </Button>
+      </div>
+      <Typography variant="h5" gutterBottom>
+        Degree
+      </Typography>
+      <TableContainer component={Paper} className="admin-tables">
+        <Table>
+          <TableHead>
+            <TableRow>
+              <TableCell>S.No</TableCell>
+              <TableCell>Exam Type</TableCell>
+              <TableCell>Degree Name</TableCell>
+              <TableCell>Edit</TableCell>
+              <TableCell>Delete</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {degrees.length === 0 && (
+              <TableRow>
+                <TableCell colSpan={8}>No degrees available...</TableCell>
+              </TableRow>
+            )}
+            {degrees
+              .slice()
+              .sort((a, b) => b.id - a.id)
+              .map((degree, index) => (
+                <TableRow key={degree.id}>
+                  <TableCell>{index + 1}</TableCell>
+                  <TableCell>{degree.exam_type_name}</TableCell>
+                  <TableCell>{degree.degree_name}</TableCell>
+                  <TableCell>
+                    {/* <Button
+                      variant="outlined"
+                      onClick={() => handleEditDegreeClick(degree)}
+                    >
+                      Edit
+                    </Button> */}
+                    <IconButton
+                      color="primary"
+                      onClick={() => handleEditDegreeClick(degree)}
+                    >
+                      <EditIcon />
+                    </IconButton>
+                  </TableCell>
+                  <TableCell>
+                    {/* <Button
+                      variant="outlined"
+                      color="error"
+                      onClick={() => handleDeleteDegreeClick(degree)}
+                    >
+                      Delete
+                    </Button> */}
+                    <IconButton
+                      color="error"
+                      onClick={() => handleDeleteDegreeClick(degree)}
+                    >
+                      <DeleteIcon />
+                    </IconButton>
+                  </TableCell>
+                </TableRow>
+              ))}
+          </TableBody>
+        </Table>
+      </TableContainer>
+
+      {/* Add Degree Dialog */}
+      <Dialog open={addDialogOpen} onClose={handleCloseAddDialog}>
+        <DialogTitle>Add New Degree</DialogTitle>
+        <DialogContent>
+          <FormControl fullWidth margin="normal">
+            <InputLabel>Exam Type</InputLabel>
+            <Select
+              value={selectedExamType}
+              onChange={(e) => {
+                setSelectedExamType(e.target.value);
+                setErrors({ ...errors, selectedExamType: false });
+              }}
+              label="Exam Type"
+            >
+              {examTypes.map((examType) => (
+                <MenuItem key={examType.id} value={examType.id}>
+                  {examType.exam_type_name}
+                </MenuItem>
+              ))}
+            </Select>
+            {errors.selectedExamType && (
+              <Typography color="error" variant="body2">
+                Exam type is required
+              </Typography>
+            )}
+          </FormControl>
+          <TextField
+            label="Degree Name"
+            value={degreeName}
+            onChange={(e) => setDegreeName(e.target.value)}
+            fullWidth
+            margin="normal"
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseAddDialog} color="primary">
+            Cancel
+          </Button>
+          <Button
+            onClick={handleAddDegreeSubmit}
+            color="primary"
+            disabled={dialogLoading}
+          >
+            {dialogLoading ? "Adding..." : "Add"}
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      {/* Edit Degree Dialog */}
+      <Dialog open={editDialogOpen} onClose={handleCloseEditDialog}>
+        <DialogTitle>Edit Degree</DialogTitle>
+        <DialogContent>
+          <FormControl fullWidth margin="normal">
+            <InputLabel>Exam Type</InputLabel>
+            <Select
+              value={selectedExamType}
+              onChange={(e) => {
+                setSelectedExamType(e.target.value);
+                setErrors({ ...errors, selectedExamType: false });
+              }}
+              label="Exam Type"
+            >
+              {examTypes.map((examType) => (
+                <MenuItem key={examType.id} value={examType.id}>
+                  {examType.exam_type_name}
+                </MenuItem>
+              ))}
+            </Select>
+            {errors.selectedExamType && (
+              <Typography color="error" variant="body2">
+                Exam type is required
+              </Typography>
+            )}
+          </FormControl>
+          <TextField
+            label="Degree Name"
+            value={degreeName}
+            onChange={(e) => setDegreeName(e.target.value)}
+            fullWidth
+            margin="normal"
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseEditDialog} color="primary">
+            Cancel
+          </Button>
+          <Button
+            onClick={handleEditDegreeSubmit}
+            color="primary"
+            disabled={dialogLoading}
+          >
+            {dialogLoading ? "Updating..." : "Update"}
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      {/* Delete Degree Dialog */}
+      <Dialog open={deleteDialogOpen} onClose={handleCloseDeleteDialog}>
+        <DialogTitle>Confirm Deletion</DialogTitle>
+        <DialogContent>
+          <Typography>
+            Are you sure you want to delete the degree{" "}
+            <strong>{degreeToDelete?.degree_name}</strong>?
+          </Typography>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseDeleteDialog} color="primary">
+            Cancel
+          </Button>
+          <Button
+            onClick={handleDeleteDegreeSubmit}
+            color="error"
+            disabled={dialogLoading}
+          >
+            {dialogLoading ? "Deleting..." : "Delete"}
+          </Button>
+        </DialogActions>
+      </Dialog>
+      <Notification
+        open={notification.open}
+        handleClose={() => setNotification({ ...notification, open: false })}
+        alertMessage={notification.message}
+        alertSeverity={notification.severity}
+      />
+    </div>
   );
 }
 
-export default CreateVisitors;
+export default CreateDegree;

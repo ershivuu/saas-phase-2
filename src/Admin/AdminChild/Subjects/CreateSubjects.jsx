@@ -16,6 +16,7 @@ import {
   DialogTitle,
   TextField,
   MenuItem,
+  IconButton,
 } from "@mui/material";
 import {
   getSubjects,
@@ -25,6 +26,8 @@ import {
   getDepartment,
 } from "../../Services/AdminServices"; // Adjust the path as needed
 import Notification from "../../../Notification/Notification";
+import EditIcon from "@mui/icons-material/Edit";
+import DeleteIcon from "@mui/icons-material/Delete";
 
 function CreateSubjects() {
   const [subjects, setSubjects] = useState([]);
@@ -85,7 +88,6 @@ function CreateSubjects() {
   };
 
   const handleAddSubmit = async () => {
-   
     if (!subjectName) {
       setSubjectNameError("This field is required");
     }
@@ -96,8 +98,7 @@ function CreateSubjects() {
       return;
     }
     try {
-      
-     const response = await createSubject(subjectName, selectedDepartment);
+      const response = await createSubject(subjectName, selectedDepartment);
       const data = await getSubjects(); // Refresh subjects list
       setSubjects(data);
       handleCloseDialog();
@@ -143,7 +144,7 @@ function CreateSubjects() {
     }
     try {
       if (editingSubject) {
-      const response =  await updateSubject(
+        const response = await updateSubject(
           editingSubject.id,
           editedSubjectName,
           editedSelectedDepartment
@@ -180,7 +181,7 @@ function CreateSubjects() {
   const handleDeleteSubmit = async () => {
     try {
       if (subjectToDelete) {
-       const response = await deleteSubject(subjectToDelete.id);
+        const response = await deleteSubject(subjectToDelete.id);
         const data = await getSubjects(); // Refresh subjects list
         setSubjects(data);
         handleDeleteCloseDialog();
@@ -192,7 +193,7 @@ function CreateSubjects() {
       }
     } catch (error) {
       setError(error.message);
-        setNotification({
+      setNotification({
         open: true,
         message: error.message,
         severity: "error",
@@ -261,21 +262,33 @@ function CreateSubjects() {
                   <TableCell>{subject.department_name}</TableCell>
                   <TableCell>{subject.subject_name}</TableCell>
                   <TableCell>
-                    <Button
+                    {/* <Button
                       variant="outlined"
                       onClick={() => handleEditClick(subject)}
                     >
                       Edit
-                    </Button>
+                    </Button> */}
+                    <IconButton
+                      color="primary"
+                      onClick={() => handleEditClick(subject)}
+                    >
+                      <EditIcon />
+                    </IconButton>
                   </TableCell>
                   <TableCell>
-                    <Button
+                    {/* <Button
                       variant="outlined"
                       color="error"
                       onClick={() => handleDeleteClick(subject)}
                     >
                       Delete
-                    </Button>
+                    </Button> */}
+                    <IconButton
+                      color="error"
+                      onClick={() => handleDeleteClick(subject)}
+                    >
+                      <DeleteIcon />
+                    </IconButton>
                   </TableCell>
                 </TableRow>
               ))}

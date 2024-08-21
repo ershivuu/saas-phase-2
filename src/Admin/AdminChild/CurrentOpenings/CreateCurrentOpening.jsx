@@ -19,6 +19,9 @@ import {
   FormControlLabel,
   MenuItem,
   IconButton,
+  Grid,
+  Pagination,
+  Stack,
 } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
@@ -29,6 +32,7 @@ import {
   getCombineCategories,
   getDepartment,
   deleteJobOpening,
+  getFilteredJobOpenings,
 } from "../../Services/AdminServices";
 import Notification from "../../../Notification/Notification";
 
@@ -41,6 +45,7 @@ function CreateCurrentOpening() {
   const [deleteOpen, setDeleteOpen] = useState(false);
   const [deleteId, setDeleteId] = useState(null);
   const [originalEditData, setOriginalEditData] = useState({});
+  const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     category_of_appointment: "",
     post_applied_for: "",
@@ -61,7 +66,6 @@ function CreateCurrentOpening() {
   const [formErrors, setFormErrors] = useState({});
   const [editErrors, setEditErrors] = useState({});
 
-  // States for Edit Job Opening Dialog
   const [editOpen, setEditOpen] = useState(false);
   const [currentEditId, setCurrentEditId] = useState(null);
   const [editFormData, setEditFormData] = useState({
@@ -77,6 +81,11 @@ function CreateCurrentOpening() {
   const [posts, setPosts] = useState([]);
   const [subposts, setSubposts] = useState([]);
 
+  const [filters, setFilters] = useState({
+    category_of_appointment: "",
+    post_applied_for: "",
+    departments: "",
+  });
   const fetchJobOpenings = async () => {
     try {
       const data = await getJobOpenings();
@@ -124,7 +133,6 @@ function CreateCurrentOpening() {
     fetchDepartments();
   }, []);
 
-  // Utility function to format dates for server
   const formatDateForServer = (date) => {
     if (!date) return null;
     const [year, month, day] = date.split("T")[0].split("-");
@@ -132,6 +140,22 @@ function CreateCurrentOpening() {
   };
 
   const handleClickOpen = () => {
+    setFormData({
+      category_of_appointment: "",
+      post_applied_for: "",
+      sub_post_applied_for: "",
+      departments: "",
+      qualification_and_experience: "",
+      highly_desirable: "",
+      last_date_to_apply: "",
+      eligibility_criteria: "",
+      interview_date_1: "",
+      interview_date_2: "",
+      interview_date_3: "",
+      publish_to_job_profile: false,
+      publish_to_schedule_interview: false,
+      publish_to_vacancy: false,
+    }); // Reset form data
     setOpen(true);
   };
 
@@ -157,30 +181,20 @@ function CreateCurrentOpening() {
   };
   const validateForm = (data) => {
     let errors = {};
-    if (!data.category_of_appointment)
-      errors.category_of_appointment = "This feild is required.";
-    if (!data.post_applied_for)
-      errors.post_applied_for = "This feild is required.";
-    if (!data.sub_post_applied_for)
-      errors.sub_post_applied_for = "This feild is required.";
-    if (!data.departments) errors.departments = "This feild is required.";
-    if (!data.last_date_to_apply)
-      errors.last_date_to_apply = "This feild is required.";
-    if (!data.eligibility_criteria)
-      errors.eligibility_criteria = "This feild is required.";
-    if (!data.qualification_and_experience)
-      errors.qualification_and_experience = "This feild is required.";
-    if (!data.highly_desirable)
-      errors.highly_desirable = "This feild is required.";
-    if (!data.interview_date_1)
-      errors.interview_date_1 = "This feild is required.";
-    if (!data.interview_date_2)
-      errors.interview_date_2 = "This feild is required.";
-    if (!data.interview_date_3)
-      errors.interview_date_3 = "This feild is required.";
+    if (!data.category_of_appointment) errors.category_of_appointment = "Category of appointment is required.";
+    if (!data.post_applied_for) errors.post_applied_for = "Post applied for is required.";
+    if (!data.sub_post_applied_for) errors.sub_post_applied_for = "Sub Post applied for is required.";
+    if (!data.departments) errors.departments = "Department is required.";
+    if (!data.last_date_to_apply) errors.last_date_to_apply = "Last date to apply is required.";
+    if (!data.eligibility_criteria) errors.eligibility_criteria = "Eligibility criteria is required.";
+    if (!data.qualification_and_experience) errors.qualification_and_experience = "Qualification and Experince  is required.";
+    if (!data.highly_desirable) errors.highly_desirable = "Highly Desirable is required.";
+    if (!data.interview_date_1) errors.interview_date_1 = "Interview Date 1 is required.";
+    if (!data.interview_date_2) errors.interview_date_2 = "Interview Date 2 is required.";
+    if (!data.interview_date_3) errors.interview_date_3 = "Interview Date 3 is required.";
     return errors;
   };
-
+  
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
 
@@ -197,12 +211,11 @@ function CreateCurrentOpening() {
 
   const handleCategoryChange = (e) => {
     const selectedCategoryName = e.target.value;
-
-    // Clear error for the category field
-    setFormErrors((prevErrors) => ({
-      ...prevErrors,
-      category_of_appointment: "",
-    }));
+      // Clear error for the category field
+  setFormErrors((prevErrors) => ({
+    ...prevErrors,
+    category_of_appointment: "",
+  }));
 
     const selectedCategory = categories.find(
       (category) => category.category_name === selectedCategoryName
@@ -221,12 +234,13 @@ function CreateCurrentOpening() {
   const handlePostChange = (e) => {
     const selectedPostName = e.target.value;
 
-    // Clear error for the post field
-    setFormErrors((prevErrors) => ({
-      ...prevErrors,
-      post_applied_for: "",
-    }));
+        // Clear error for the post field
+  setFormErrors((prevErrors) => ({
+    ...prevErrors,
+    post_applied_for: "",
+  }));
 
+  
     const selectedPost = posts.find(
       (post) => post.post_name === selectedPostName
     );
@@ -239,12 +253,14 @@ function CreateCurrentOpening() {
     });
   };
 
+  
   const handleSubmit = async () => {
     const errors = validateForm(formData);
     if (Object.keys(errors).length > 0) {
       setFormErrors(errors);
       return;
     }
+
     try {
       const selectedCategoryId = categories.find(
         (cat) => cat.category_name === formData.category_of_appointment
@@ -284,33 +300,24 @@ function CreateCurrentOpening() {
       });
     }
   };
+
   const validateEditForm = (data) => {
     let errors = {};
-    if (!data.category_of_appointment)
-      errors.category_of_appointment = "This feild is required.";
-    if (!data.post_applied_for)
-      errors.post_applied_for = "This feild is required.";
-    if (!data.sub_post_applied_for)
-      errors.sub_post_applied_for = "This feild is required.";
-    if (!data.departments) errors.departments = "This feild is required.";
-    if (!data.last_date_to_apply)
-      errors.last_date_to_apply = "This feild is required.";
-    if (!data.eligibility_criteria)
-      errors.eligibility_criteria = "This feild is required.";
-    if (!data.qualification_and_experience)
-      errors.qualification_and_experience = "This feild is required.";
-    if (!data.highly_desirable)
-      errors.highly_desirable = "This feild is required.";
-    if (!data.interview_date_1)
-      errors.interview_date_1 = "This feild is required.";
-    if (!data.interview_date_2)
-      errors.interview_date_2 = "This feild is required.";
-    if (!data.interview_date_3)
-      errors.interview_date_3 = "This feild is required.";
+    if (!data.category_of_appointment) errors.category_of_appointment = "Category of appointment is required.";
+    if (!data.post_applied_for) errors.post_applied_for = "Post applied for is required.";
+    if (!data.sub_post_applied_for) errors.sub_post_applied_for = "Sub Post applied for is required.";
+    if (!data.departments) errors.departments = "Department is required.";
+    if (!data.last_date_to_apply) errors.last_date_to_apply = "Last date to apply is required.";
+    if (!data.eligibility_criteria) errors.eligibility_criteria = "Eligibility criteria is required.";
+    if (!data.qualification_and_experience) errors.qualification_and_experience = "Qualification and Experience is required.";
+    if (!data.highly_desirable) errors.highly_desirable = "Highly Desirable is required.";
+    if (!data.interview_date_1) errors.interview_date_1 = "Interview Date 1 is required.";
+    if (!data.interview_date_2) errors.interview_date_2 = "Interview Date 2 is required.";
+    if (!data.interview_date_3) errors.interview_date_3 = "Interview Date 3 is required.";
     return errors;
   };
 
-  // Edit Job Opening Dialog Handlers
+
   const handleEditClick = (job) => {
     const selectedCategory = categories.find(
       (cat) => cat.category_name === job.category_of_appointment
@@ -330,7 +337,7 @@ function CreateCurrentOpening() {
 
     setEditFormData({
       ...job,
-      last_date_to_apply: formatDate(job.last_date_to_apply),
+      last_date_to_apply: formatDate(job.last_date_to_apply), // Format for input
       interview_date_1: formatDate(job.interview_date_1),
       interview_date_2: formatDate(job.interview_date_2),
       interview_date_3: formatDate(job.interview_date_3),
@@ -340,7 +347,6 @@ function CreateCurrentOpening() {
 
   const handleEditChange = (e) => {
     const { name, value, type, checked } = e.target;
-
     if (name === "category_of_appointment") {
       const selectedCategory = categories.find(
         (cat) => cat.category_name === value
@@ -352,12 +358,6 @@ function CreateCurrentOpening() {
       const selectedPost = posts.find((post) => post.post_name === value);
       setSubposts(selectedPost ? selectedPost.subposts : []);
     }
-
-    setEditErrors((prevErrors) => ({
-      ...prevErrors,
-      [name]: "",
-    }));
-
     setEditFormData({
       ...editFormData,
       [name]: type === "checkbox" ? checked : value,
@@ -365,6 +365,7 @@ function CreateCurrentOpening() {
   };
 
   const handleEditSubmit = async () => {
+
     const errors = validateEditForm(editFormData);
     if (Object.keys(errors).length > 0) {
       setEditErrors(errors);
@@ -372,7 +373,6 @@ function CreateCurrentOpening() {
     }
 
     try {
-      // Construct the data to update, excluding unchanged fields
       const updatedFields = {};
 
       for (const [key, value] of Object.entries(editFormData)) {
@@ -442,8 +442,9 @@ function CreateCurrentOpening() {
     const year = date.getFullYear();
     const month = String(date.getMonth() + 1).padStart(2, "0"); // Months are 0-based
     const day = String(date.getDate()).padStart(2, "0");
-    return `${year}/${month}/${day}`;
+    return `${year}-${month}-${day}`; // Return in YYYY-MM-DD format
   };
+
   const handleDeleteClick = (id) => {
     setDeleteId(id);
     setDeleteOpen(true);
@@ -456,7 +457,7 @@ function CreateCurrentOpening() {
 
   const handleDeleteConfirm = async () => {
     try {
-      const response = await deleteJobOpening(deleteId); // Implement deleteJobOpening in your services
+      const response = await deleteJobOpening(deleteId);
       setDeleteOpen(false);
       setDeleteId(null);
       fetchJobOpenings();
@@ -474,6 +475,59 @@ function CreateCurrentOpening() {
       });
     }
   };
+  const fetchFilteredJobOpenings = async () => {
+    setLoading(true);
+    try {
+      const data = await getFilteredJobOpenings(filters);
+      setJobOpenings(data.jobOpenings);
+    } catch (error) {
+      setError(error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchFilteredJobOpenings();
+  }, [filters]);
+
+  const handleFilterChange = (e) => {
+    const { name, value } = e.target;
+
+    setFilters((prevFilters) => {
+      const updatedFilters = {
+        ...prevFilters,
+        [name]: value,
+      };
+
+      if (name === "category_of_appointment") {
+        const selectedCategory = categories.find(
+          (category) => category.category_name === value
+        );
+        setPosts(selectedCategory ? selectedCategory.posts : []);
+        setSubposts([]);
+
+        setFormData((prevFormData) => ({
+          ...prevFormData,
+          category_of_appointment: value,
+          post_applied_for: "",
+          sub_post_applied_for: "",
+        }));
+      } else if (name === "post_applied_for") {
+        const selectedPost = posts.find((post) => post.post_name === value);
+
+        setSubposts(selectedPost ? selectedPost.subposts : []);
+
+        setFormData((prevFormData) => ({
+          ...prevFormData,
+          post_applied_for: value,
+          sub_post_applied_for: "",
+        }));
+      }
+
+      return updatedFilters;
+    });
+  };
   return (
     <>
       <div style={{ padding: "20px" }}>
@@ -485,63 +539,131 @@ function CreateCurrentOpening() {
         <Typography variant="h5" gutterBottom>
           Current Openings
         </Typography>
-        <TableContainer component={Paper}>
-          <Table>
-            <TableHead>
-              <TableRow>
-                <TableCell>S.No</TableCell>
-                <TableCell>Category</TableCell>
-                <TableCell>Post</TableCell>
-                <TableCell>Subpost</TableCell>
-                <TableCell>Department</TableCell>
-                <TableCell>Last Date</TableCell>
-                <TableCell>Status</TableCell>
-                <TableCell>Edit</TableCell>
-                <TableCell>Delete</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {jobOpenings
-                .slice()
-                .sort((a, b) => b.id - a.id)
-                .map((job, index) => (
-                  <TableRow key={job.id}>
-                    <TableCell>{index + 1}</TableCell>
-                    <TableCell>{job.category_of_appointment}</TableCell>
-                    <TableCell>{job.post_applied_for}</TableCell>
-                    <TableCell>{job.sub_post_applied_for}</TableCell>
-                    <TableCell>{job.departments}</TableCell>
-                    <TableCell>{formatDate(job.last_date_to_apply)}</TableCell>
-                    <TableCell>
-                      <Switch
-                        checked={job.is_active_all}
-                        onChange={(e) =>
-                          handleSwitchChange(job.id, e.target.checked)
-                        }
-                      />
-                    </TableCell>
-                    <TableCell>
-                      <IconButton
-                        color="primary"
-                        onClick={() => handleEditClick(job)}
-                      >
-                        <EditIcon />
-                      </IconButton>
-                    </TableCell>
-                    <TableCell>
-                      <IconButton
-                        color="error"
-                        onClick={() => handleDeleteClick(job.id)}
-                      >
-                        <DeleteIcon />
-                      </IconButton>
-                    </TableCell>
+        <Grid container spacing={2} sx={{ marginBottom: "20px" }}>
+          <Grid item xs={12} sm={3}>
+            <TextField
+              margin="dense"
+              label="Category"
+              name="category_of_appointment"
+              select
+              fullWidth
+              value={filters.category_of_appointment}
+              onChange={handleFilterChange}
+            >
+              {categories.map((category) => (
+                <MenuItem
+                  key={category.category_id}
+                  value={category.category_name}
+                >
+                  {category.category_name}
+                </MenuItem>
+              ))}
+            </TextField>
+          </Grid>
+          <Grid item xs={12} sm={3}>
+            <TextField
+              margin="dense"
+              label="post"
+              name="post_applied_for"
+              select
+              fullWidth
+              value={filters.post_applied_for}
+              onChange={handleFilterChange}
+            >
+              {posts.map((post) => (
+                <MenuItem key={post.post_id} value={post.post_name}>
+                  {post.post_name}
+                </MenuItem>
+              ))}
+            </TextField>
+          </Grid>
+          <Grid item xs={12} sm={3}>
+            <TextField
+              margin="dense"
+              label="Department"
+              name="departments"
+              select
+              fullWidth
+              value={filters.departments}
+              onChange={handleFilterChange}
+            >
+              {departments.map((department) => (
+                <MenuItem
+                  key={department.department_id}
+                  value={department.depart_name}
+                >
+                  {department.depart_name}
+                </MenuItem>
+              ))}
+            </TextField>
+          </Grid>
+        </Grid>
+        {loading ? (
+          <div className="loading-process">
+            <CircularProgress />
+          </div>
+        ) : (
+          <>
+            <TableContainer component={Paper}>
+              <Table>
+                <TableHead>
+                  <TableRow>
+                    <TableCell>S.No</TableCell>
+                    <TableCell>Category</TableCell>
+                    <TableCell>Post</TableCell>
+                    <TableCell>Subpost</TableCell>
+                    <TableCell>Department</TableCell>
+                    <TableCell>Last Date</TableCell>
+                    <TableCell>Status</TableCell>
+                    <TableCell>Edit</TableCell>
+                    <TableCell>Delete</TableCell>
                   </TableRow>
-                ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
-
+                </TableHead>
+                <TableBody>
+                  {jobOpenings
+                    .slice()
+                    .sort((a, b) => b.id - a.id)
+                    .map((job, index) => (
+                      <TableRow key={job.id}>
+                        <TableCell>{index + 1}</TableCell>
+                        <TableCell>{job.category_of_appointment}</TableCell>
+                        <TableCell>{job.post_applied_for}</TableCell>
+                        <TableCell>{job.sub_post_applied_for}</TableCell>
+                        <TableCell>{job.departments}</TableCell>
+                        <TableCell>
+                          {formatDate(job.last_date_to_apply)}
+                        </TableCell>
+                        <TableCell>
+                          <Switch
+                            checked={job.is_active_all}
+                            onChange={(e) =>
+                              handleSwitchChange(job.id, e.target.checked)
+                            }
+                          />
+                        </TableCell>
+                        <TableCell>
+                          <IconButton
+                            color="primary"
+                            onClick={() => handleEditClick(job)}
+                          >
+                            <EditIcon />
+                          </IconButton>
+                        </TableCell>
+                        <TableCell>
+                          <IconButton
+                            color="error"
+                            onClick={() => handleDeleteClick(job.id)}
+                          >
+                            <DeleteIcon />
+                          </IconButton>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                </TableBody>
+              </Table>
+            </TableContainer>
+          </>
+        )}
         <Dialog open={deleteOpen} onClose={handleDeleteClose}>
           <DialogTitle>Confirm Deletion</DialogTitle>
           <DialogContent>
@@ -657,18 +779,7 @@ function CreateCurrentOpening() {
               error={!!formErrors.highly_desirable}
               helperText={formErrors.highly_desirable}
             />
-            <TextField
-              margin="dense"
-              label="Last Date to Apply"
-              name="last_date_to_apply"
-              type="date"
-              fullWidth
-              value={formData.last_date_to_apply}
-              onChange={handleChange}
-              InputLabelProps={{ shrink: true }}
-              error={!!formErrors.last_date_to_apply}
-              helperText={formErrors.last_date_to_apply}
-            />
+
             <TextField
               margin="dense"
               label="Eligibility Criteria"
@@ -688,7 +799,7 @@ function CreateCurrentOpening() {
               InputLabelProps={{ shrink: true }}
               value={formData.last_date_to_apply}
               onChange={handleChange}
-              error={!!formErrors.last_date_to_apply}
+                error={!!formErrors.last_date_to_apply}
               helperText={formErrors.last_date_to_apply}
             />
             <TextField
@@ -737,6 +848,7 @@ function CreateCurrentOpening() {
               }
               label="Publish to Job Profile"
             />
+            <br />
             <FormControlLabel
               control={
                 <Switch
@@ -747,6 +859,7 @@ function CreateCurrentOpening() {
               }
               label="Publish to Schedule Interview"
             />
+            <br />
             <FormControlLabel
               control={
                 <Switch
@@ -755,7 +868,7 @@ function CreateCurrentOpening() {
                   name="publish_to_vacancy"
                 />
               }
-              label="Publish to Vacancy"
+              label="Publish to Current Opening"
             />
           </DialogContent>
           <DialogActions>
@@ -767,6 +880,7 @@ function CreateCurrentOpening() {
             </Button>
           </DialogActions>
         </Dialog>
+
 
         {/* Edit Job Opening  */}
         <Dialog open={editOpen} onClose={handleCloseEdit}>
@@ -833,9 +947,9 @@ function CreateCurrentOpening() {
               select
               fullWidth
               value={editFormData.departments}
-              onChange={handleEditChange}
               error={!!editErrors.departments}
               helperText={editErrors.departments}
+              onChange={handleEditChange}
             >
               {departments.map((department) => (
                 <MenuItem
@@ -872,9 +986,9 @@ function CreateCurrentOpening() {
               type="date"
               name="last_date_to_apply"
               fullWidth
+              InputLabelProps={{ shrink: true }}
               value={editFormData.last_date_to_apply}
               onChange={handleEditChange}
-              InputLabelProps={{ shrink: true }}
               error={!!editErrors.last_date_to_apply}
               helperText={editErrors.last_date_to_apply}
             />
@@ -894,9 +1008,9 @@ function CreateCurrentOpening() {
               type="date"
               name="interview_date_1"
               fullWidth
+              InputLabelProps={{ shrink: true }}
               value={editFormData.interview_date_1}
               onChange={handleEditChange}
-              InputLabelProps={{ shrink: true }}
               error={!!editErrors.interview_date_1}
               helperText={editErrors.interview_date_1}
             />
@@ -906,9 +1020,9 @@ function CreateCurrentOpening() {
               type="date"
               name="interview_date_2"
               fullWidth
+              InputLabelProps={{ shrink: true }}
               value={editFormData.interview_date_2}
               onChange={handleEditChange}
-              InputLabelProps={{ shrink: true }}
               error={!!editErrors.interview_date_2}
               helperText={editErrors.interview_date_2}
             />
@@ -918,9 +1032,9 @@ function CreateCurrentOpening() {
               type="date"
               name="interview_date_3"
               fullWidth
+              InputLabelProps={{ shrink: true }}
               value={editFormData.interview_date_3}
               onChange={handleEditChange}
-              InputLabelProps={{ shrink: true }}
               error={!!editErrors.interview_date_3}
               helperText={editErrors.interview_date_3}
             />
@@ -934,6 +1048,19 @@ function CreateCurrentOpening() {
               }
               label="Publish to Job Profile"
             />
+
+            <br />
+            <FormControlLabel
+              control={
+                <Switch
+                  checked={editFormData.publish_to_vacancy}
+                  onChange={handleEditChange}
+                  name="publish_to_vacancy"
+                />
+              }
+              label="Publish to Current Opening"
+            />
+            <br />
             <FormControlLabel
               control={
                 <Switch
@@ -943,16 +1070,6 @@ function CreateCurrentOpening() {
                 />
               }
               label="Publish to Schedule Interview"
-            />
-            <FormControlLabel
-              control={
-                <Switch
-                  checked={editFormData.publish_to_vacancy}
-                  onChange={handleEditChange}
-                  name="publish_to_vacancy"
-                />
-              }
-              label="Publish to Vacancy"
             />
           </DialogContent>
           <DialogActions>

@@ -16,6 +16,7 @@ import {
   DialogTitle,
   TextField,
   MenuItem,
+  IconButton
 } from "@mui/material";
 import {
   getPosts,
@@ -25,6 +26,8 @@ import {
   deletePost,
 } from "../../Services/AdminServices";
 import Notification from "../../../Notification/Notification";
+import EditIcon from "@mui/icons-material/Edit";
+import DeleteIcon from "@mui/icons-material/Delete";
 
 function CreatePosts() {
   const [posts, setPosts] = useState([]);
@@ -244,21 +247,33 @@ function CreatePosts() {
                   <TableCell>{post.category_name}</TableCell>
                   <TableCell>{post.post_name}</TableCell>
                   <TableCell>
-                    <Button
+                    {/* <Button
                       variant="outlined"
                       onClick={() => handleEditClick(post)}
                     >
                       Edit
-                    </Button>
+                    </Button> */}
+                    <IconButton
+                            color="primary"
+                            onClick={() => handleEditClick(post)}
+                          >
+                            <EditIcon />
+                          </IconButton>
                   </TableCell>
                   <TableCell>
-                    <Button
+                    {/* <Button
                       variant="outlined"
                       color="error"
                       onClick={() => handleDeleteClick(post)}
                     >
                       Delete
-                    </Button>
+                    </Button> */}
+                        <IconButton
+                            color="error"
+                            onClick={() => handleDeleteClick(post)}
+                          >
+                            <DeleteIcon />
+                          </IconButton>
                   </TableCell>
                 </TableRow>
               ))}
