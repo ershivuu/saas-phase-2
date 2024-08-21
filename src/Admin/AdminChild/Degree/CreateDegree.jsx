@@ -19,6 +19,7 @@ import {
   Select,
   InputLabel,
   FormControl,
+  IconButton,
 } from "@mui/material";
 import {
   getDegree,
@@ -28,6 +29,8 @@ import {
   deleteDegree,
 } from "../../Services/AdminServices"; // Adjust the path as needed
 import Notification from "../../../Notification/Notification";
+import EditIcon from "@mui/icons-material/Edit";
+import DeleteIcon from "@mui/icons-material/Delete";
 
 function CreateDegree() {
   const [degrees, setDegrees] = useState([]);
@@ -264,21 +267,40 @@ function CreateDegree() {
                   <TableCell>{degree.exam_type_name}</TableCell>
                   <TableCell>{degree.degree_name}</TableCell>
                   <TableCell>
-                    <Button
+                    {/* <Button
                       variant="outlined"
                       onClick={() => handleEditDegreeClick(degree)}
                     >
                       Edit
+<<<<<<< HEAD
                     </Button>
                   </TableCell>
                   <TableCell>
                     <Button
+=======
+                    </Button> */}
+                    <IconButton
+                      color="primary"
+                      onClick={() => handleEditDegreeClick(degree)}
+                    >
+                      <EditIcon />
+                    </IconButton>
+                  </TableCell>
+                  <TableCell>
+                    {/* <Button
+>>>>>>> 152449f2627f04294a77c9995d5e063a39e5efc7
                       variant="outlined"
                       color="error"
                       onClick={() => handleDeleteDegreeClick(degree)}
                     >
                       Delete
-                    </Button>
+                    </Button> */}
+                    <IconButton
+                      color="error"
+                      onClick={() => handleDeleteDegreeClick(degree)}
+                    >
+                      <DeleteIcon />
+                    </IconButton>
                   </TableCell>
                 </TableRow>
               ))}

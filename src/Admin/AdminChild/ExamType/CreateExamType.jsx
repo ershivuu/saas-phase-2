@@ -15,6 +15,7 @@ import {
   DialogContent,
   DialogTitle,
   TextField,
+  IconButton,
 } from "@mui/material";
 import {
   getExamType,
@@ -23,6 +24,8 @@ import {
   updateExamType,
 } from "../../Services/AdminServices"; // Adjust the path as needed
 import Notification from "../../../Notification/Notification";
+import EditIcon from "@mui/icons-material/Edit";
+import DeleteIcon from "@mui/icons-material/Delete";
 
 function CreateExamType() {
   const [examTypes, setExamTypes] = useState([]);
@@ -35,7 +38,7 @@ function CreateExamType() {
   const [examTypeToEdit, setExamTypeToEdit] = useState(null);
   const [examTypeToDelete, setExamTypeToDelete] = useState(null);
   const [editedExamTypeName, setEditedExamTypeName] = useState("");
-  
+
   const [notification, setNotification] = useState({
     open: false,
     message: "",
@@ -78,7 +81,7 @@ function CreateExamType() {
     }
 
     try {
-     const response = await createExamType(examTypeName);
+      const response = await createExamType(examTypeName);
       const data = await getExamType(); // Refresh the list of exam types
       setExamTypes(data);
       handleCloseDialog();
@@ -117,7 +120,10 @@ function CreateExamType() {
     }
     try {
       if (examTypeToEdit) {
-      const response =  await updateExamType(examTypeToEdit.id, editedExamTypeName);
+        const response = await updateExamType(
+          examTypeToEdit.id,
+          editedExamTypeName
+        );
         const data = await getExamType(); // Refresh the list of exam types
         setExamTypes(data);
         handleEditCloseDialog();
@@ -150,7 +156,7 @@ function CreateExamType() {
   const handleDeleteSubmit = async () => {
     try {
       if (examTypeToDelete) {
-      const response =  await deleteExamType(examTypeToDelete.id);
+        const response = await deleteExamType(examTypeToDelete.id);
         const data = await getExamType(); // Refresh the list of exam types
         setExamTypes(data);
         handleDeleteCloseDialog();
@@ -229,21 +235,33 @@ function CreateExamType() {
                   <TableCell>{index + 1}</TableCell>
                   <TableCell>{examType.exam_type_name}</TableCell>
                   <TableCell>
-                    <Button
+                    {/* <Button
                       variant="outlined"
                       onClick={() => handleEditClick(examType)}
                     >
                       Edit
-                    </Button>
+                    </Button> */}
+                    <IconButton
+                      color="primary"
+                      onClick={() => handleEditClick(examType)}
+                    >
+                      <EditIcon />
+                    </IconButton>
                   </TableCell>
                   <TableCell>
-                    <Button
+                    {/* <Button
                       variant="outlined"
                       color="error"
                       onClick={() => handleDeleteClick(examType)}
                     >
                       Delete
-                    </Button>
+                    </Button> */}
+                    <IconButton
+                      color="error"
+                      onClick={() => handleDeleteClick(examType)}
+                    >
+                      <DeleteIcon />
+                    </IconButton>
                   </TableCell>
                 </TableRow>
               ))}

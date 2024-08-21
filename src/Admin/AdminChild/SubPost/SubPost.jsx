@@ -16,6 +16,7 @@ import {
   DialogTitle,
   TextField,
   MenuItem,
+  IconButton,
 } from "@mui/material";
 import {
   getSubPosts,
@@ -25,6 +26,8 @@ import {
   deleteSubPost,
 } from "../../Services/AdminServices";
 import Notification from "../../../Notification/Notification";
+import EditIcon from "@mui/icons-material/Edit";
+import DeleteIcon from "@mui/icons-material/Delete";
 
 function SubPost() {
   const [subPosts, setSubPosts] = useState([]);
@@ -123,7 +126,7 @@ function SubPost() {
     if (!validateFields()) return;
 
     try {
-      let response ;
+      let response;
       const selectedPost = posts.find((post) => post.id === selectedPostId);
       if (!selectedPost) {
         throw new Error("Selected post not found.");
@@ -131,21 +134,27 @@ function SubPost() {
       const { category_id } = selectedPost;
 
       if (isEditing) {
-     response =   await updateSubPost(
+        response = await updateSubPost(
           selectedSubPost.id,
           selectedPostId,
           category_id,
           subPostName
         );
       } else {
-      response =   await createSubPost(selectedPostId, category_id, subPostName);
+        response = await createSubPost(
+          selectedPostId,
+          category_id,
+          subPostName
+        );
       }
       const subPostsData = await getSubPosts();
       setSubPosts(subPostsData);
       handleCloseDialog();
       setNotification({
         open: true,
-        message: response.message || (isEditing ? "Updated Successfully" : "Added Successfully"),
+        message:
+          response.message ||
+          (isEditing ? "Updated Successfully" : "Added Successfully"),
         severity: "success",
       });
     } catch (error) {
@@ -161,7 +170,7 @@ function SubPost() {
   const handleDelete = async () => {
     try {
       if (subPostToDelete) {
-       const response = await deleteSubPost(subPostToDelete.id);
+        const response = await deleteSubPost(subPostToDelete.id);
         const subPostsData = await getSubPosts();
         setSubPosts(subPostsData);
         handleCloseDeleteDialog();
@@ -247,21 +256,33 @@ function SubPost() {
                   <TableCell>{subPost.post_name}</TableCell>
                   <TableCell>{subPost.subpost_name}</TableCell>
                   <TableCell>
-                    <Button
+                    {/* <Button
                       variant="outlined"
                       onClick={() => handleEditClick(subPost)}
                     >
                       Edit
-                    </Button>
+                    </Button> */}
+                    <IconButton
+                      color="primary"
+                      onClick={() => handleEditClick(subPost)}
+                    >
+                      <EditIcon />
+                    </IconButton>
                   </TableCell>
                   <TableCell>
-                    <Button
+                    {/* <Button
                       variant="outlined"
                       color="error"
                       onClick={() => handleDeleteClick(subPost)}
                     >
                       Delete
-                    </Button>
+                    </Button> */}
+                    <IconButton
+                      color="error"
+                      onClick={() => handleDeleteClick(subPost)}
+                    >
+                      <DeleteIcon />
+                    </IconButton>
                   </TableCell>
                 </TableRow>
               ))}

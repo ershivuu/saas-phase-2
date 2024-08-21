@@ -977,17 +977,17 @@ export const getAllVisitors = async () => {
       {
         headers: {
           Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json", // Optional, depending on API requirements
+          "Content-Type": "application/json", 
         },
       }
     );
-    return response.data.data; // Adjust according to your API response structure
+    return response.data.data; 
   } catch (error) {
     console.error(
       "Error fetching visitors:",
       error.response ? error.response.data : error.message
     );
-    throw error; // Re-throw the error for handling in the calling code
+    throw error; 
   }
 };
 export const deleteVisitor = async (id) => {

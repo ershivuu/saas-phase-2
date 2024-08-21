@@ -62,6 +62,9 @@ function CreateCurrentOpening() {
     publish_to_vacancy: false,
   });
 
+  const [formErrors, setFormErrors] = useState({});
+  const [editErrors, setEditErrors] = useState({});
+
   const [editOpen, setEditOpen] = useState(false);
   const [currentEditId, setCurrentEditId] = useState(null);
   const [editFormData, setEditFormData] = useState({
@@ -157,10 +160,48 @@ function CreateCurrentOpening() {
 
   const handleClose = () => {
     setOpen(false);
+    setFormData({
+      category_of_appointment: "",
+      post_applied_for: "",
+      sub_post_applied_for: "",
+      departments: "",
+      qualification_and_experience: "",
+      highly_desirable: "",
+      last_date_to_apply: "",
+      eligibility_criteria: "",
+      interview_date_1: "",
+      interview_date_2: "",
+      interview_date_3: "",
+      publish_to_job_profile: false,
+      publish_to_schedule_interview: false,
+      publish_to_vacancy: false,
+    });
+    setFormErrors({});
   };
-
+  const validateForm = (data) => {
+    let errors = {};
+    if (!data.category_of_appointment) errors.category_of_appointment = "Category of appointment is required.";
+    if (!data.post_applied_for) errors.post_applied_for = "Post applied for is required.";
+    if (!data.sub_post_applied_for) errors.sub_post_applied_for = "Sub Post applied for is required.";
+    if (!data.departments) errors.departments = "Department is required.";
+    if (!data.last_date_to_apply) errors.last_date_to_apply = "Last date to apply is required.";
+    if (!data.eligibility_criteria) errors.eligibility_criteria = "Eligibility criteria is required.";
+    if (!data.qualification_and_experience) errors.qualification_and_experience = "Qualification and Experince  is required.";
+    if (!data.highly_desirable) errors.highly_desirable = "Highly Desirable is required.";
+    if (!data.interview_date_1) errors.interview_date_1 = "Interview Date 1 is required.";
+    if (!data.interview_date_2) errors.interview_date_2 = "Interview Date 2 is required.";
+    if (!data.interview_date_3) errors.interview_date_3 = "Interview Date 3 is required.";
+    return errors;
+  };
+  
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
+
+    setFormErrors((prevErrors) => ({
+      ...prevErrors,
+      [name]: "",
+    }));
+
     setFormData({
       ...formData,
       [name]: type === "checkbox" ? checked : value,
@@ -169,6 +210,12 @@ function CreateCurrentOpening() {
 
   const handleCategoryChange = (e) => {
     const selectedCategoryName = e.target.value;
+      // Clear error for the category field
+  setFormErrors((prevErrors) => ({
+    ...prevErrors,
+    category_of_appointment: "",
+  }));
+
     const selectedCategory = categories.find(
       (category) => category.category_name === selectedCategoryName
     );
@@ -185,6 +232,14 @@ function CreateCurrentOpening() {
 
   const handlePostChange = (e) => {
     const selectedPostName = e.target.value;
+
+        // Clear error for the post field
+  setFormErrors((prevErrors) => ({
+    ...prevErrors,
+    post_applied_for: "",
+  }));
+
+  
     const selectedPost = posts.find(
       (post) => post.post_name === selectedPostName
     );
@@ -197,7 +252,14 @@ function CreateCurrentOpening() {
     });
   };
 
+  
   const handleSubmit = async () => {
+    const errors = validateForm(formData);
+    if (Object.keys(errors).length > 0) {
+      setFormErrors(errors);
+      return;
+    }
+
     try {
       const selectedCategoryId = categories.find(
         (cat) => cat.category_name === formData.category_of_appointment
@@ -237,6 +299,23 @@ function CreateCurrentOpening() {
       });
     }
   };
+
+  const validateEditForm = (data) => {
+    let errors = {};
+    if (!data.category_of_appointment) errors.category_of_appointment = "Category of appointment is required.";
+    if (!data.post_applied_for) errors.post_applied_for = "Post applied for is required.";
+    if (!data.sub_post_applied_for) errors.sub_post_applied_for = "Sub Post applied for is required.";
+    if (!data.departments) errors.departments = "Department is required.";
+    if (!data.last_date_to_apply) errors.last_date_to_apply = "Last date to apply is required.";
+    if (!data.eligibility_criteria) errors.eligibility_criteria = "Eligibility criteria is required.";
+    if (!data.qualification_and_experience) errors.qualification_and_experience = "Qualification and Experience is required.";
+    if (!data.highly_desirable) errors.highly_desirable = "Highly Desirable is required.";
+    if (!data.interview_date_1) errors.interview_date_1 = "Interview Date 1 is required.";
+    if (!data.interview_date_2) errors.interview_date_2 = "Interview Date 2 is required.";
+    if (!data.interview_date_3) errors.interview_date_3 = "Interview Date 3 is required.";
+    return errors;
+  };
+
 
   const handleEditClick = (job) => {
     const selectedCategory = categories.find(
@@ -285,6 +364,13 @@ function CreateCurrentOpening() {
   };
 
   const handleEditSubmit = async () => {
+
+    const errors = validateEditForm(editFormData);
+    if (Object.keys(errors).length > 0) {
+      setEditErrors(errors);
+      return;
+    }
+
     try {
       const updatedFields = {};
 
@@ -612,6 +698,8 @@ function CreateCurrentOpening() {
             </Button>
           </DialogActions>
         </Dialog>
+
+        {/* Create Job Opening  */}
         <Dialog open={open} onClose={handleClose}>
           <DialogTitle>Create Job Opening</DialogTitle>
           <DialogContent>
@@ -623,6 +711,8 @@ function CreateCurrentOpening() {
               fullWidth
               value={formData.category_of_appointment}
               onChange={handleCategoryChange}
+              error={!!formErrors.category_of_appointment}
+              helperText={formErrors.category_of_appointment}
             >
               {categories.map((category) => (
                 <MenuItem
@@ -641,6 +731,8 @@ function CreateCurrentOpening() {
               fullWidth
               value={formData.post_applied_for}
               onChange={handlePostChange}
+              error={!!formErrors.post_applied_for}
+              helperText={formErrors.post_applied_for}
             >
               {posts.map((post) => (
                 <MenuItem key={post.post_id} value={post.post_name}>
@@ -656,6 +748,8 @@ function CreateCurrentOpening() {
               fullWidth
               value={formData.sub_post_applied_for}
               onChange={handleChange}
+              error={!!formErrors.sub_post_applied_for}
+              helperText={formErrors.sub_post_applied_for}
             >
               {subposts.map((subpost) => (
                 <MenuItem key={subpost.subpost_id} value={subpost.subpost_name}>
@@ -671,6 +765,8 @@ function CreateCurrentOpening() {
               fullWidth
               value={formData.depart_name}
               onChange={handleChange}
+              error={!!formErrors.departments}
+              helperText={formErrors.departments}
             >
               {departments.map((department) => (
                 <MenuItem
@@ -688,6 +784,8 @@ function CreateCurrentOpening() {
               fullWidth
               value={formData.qualification_and_experience}
               onChange={handleChange}
+              error={!!formErrors.qualification_and_experience}
+              helperText={formErrors.qualification_and_experience}
             />
             <TextField
               margin="dense"
@@ -696,6 +794,8 @@ function CreateCurrentOpening() {
               fullWidth
               value={formData.highly_desirable}
               onChange={handleChange}
+              error={!!formErrors.highly_desirable}
+              helperText={formErrors.highly_desirable}
             />
 
             <TextField
@@ -705,6 +805,8 @@ function CreateCurrentOpening() {
               fullWidth
               value={formData.eligibility_criteria}
               onChange={handleChange}
+              error={!!formErrors.eligibility_criteria}
+              helperText={formErrors.eligibility_criteria}
             />
             <TextField
               margin="dense"
@@ -715,6 +817,8 @@ function CreateCurrentOpening() {
               InputLabelProps={{ shrink: true }}
               value={formData.last_date_to_apply}
               onChange={handleChange}
+                error={!!formErrors.last_date_to_apply}
+              helperText={formErrors.last_date_to_apply}
             />
             <TextField
               margin="dense"
@@ -725,6 +829,8 @@ function CreateCurrentOpening() {
               InputLabelProps={{ shrink: true }}
               value={formData.interview_date_1}
               onChange={handleChange}
+              error={!!formErrors.interview_date_1}
+              helperText={formErrors.interview_date_1}
             />
             <TextField
               margin="dense"
@@ -735,6 +841,8 @@ function CreateCurrentOpening() {
               InputLabelProps={{ shrink: true }}
               value={formData.interview_date_2}
               onChange={handleChange}
+              error={!!formErrors.interview_date_2}
+              helperText={formErrors.interview_date_2}
             />
             <TextField
               margin="dense"
@@ -745,6 +853,8 @@ function CreateCurrentOpening() {
               InputLabelProps={{ shrink: true }}
               value={formData.interview_date_3}
               onChange={handleChange}
+              error={!!formErrors.interview_date_3}
+              helperText={formErrors.interview_date_3}
             />
             <FormControlLabel
               control={
@@ -788,6 +898,9 @@ function CreateCurrentOpening() {
             </Button>
           </DialogActions>
         </Dialog>
+
+
+        {/* Edit Job Opening  */}
         <Dialog open={editOpen} onClose={handleCloseEdit}>
           <DialogTitle>Edit Job Opening</DialogTitle>
           <DialogContent>
@@ -799,6 +912,8 @@ function CreateCurrentOpening() {
               fullWidth
               value={editFormData.category_of_appointment}
               onChange={handleEditChange}
+              error={!!editErrors.category_of_appointment}
+              helperText={editErrors.category_of_appointment}
             >
               {categories.map((category) => (
                 <MenuItem
@@ -817,6 +932,8 @@ function CreateCurrentOpening() {
               fullWidth
               value={editFormData.post_applied_for}
               onChange={handleEditChange}
+              error={!!editErrors.post_applied_for}
+              helperText={editErrors.post_applied_for}
             >
               {posts.map((post) => (
                 <MenuItem key={post.post_id} value={post.post_name}>
@@ -832,6 +949,8 @@ function CreateCurrentOpening() {
               fullWidth
               value={editFormData.sub_post_applied_for}
               onChange={handleEditChange}
+              error={!!editErrors.sub_post_applied_for}
+              helperText={editErrors.sub_post_applied_for}
             >
               {subposts.map((subpost) => (
                 <MenuItem key={subpost.subpost_id} value={subpost.subpost_name}>
@@ -846,6 +965,8 @@ function CreateCurrentOpening() {
               select
               fullWidth
               value={editFormData.departments}
+              error={!!editErrors.departments}
+              helperText={editErrors.departments}
               onChange={handleEditChange}
             >
               {departments.map((department) => (
@@ -864,6 +985,8 @@ function CreateCurrentOpening() {
               fullWidth
               value={editFormData.qualification_and_experience}
               onChange={handleEditChange}
+              error={!!editErrors.qualification_and_experience}
+              helperText={editErrors.qualification_and_experience}
             />
             <TextField
               margin="dense"
@@ -872,6 +995,8 @@ function CreateCurrentOpening() {
               fullWidth
               value={editFormData.highly_desirable}
               onChange={handleEditChange}
+              error={!!editErrors.highly_desirable}
+              helperText={editErrors.highly_desirable}
             />
             <TextField
               margin="dense"
@@ -882,6 +1007,8 @@ function CreateCurrentOpening() {
               InputLabelProps={{ shrink: true }}
               value={editFormData.last_date_to_apply}
               onChange={handleEditChange}
+              error={!!editErrors.last_date_to_apply}
+              helperText={editErrors.last_date_to_apply}
             />
             <TextField
               margin="dense"
@@ -890,6 +1017,8 @@ function CreateCurrentOpening() {
               fullWidth
               value={editFormData.eligibility_criteria}
               onChange={handleEditChange}
+              error={!!editErrors.eligibility_criteria}
+              helperText={editErrors.eligibility_criteria}
             />
             <TextField
               margin="dense"
@@ -898,8 +1027,10 @@ function CreateCurrentOpening() {
               name="interview_date_1"
               fullWidth
               InputLabelProps={{ shrink: true }}
-              value={editFormData.interview_date_1} // Ensure this is correctly bound
+              value={editFormData.interview_date_1}
               onChange={handleEditChange}
+              error={!!editErrors.interview_date_1}
+              helperText={editErrors.interview_date_1}
             />
             <TextField
               margin="dense"
@@ -908,8 +1039,10 @@ function CreateCurrentOpening() {
               name="interview_date_2"
               fullWidth
               InputLabelProps={{ shrink: true }}
-              value={editFormData.interview_date_2} // Ensure this is correctly bound
+              value={editFormData.interview_date_2}
               onChange={handleEditChange}
+              error={!!editErrors.interview_date_2}
+              helperText={editErrors.interview_date_2}
             />
             <TextField
               margin="dense"
@@ -920,6 +1053,8 @@ function CreateCurrentOpening() {
               InputLabelProps={{ shrink: true }}
               value={editFormData.interview_date_3}
               onChange={handleEditChange}
+              error={!!editErrors.interview_date_3}
+              helperText={editErrors.interview_date_3}
             />
             <FormControlLabel
               control={
