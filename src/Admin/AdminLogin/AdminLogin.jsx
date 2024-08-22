@@ -4,9 +4,10 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Notification from "../../Notification/Notification";
 import { useNavigate, useLocation } from "react-router-dom";
 import { loginAdmin } from "../Services/AdminServices";
-import "./AdminLogin.css"
+import "./AdminLogin.css";
 
 function AdminLogin() {
+  const logoutTime = 30;  // set auto logout time in minutes ( max 60 min1)
   const [showPassword, setShowPassword] = useState(false);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -24,10 +25,8 @@ function AdminLogin() {
     const { email, password, autoLogin } = location.state || {};
 
     if (autoLogin) {
-      // Automatically log in if autoLogin flag is set
       handleAutoLogin(email, password);
     } else if (email && password) {
-      // Set email and password for manual login
       setUsername(email);
       setPassword(password);
     }
@@ -42,36 +41,29 @@ function AdminLogin() {
       if (response && response.data.token) {
         sessionStorage.setItem("Token", JSON.stringify(response.data.token));
         localStorage.setItem("Token", JSON.stringify(response.data.token));
+
+        const logoutTimeout = setTimeout(() => {
+          sessionStorage.removeItem("Token");
+          localStorage.removeItem("Token");
+          navigate(`/admin`);
+        }, logoutTime * 60 * 1000);
+
+        sessionStorage.setItem("LogoutTimeout", JSON.stringify(logoutTimeout));
+
         navigate(`/admin-dashboard/admin-page`);
         setErrorNotification({
           open: true,
           message: "Login Successful",
         });
       } else {
-        setErrorMessage("Invalid credentials");
-        setErrorNotification({
-          open: true,
-          message: "Invalid credentials",
-        });
-        setErrorCount((prevCount) => prevCount + 1); // Increment error count
+        handleLoginError("Invalid credentials");
       }
     } catch (error) {
-      console.error("Error during login:", error);
-      if (error.response && error.response.status === 400) {
-        setErrorMessage(error.response.data.message || "Invalid credentials");
-        setErrorNotification({
-          open: true,
-          message: error.response.data.message || "Invalid credentials",
-        });
-        setErrorCount((prevCount) => prevCount + 1);
-      } else {
-        setErrorMessage("An error occurred during login");
-        setErrorNotification({
-          open: true,
-          message: "An error occurred during login",
-        });
-        setErrorCount((prevCount) => prevCount + 1);
-      }
+      handleLoginError(
+        error.response
+          ? error.response.data.message
+          : "An error occurred during login"
+      );
     }
   };
 
@@ -86,37 +78,41 @@ function AdminLogin() {
       if (response && response.data.token) {
         sessionStorage.setItem("Token", JSON.stringify(response.data.token));
         localStorage.setItem("Token", JSON.stringify(response.data.token));
+
+        // Set timeout for auto logout
+        const logoutTimeout = setTimeout(() => {
+          sessionStorage.removeItem("Token");
+          localStorage.removeItem("Token");
+          navigate(`/admin`);
+        }, logoutTime * 60 * 1000);
+
+        sessionStorage.setItem("LogoutTimeout", JSON.stringify(logoutTimeout));
+
         navigate(`/admin-dashboard/admin-page`);
         setErrorNotification({
           open: true,
           message: "Login Successful",
         });
       } else {
-        setErrorMessage("Invalid credentials");
-        setErrorNotification({
-          open: true,
-          message: "Invalid credentials",
-        });
-        setErrorCount((prevCount) => prevCount + 1); // Increment error count
+        handleLoginError("Invalid credentials");
       }
     } catch (error) {
-      console.error("Error during login:", error);
-      if (error.response && error.response.status === 400) {
-        setErrorMessage(error.response.data.message || "Invalid credentials");
-        setErrorNotification({
-          open: true,
-          message: error.response.data.message || "Invalid credentials",
-        });
-        setErrorCount((prevCount) => prevCount + 1);
-      } else {
-        setErrorMessage("An error occurred during login");
-        setErrorNotification({
-          open: true,
-          message: "An error occurred during login",
-        });
-        setErrorCount((prevCount) => prevCount + 1);
-      }
+      handleLoginError(
+        error.response
+          ? error.response.data.message
+          : "An error occurred during login"
+      );
     }
+  };
+
+  const handleLoginError = (message) => {
+    console.error("Error during login:", message);
+    setErrorMessage(message);
+    setErrorNotification({
+      open: true,
+      message,
+    });
+    setErrorCount((prevCount) => prevCount + 1);
   };
 
   const handleTogglePassword = () => {

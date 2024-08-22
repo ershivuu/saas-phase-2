@@ -14,7 +14,7 @@ import {
   getSubscriptionPlan,
   getExpiredCompany,
   submitSubscriptionPlan,
-} from "../../SuperAdminService"; // Import API functions
+} from "../../SuperAdminService"; 
 import Notification from "../../../Notification/Notification";
 
 const OfflinePayment = () => {

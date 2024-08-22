@@ -208,28 +208,28 @@ function CreateSubjects() {
       </div>
     );
 
-  if (error)
-    return (
-      <div style={{ padding: "20px" }}>
-        <TableContainer component={Paper}>
-          <Table>
-            <TableHead>
-              <TableRow>
-                <TableCell>ID</TableCell>
-                <TableCell>Subject Name</TableCell>
-                <TableCell>Edit</TableCell>
-                <TableCell>Delete</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              <Typography color="error" sx={{ padding: "10px" }}>
-                Error: {error}
-              </Typography>
-            </TableBody>
-          </Table>
-        </TableContainer>
-      </div>
-    );
+  // if (error)
+  //   return (
+  //     <div style={{ padding: "20px" }}>
+  //       <TableContainer component={Paper}>
+  //         <Table>
+  //           <TableHead>
+  //             <TableRow>
+  //               <TableCell>ID</TableCell>
+  //               <TableCell>Subject Name</TableCell>
+  //               <TableCell>Edit</TableCell>
+  //               <TableCell>Delete</TableCell>
+  //             </TableRow>
+  //           </TableHead>
+  //           <TableBody>
+  //             <Typography color="error" sx={{ padding: "10px" }}>
+  //               Error: {error}
+  //             </Typography>
+  //           </TableBody>
+  //         </Table>
+  //       </TableContainer>
+  //     </div>
+  //   );
 
   return (
     <div style={{ padding: "20px" }}>
@@ -253,6 +253,11 @@ function CreateSubjects() {
             </TableRow>
           </TableHead>
           <TableBody>
+            {subjects.length === 0 && (
+              <TableRow>
+                <TableCell colSpan={8}>No Subjects Available...</TableCell>
+              </TableRow>
+            )}
             {subjects
               .slice()
               .sort((a, b) => b.id - a.id)
@@ -262,12 +267,6 @@ function CreateSubjects() {
                   <TableCell>{subject.department_name}</TableCell>
                   <TableCell>{subject.subject_name}</TableCell>
                   <TableCell>
-                    {/* <Button
-                      variant="outlined"
-                      onClick={() => handleEditClick(subject)}
-                    >
-                      Edit
-                    </Button> */}
                     <IconButton
                       color="primary"
                       onClick={() => handleEditClick(subject)}
@@ -276,13 +275,6 @@ function CreateSubjects() {
                     </IconButton>
                   </TableCell>
                   <TableCell>
-                    {/* <Button
-                      variant="outlined"
-                      color="error"
-                      onClick={() => handleDeleteClick(subject)}
-                    >
-                      Delete
-                    </Button> */}
                     <IconButton
                       color="error"
                       onClick={() => handleDeleteClick(subject)}
@@ -312,11 +304,14 @@ function CreateSubjects() {
             error={Boolean(departmentError)}
             helperText={departmentError}
           >
-            {departments.map((department) => (
-              <MenuItem key={department.id} value={department.id}>
-                {department.depart_name}
-              </MenuItem>
-            ))}
+            {departments
+              .slice()
+              .sort((a, b) => b.id - a.id)
+              .map((department) => (
+                <MenuItem key={department.id} value={department.id}>
+                  {department.depart_name}
+                </MenuItem>
+              ))}
           </TextField>
           {departmentError && (
             <Typography color="error" sx={{ padding: "10px" }}>
@@ -362,11 +357,14 @@ function CreateSubjects() {
             error={Boolean(departmentError)}
             helperText={departmentError}
           >
-            {departments.map((department) => (
-              <MenuItem key={department.id} value={department.id}>
-                {department.depart_name}
-              </MenuItem>
-            ))}
+            {departments
+              .slice()
+              .sort((a, b) => b.id - a.id)
+              .map((department) => (
+                <MenuItem key={department.id} value={department.id}>
+                  {department.depart_name}
+                </MenuItem>
+              ))}
           </TextField>
           {departmentError && (
             <Typography color="error" sx={{ padding: "10px" }}>
@@ -391,7 +389,7 @@ function CreateSubjects() {
             Cancel
           </Button>
           <Button onClick={handleEditSubmit} color="primary">
-            Update
+            save
           </Button>
         </DialogActions>
       </Dialog>

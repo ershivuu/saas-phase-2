@@ -1,8 +1,7 @@
 import React from "react";
-import { useNavigate } from "react-router-dom";
+import { Navigate } from "react-router-dom";
 
-const AdminAuthGaurd = ({ element }) => {
-  const navigate = useNavigate();
+const AuthWrapper = ({ element }) => {
   const getAdminToken = () => {
     let token = sessionStorage.getItem("Token");
     if (token.startsWith('"') && token.endsWith('"')) {
@@ -11,15 +10,11 @@ const AdminAuthGaurd = ({ element }) => {
     return token;
   };
   const token = getAdminToken();
-
   if (!token) {
-    navigate(`/admin`);
-    sessionStorage.removeItem("token");
-    localStorage.removeItem("token");
-    return;
+    return <Navigate to="/admin" replace />;
   }
 
   return element;
 };
 
-export default AdminAuthGaurd;
+export default AuthWrapper;

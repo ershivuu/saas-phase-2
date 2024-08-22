@@ -19,8 +19,8 @@ import {
   MenuItem,
 } from "@mui/material";
 import VisibilityIcon from "@mui/icons-material/Visibility";
-import FileOpenIcon from "@mui/icons-material/FileOpen";
 import DeleteIcon from "@mui/icons-material/Delete";
+import FileOpenIcon from "@mui/icons-material/FileOpen";
 import {
   getAllApplicants,
   deleteApplicant,
@@ -287,7 +287,7 @@ function CreateAppliedCandidates() {
             <TableBody>
               {filteredData.length === 0 && (
                 <TableRow>
-                  <TableCell colSpan={10}>No candidates available...</TableCell>
+                  <TableCell colSpan={10}>No candidates Applied...</TableCell>
                 </TableRow>
               )}
               {filteredData

@@ -139,7 +139,7 @@ export const createAdmin = async (formValues) => {
       "Error registering company data:",
       error.response ? error.response.data : error.message
     );
-    throw error; // Re-throw error to handle it further up the call stack if needed
+    throw error;
   }
 };
 export const updatePlanStatus = async (planId, status) => {
@@ -149,7 +149,7 @@ export const updatePlanStatus = async (planId, status) => {
   }
 
   try {
-    await axios.patch(
+    const response = await axios.patch(
       `${SUPER_ADMIN_BASE_URL}/subscriptions/update/${planId}`,
       { plan_status: status },
       {
@@ -158,6 +158,7 @@ export const updatePlanStatus = async (planId, status) => {
         },
       }
     );
+    return response.data;
   } catch (error) {
     console.error(
       "Error updating plan status:",

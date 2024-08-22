@@ -22,7 +22,7 @@ import {
   DialogContent,
   DialogTitle,
   TextField,
-  IconButton
+  IconButton,
 } from "@mui/material";
 import Notification from "../../../Notification/Notification";
 import EditIcon from "@mui/icons-material/Edit";
@@ -85,7 +85,7 @@ function CreateCategory() {
       return;
     }
     try {
-   const response =   await createCategory(newCategory);
+      const response = await createCategory(newCategory);
       setNewCategory("");
       handleCloseAddDialog();
       // Optionally refetch categories here
@@ -113,7 +113,7 @@ function CreateCategory() {
     }
     try {
       if (categoryToEdit) {
-       const response = await updateCategory(categoryToEdit, categoryNameEdit);
+        const response = await updateCategory(categoryToEdit, categoryNameEdit);
         setCategoryToEdit(null);
         setCategoryNameEdit("");
         handleCloseEditDialog();
@@ -139,7 +139,7 @@ function CreateCategory() {
   const handleDeleteCategory = async () => {
     try {
       if (categoryToDelete) {
-       const response = await deleteCategory(categoryToDelete);
+        const response = await deleteCategory(categoryToDelete);
         setCategoryToDelete(null);
         handleCloseDeleteDialog();
         // Optionally refetch categories here
@@ -158,7 +158,6 @@ function CreateCategory() {
       //   message: error.message,
       //   severity: "error",
       // });
-
     }
   };
 
@@ -166,28 +165,6 @@ function CreateCategory() {
     return (
       <div className="loading-process">
         <CircularProgress />
-      </div>
-    );
-  if (error)
-    return (
-      <div style={{ padding: "20px" }}>
-        <TableContainer component={Paper}>
-          <Table>
-            <TableHead>
-              <TableRow>
-                <TableCell>S.No</TableCell>
-                <TableCell>Category Name</TableCell>
-                <TableCell>Edit</TableCell>
-                {/* <TableCell>Delete</TableCell> */}
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              <Typography color="error" sx={{ padding: "10px" }}>
-                Error: {error}
-              </Typography>
-            </TableBody>
-          </Table>
-        </TableContainer>
       </div>
     );
 
@@ -209,7 +186,6 @@ function CreateCategory() {
               <TableCell>Category Name</TableCell>
               <TableCell>Edit</TableCell>
               <TableCell>Delete</TableCell>
-              {/* <TableCell>Created At</TableCell> */}
             </TableRow>
           </TableHead>
           <TableBody>
@@ -226,33 +202,20 @@ function CreateCategory() {
                   <TableCell>{index + 1}</TableCell>
                   <TableCell>{category.category_name}</TableCell>
                   <TableCell>
-                    {/* <Button
-                      variant="outlined"
+                    <IconButton
+                      color="primary"
                       onClick={() => handleOpenEditDialog(category)}
                     >
-                      Edit
-                    </Button> */}
-                    <IconButton
-                            color="primary"
-                            onClick={() => handleOpenEditDialog(category)}
-                          >
-                            <EditIcon />
-                          </IconButton>
+                      <EditIcon />
+                    </IconButton>
                   </TableCell>
                   <TableCell>
-                    {/* <Button
-                      variant="outlined"
+                    <IconButton
                       color="error"
                       onClick={() => handleOpenDeleteDialog(category.id)}
                     >
-                      Delete
-                    </Button> */}
-                    <IconButton
-                            color="error"
-                            onClick={() => handleOpenDeleteDialog(category.id)}
-                          >
-                            <DeleteIcon />
-                          </IconButton>
+                      <DeleteIcon />
+                    </IconButton>
                   </TableCell>
                   {/* <TableCell>
                   {new Date(category.created_at).toLocaleString()}

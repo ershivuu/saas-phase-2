@@ -389,6 +389,13 @@ function CreateInterviewSchedules() {
             </TableRow>
           </TableHead>
           <TableBody>
+            {filteredJobOpenings.length === 0 && (
+              <TableRow>
+                <TableCell colSpan={8}>
+                  No Interview Schedule Available...
+                </TableCell>
+              </TableRow>
+            )}
             {filteredJobOpenings
               .slice()
               .sort((a, b) => b.id - a.id)

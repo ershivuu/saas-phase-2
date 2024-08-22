@@ -183,28 +183,28 @@ function CreateExamType() {
       </div>
     );
 
-  if (error)
-    return (
-      <div style={{ padding: "20px" }}>
-        <TableContainer component={Paper}>
-          <Table>
-            <TableHead>
-              <TableRow>
-                <TableCell>ID</TableCell>
-                <TableCell>Exam Type</TableCell>
-                <TableCell>Edit</TableCell>
-                <TableCell>Delete</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              <Typography color="error" sx={{ padding: "10px" }}>
-                Error: {error}
-              </Typography>
-            </TableBody>
-          </Table>
-        </TableContainer>
-      </div>
-    );
+  // if (error)
+  //   return (
+  //     <div style={{ padding: "20px" }}>
+  //       <TableContainer component={Paper}>
+  //         <Table>
+  //           <TableHead>
+  //             <TableRow>
+  //               <TableCell>ID</TableCell>
+  //               <TableCell>Exam Type</TableCell>
+  //               <TableCell>Edit</TableCell>
+  //               <TableCell>Delete</TableCell>
+  //             </TableRow>
+  //           </TableHead>
+  //           <TableBody>
+  //             <Typography color="error" sx={{ padding: "10px" }}>
+  //               Error: {error}
+  //             </Typography>
+  //           </TableBody>
+  //         </Table>
+  //       </TableContainer>
+  //     </div>
+  //   );
 
   return (
     <div style={{ padding: "20px" }}>
@@ -227,6 +227,11 @@ function CreateExamType() {
             </TableRow>
           </TableHead>
           <TableBody>
+            {examTypes.length === 0 && (
+              <TableRow>
+                <TableCell colSpan={8}>No Exam Types Available...</TableCell>
+              </TableRow>
+            )}
             {examTypes
               .slice()
               .sort((a, b) => b.id - a.id)
@@ -235,12 +240,6 @@ function CreateExamType() {
                   <TableCell>{index + 1}</TableCell>
                   <TableCell>{examType.exam_type_name}</TableCell>
                   <TableCell>
-                    {/* <Button
-                      variant="outlined"
-                      onClick={() => handleEditClick(examType)}
-                    >
-                      Edit
-                    </Button> */}
                     <IconButton
                       color="primary"
                       onClick={() => handleEditClick(examType)}
@@ -249,13 +248,6 @@ function CreateExamType() {
                     </IconButton>
                   </TableCell>
                   <TableCell>
-                    {/* <Button
-                      variant="outlined"
-                      color="error"
-                      onClick={() => handleDeleteClick(examType)}
-                    >
-                      Delete
-                    </Button> */}
                     <IconButton
                       color="error"
                       onClick={() => handleDeleteClick(examType)}
@@ -320,7 +312,7 @@ function CreateExamType() {
             Cancel
           </Button>
           <Button onClick={handleEditSubmit} color="primary">
-            Update
+            save
           </Button>
         </DialogActions>
       </Dialog>
