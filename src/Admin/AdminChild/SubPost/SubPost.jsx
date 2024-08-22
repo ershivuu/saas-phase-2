@@ -196,29 +196,6 @@ function SubPost() {
         <CircularProgress />
       </div>
     );
-  if (error)
-    return (
-      <div style={{ padding: "20px" }}>
-        <TableContainer component={Paper}>
-          <Table>
-            <TableHead>
-              <TableRow>
-                <TableCell>S.No</TableCell>
-                <TableCell>Post</TableCell>
-                <TableCell>Sub Post</TableCell>
-                <TableCell>Edit</TableCell>
-                <TableCell>Delete</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              <Typography color="error" sx={{ padding: "10px" }}>
-                Error: {error}
-              </Typography>
-            </TableBody>
-          </Table>
-        </TableContainer>
-      </div>
-    );
 
   return (
     <div style={{ padding: "20px" }}>
@@ -244,7 +221,7 @@ function SubPost() {
           <TableBody>
             {subPosts.length === 0 && (
               <TableRow>
-                <TableCell colSpan={8}>No Sub Posts available...</TableCell>
+                <TableCell colSpan={8}>No Sub Posts Available...</TableCell>
               </TableRow>
             )}
             {subPosts
@@ -256,12 +233,6 @@ function SubPost() {
                   <TableCell>{subPost.post_name}</TableCell>
                   <TableCell>{subPost.subpost_name}</TableCell>
                   <TableCell>
-                    {/* <Button
-                      variant="outlined"
-                      onClick={() => handleEditClick(subPost)}
-                    >
-                      Edit
-                    </Button> */}
                     <IconButton
                       color="primary"
                       onClick={() => handleEditClick(subPost)}
@@ -270,13 +241,6 @@ function SubPost() {
                     </IconButton>
                   </TableCell>
                   <TableCell>
-                    {/* <Button
-                      variant="outlined"
-                      color="error"
-                      onClick={() => handleDeleteClick(subPost)}
-                    >
-                      Delete
-                    </Button> */}
                     <IconButton
                       color="error"
                       onClick={() => handleDeleteClick(subPost)}
@@ -307,11 +271,14 @@ function SubPost() {
             error={!!errors.postId}
             helperText={errors.postId}
           >
-            {posts.map((post) => (
-              <MenuItem key={post.id} value={post.id}>
-                {post.post_name}
-              </MenuItem>
-            ))}
+            {posts
+              .slice()
+              .sort((a, b) => b.id - a.id)
+              .map((post) => (
+                <MenuItem key={post.id} value={post.id}>
+                  {post.post_name}
+                </MenuItem>
+              ))}
           </TextField>
           <TextField
             label="Sub Post Name"
@@ -331,7 +298,7 @@ function SubPost() {
             Cancel
           </Button>
           <Button onClick={handleSubmit} color="primary">
-            {isEditing ? "UPDATE" : "ADD"}
+            {isEditing ? "save" : "add"}
           </Button>
         </DialogActions>
       </Dialog>

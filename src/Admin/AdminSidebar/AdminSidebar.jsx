@@ -68,27 +68,16 @@ const AdminSidebar = ({ isOpen, onToggle }) => {
     setOpenDropdown(openDropdown === item ? "" : item);
   };
 
-  // const handleLogout = () => {
-  //   sessionStorage.removeItem("Token");
-  //   sessionStorage.removeItem("isLoggedIn");
-  //   localStorage.removeItem("Token");
-  //   localStorage.removeItem("isLoggedIn");
-  //   navigate("/");
-  // };
   const handleLogout = async () => {
     try {
-      // Call the API to log out
       await logoutAdmin();
     } catch (error) {
-      // Optionally handle the error (e.g., show a notification)
     } finally {
-      // Clear session and local storage
       sessionStorage.removeItem("Token");
       sessionStorage.removeItem("isLoggedIn");
       localStorage.removeItem("Token");
       localStorage.removeItem("isLoggedIn");
-      // Navigate to login or home page
-      navigate("/");
+      navigate("/admin");
     }
   };
   const drawer = (

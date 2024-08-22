@@ -1,30 +1,25 @@
 import React from "react";
-import { Navigate, useLocation } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
-// Function to get the token from session storage
-const getAuthToken = () => {
-  let token = sessionStorage.getItem("Token");
-  if (token && token.startsWith('"') && token.endsWith('"')) {
-    token = token.slice(1, -1);
-  }
-  return token;
-};
+const SuperAdminAuthGaurd = ({ element }) => {
+  const navigate = useNavigate();
+  const getAdminToken = () => {
+    let token = sessionStorage.getItem("Token");
+    if (token.startsWith('"') && token.endsWith('"')) {
+      token = token.slice(1, -1);
+    }
+    return token;
+  };
+  const token = getAdminToken();
 
-// RouteGuard component
-const SuperAdminAuthGaurd = ({ children }) => {
-  const location = useLocation();
-  const token = getAuthToken();
-
-  // Check if token exists
   if (!token) {
-    // Redirect to login if no token
-    return <Navigate to="/superadmin" state={{ from: location }} />;
+    navigate(`/superadmin`);
+    sessionStorage.removeItem("token");
+    localStorage.removeItem("token");
+    return;
   }
 
-  // Optionally add further validation for token expiry or authenticity
-  // For example, make an API call to verify the token
-
-  return children;
+  return element;
 };
 
 export default SuperAdminAuthGaurd;

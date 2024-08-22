@@ -179,28 +179,28 @@ function CreateDepartment() {
         <CircularProgress />
       </div>
     );
-  if (error)
-    return (
-      <div style={{ padding: "20px" }}>
-        <TableContainer component={Paper}>
-          <Table>
-            <TableHead>
-              <TableRow>
-                <TableCell>ID</TableCell>
-                <TableCell>Department Name</TableCell>
-                <TableCell>Edit</TableCell>
-                <TableCell>Delete</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              <Typography color="error" sx={{ padding: "10px" }}>
-                Error: {error}
-              </Typography>
-            </TableBody>
-          </Table>
-        </TableContainer>
-      </div>
-    );
+  // if (error)
+  //   return (
+  //     <div style={{ padding: "20px" }}>
+  //       <TableContainer component={Paper}>
+  //         <Table>
+  //           <TableHead>
+  //             <TableRow>
+  //               <TableCell>ID</TableCell>
+  //               <TableCell>Department Name</TableCell>
+  //               <TableCell>Edit</TableCell>
+  //               <TableCell>Delete</TableCell>
+  //             </TableRow>
+  //           </TableHead>
+  //           <TableBody>
+  //             <Typography color="error" sx={{ padding: "10px" }}>
+  //               Error: {error}
+  //             </Typography>
+  //           </TableBody>
+  //         </Table>
+  //       </TableContainer>
+  //     </div>
+  //   );
 
   return (
     <div style={{ padding: "20px" }}>
@@ -223,6 +223,11 @@ function CreateDepartment() {
             </TableRow>
           </TableHead>
           <TableBody>
+            {departments.length === 0 && (
+              <TableRow>
+                <TableCell colSpan={8}>No Departments Available...</TableCell>
+              </TableRow>
+            )}
             {departments
               .slice()
               .sort((a, b) => b.id - a.id)
@@ -231,12 +236,6 @@ function CreateDepartment() {
                   <TableCell>{index + 1}</TableCell>
                   <TableCell>{department.depart_name}</TableCell>
                   <TableCell>
-                    {/* <Button
-                      variant="outlined"
-                      onClick={() => handleEditClick(department)}
-                    >
-                      Edit
-                    </Button> */}
                     <IconButton
                       color="primary"
                       onClick={() => handleEditClick(department)}
@@ -306,7 +305,7 @@ function CreateDepartment() {
             Cancel
           </Button>
           <Button onClick={handleEditSubmit} color="primary">
-            Update
+            save
           </Button>
         </DialogActions>
       </Dialog>

@@ -27,138 +27,93 @@ import Section3 from "../Admin/AdminChild/FrontendPages/EditHome/HomeSubPages/Se
 import Section4 from "../Admin/AdminChild/FrontendPages/EditHome/HomeSubPages/Section4";
 import Section5 from "../Admin/AdminChild/FrontendPages/EditHome/HomeSubPages/Section5";
 import UpgradePlan from "../Admin/UpgradePlan/UpgradePlan";
-import AdminAuthGaurd from "../gaurd/AdminAuthGaurd";
-
+// element={<AdminAuthGaurd component={<AdminDashboard />} />}
 const AdminAuthRoutes = [
   <Route
     key="AdminDashboard"
     path="/admin-dashboard"
-    element={<AdminAuthGaurd element={<AdminDashboard />} />}
+    element={<AdminDashboard />}
   >
     <Route
       key="AdminLanding"
       path="admin-page"
-      element={<AdminAuthGaurd element={<AdminLanding />} />}
+      element={<AdminLanding />}
     ></Route>
     <Route
       key="CreatePosts"
       path="admin-posts"
-      element={<AdminAuthGaurd element={<CreatePosts />} />}
+      element={<CreatePosts />}
     ></Route>
     <Route
       key="CreateCategory"
       path="admin-category"
-      element={<AdminAuthGaurd element={<CreateCategory />} />}
+      element={<CreateCategory />}
     ></Route>
+    <Route key="SubPost" path="admin-subpost" element={<SubPost />}></Route>
     <Route
       key="SubPost"
-      path="admin-subpost"
-      element={<AdminAuthGaurd element={<SubPost />} />}
-    ></Route>
-    <Route
-      key="CreateDepartment"
       path="admin-department"
-      element={<AdminAuthGaurd element={<CreateDepartment />} />}
+      element={<CreateDepartment />}
     ></Route>
     <Route
       key="CreateSubjects"
       path="admin-subject"
-      element={<AdminAuthGaurd element={<CreateSubjects />} />}
+      element={<CreateSubjects />}
     ></Route>
     <Route
       key="CreateExamType"
       path="admin-examtype"
-      element={<AdminAuthGaurd element={<CreateExamType />} />}
+      element={<CreateExamType />}
     ></Route>
     <Route
       key="CreateDegree"
       path="admin-degree"
-      element={<AdminAuthGaurd element={<CreateDegree />} />}
+      element={<CreateDegree />}
     ></Route>
     <Route
       key="CreateCurrentOpening"
       path="admin-current-opening"
-      element={<AdminAuthGaurd element={<CreateCurrentOpening />} />}
+      element={<CreateCurrentOpening />}
     ></Route>
     <Route
       key="CreateInterviewSchedules"
       path="admin-interview-schedules"
-      element={<AdminAuthGaurd element={<CreateInterviewSchedules />} />}
+      element={<CreateInterviewSchedules />}
     ></Route>
     <Route
       key="CreateAppliedCandidates"
       path="admin-applied-candidates"
-      element={<AdminAuthGaurd element={<CreateAppliedCandidates />} />}
+      element={<CreateAppliedCandidates />}
     ></Route>
     <Route
       key="CreateVisitors"
       path="admin-visitors"
-      element={<AdminAuthGaurd element={<CreateVisitors />} />}
+      element={<CreateVisitors />}
     ></Route>
-    <Route
-      key="CreateJd"
-      path="admin-jd"
-      element={<AdminAuthGaurd element={<CreateJd />} />}
-    ></Route>
-    <Route
-      key="EditHeader"
-      path="edit-header"
-      element={<AdminAuthGaurd element={<EditHeader />} />}
-    ></Route>
-    <Route
-      key="EditFooter"
-      path="edit-footer"
-      element={<AdminAuthGaurd element={<EditFooter />} />}
-    ></Route>
+    <Route key="CreateJd" path="admin-jd" element={<CreateJd />}></Route>
+    <Route key="EditHeader" path="edit-header" element={<EditHeader />}></Route>
+    <Route key="EditFooter" path="edit-footer" element={<EditFooter />}></Route>
     <Route
       key="EditContact"
       path="edit-contact"
-      element={<AdminAuthGaurd element={<EditContact />} />}
+      element={<EditContact />}
     ></Route>
     <Route
       key="EditInterviewSchedule"
       path="edit-interviews"
-      element={<AdminAuthGaurd element={<EditInterviewSchedule />} />}
+      element={<EditInterviewSchedule />}
     ></Route>
-    <Route
-      key="FaqSection"
-      path="edit-faq"
-      element={<AdminAuthGaurd element={<FaqSection />} />}
-    ></Route>
-    <Route
-      key="EditHome"
-      path="edit-home"
-      element={<AdminAuthGaurd element={<EditHome />} />}
-    ></Route>
-    <Route
-      key="Section1"
-      path="edit-section-1"
-      element={<AdminAuthGaurd element={<Section1 />} />}
-    ></Route>
-    <Route
-      key="Section2"
-      path="edit-section-2"
-      element={<AdminAuthGaurd element={<Section2 />} />}
-    ></Route>
-    <Route
-      key="Section3"
-      path="edit-section-3"
-      element={<AdminAuthGaurd element={<Section3 />} />}
-    ></Route>
-    <Route
-      key="Section4"
-      path="edit-section-4"
-      element={<AdminAuthGaurd element={<Section4 />} />}
-    ></Route>
-    <Route
-      key="Section5"
-      path="edit-section-5"
-      element={<AdminAuthGaurd element={<Section5 />} />}
-    ></Route>
+    <Route key="FaqSection" path="edit-faq" element={<FaqSection />}></Route>
+    <Route key="EditHome" path="edit-home" element={<EditHome />}></Route>
+    <Route key="Section1" path="edit-section-1" element={<Section1 />}></Route>
+    <Route key="Section2" path="edit-section-2" element={<Section2 />}></Route>
+    <Route key="Section3" path="edit-section-3" element={<Section3 />}></Route>
+    <Route key="Section4" path="edit-section-4" element={<Section4 />}></Route>
+    <Route key="Section5" path="edit-section-5" element={<Section5 />}></Route>
     <Route
       key="UpgradePlan"
       path="upgrade-plan"
-      element={<AdminAuthGaurd element={<UpgradePlan />} />}
+      element={<UpgradePlan />}
     ></Route>
   </Route>,
 ];

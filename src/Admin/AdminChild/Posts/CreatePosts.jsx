@@ -16,7 +16,7 @@ import {
   DialogTitle,
   TextField,
   MenuItem,
-  IconButton
+  IconButton,
 } from "@mui/material";
 import {
   getPosts,
@@ -122,18 +122,20 @@ function CreatePosts() {
   const handleSubmit = async () => {
     if (!validateFields()) return;
     try {
-      let response ;
+      let response;
       if (isEditing) {
-      response = await updatePost(selectedPost.id, categoryId, postName);
+        response = await updatePost(selectedPost.id, categoryId, postName);
       } else {
-      response = await createPost(categoryId, postName);
+        response = await createPost(categoryId, postName);
       }
       const postsData = await getPosts();
       setPosts(postsData);
       handleCloseDialog();
       setNotification({
         open: true,
-        message: response.message || (isEditing ? "Updated Successfully" : "Added Successfully"),
+        message:
+          response.message ||
+          (isEditing ? "Updated Successfully" : "Added Successfully"),
         severity: "success",
       });
     } catch (error) {
@@ -150,11 +152,11 @@ function CreatePosts() {
     try {
       if (postToDelete) {
         console.log("Deleting post with ID:", postToDelete.id); // Debug log
-      const response =  await deletePost(postToDelete.id);
+        const response = await deletePost(postToDelete.id);
         const postsData = await getPosts();
         setPosts(postsData);
         handleCloseDeleteDialog();
-         setNotification({
+        setNotification({
           open: true,
           message: response.message || "Deleted Successfully",
           severity: "success",
@@ -180,34 +182,10 @@ function CreatePosts() {
     if (e.target.value) setErrors({ ...errors, postName: "" });
   };
 
-
   if (loading)
     return (
       <div className="loading-process">
         <CircularProgress />
-      </div>
-    );
-  if (error)
-    return (
-      <div style={{ padding: "20px" }}>
-        <TableContainer component={Paper}>
-          <Table>
-            <TableHead>
-              <TableRow>
-                <TableCell>S.No</TableCell>
-                <TableCell>Category</TableCell>
-                <TableCell>Post Name</TableCell>
-                <TableCell>Edit</TableCell>
-                <TableCell>Delete</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              <Typography color="error" sx={{ padding: "10px" }}>
-                Error: {error}
-              </Typography>
-            </TableBody>
-          </Table>
-        </TableContainer>
       </div>
     );
 
@@ -254,11 +232,11 @@ function CreatePosts() {
                       Edit
                     </Button> */}
                     <IconButton
-                            color="primary"
-                            onClick={() => handleEditClick(post)}
-                          >
-                            <EditIcon />
-                          </IconButton>
+                      color="primary"
+                      onClick={() => handleEditClick(post)}
+                    >
+                      <EditIcon />
+                    </IconButton>
                   </TableCell>
                   <TableCell>
                     {/* <Button
@@ -268,12 +246,12 @@ function CreatePosts() {
                     >
                       Delete
                     </Button> */}
-                        <IconButton
-                            color="error"
-                            onClick={() => handleDeleteClick(post)}
-                          >
-                            <DeleteIcon />
-                          </IconButton>
+                    <IconButton
+                      color="error"
+                      onClick={() => handleDeleteClick(post)}
+                    >
+                      <DeleteIcon />
+                    </IconButton>
                   </TableCell>
                 </TableRow>
               ))}
@@ -293,11 +271,14 @@ function CreatePosts() {
             error={Boolean(errors.categoryId)}
             helperText={errors.categoryId}
           >
-            {categories.map((category) => (
-              <MenuItem key={category.id} value={category.id}>
-                {category.category_name}
-              </MenuItem>
-            ))}
+            {categories
+              .slice()
+              .sort((a, b) => b.id - a.id)
+              .map((category) => (
+                <MenuItem key={category.id} value={category.id}>
+                  {category.category_name}
+                </MenuItem>
+              ))}
           </TextField>
           <TextField
             label="Post Name"
@@ -314,7 +295,7 @@ function CreatePosts() {
             Cancel
           </Button>
           <Button onClick={handleSubmit} color="primary">
-            {isEditing ? "Update Post" : "Add Post"}
+            {isEditing ? "Save" : "Add"}
           </Button>
         </DialogActions>
       </Dialog>

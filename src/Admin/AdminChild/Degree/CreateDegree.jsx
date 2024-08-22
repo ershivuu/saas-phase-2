@@ -399,7 +399,7 @@ function CreateDegree() {
             color="primary"
             disabled={dialogLoading}
           >
-            {dialogLoading ? "Updating..." : "Update"}
+            {dialogLoading ? "saving..." : "save"}
           </Button>
         </DialogActions>
       </Dialog>
@@ -408,10 +408,7 @@ function CreateDegree() {
       <Dialog open={deleteDialogOpen} onClose={handleCloseDeleteDialog}>
         <DialogTitle>Confirm Deletion</DialogTitle>
         <DialogContent>
-          <Typography>
-            Are you sure you want to delete the degree{" "}
-            <strong>{degreeToDelete?.degree_name}</strong>?
-          </Typography>
+          <Typography>Are you sure you want to delete the degree?</Typography>
         </DialogContent>
         <DialogActions>
           <Button onClick={handleCloseDeleteDialog} color="primary">

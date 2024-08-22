@@ -19,7 +19,9 @@ import {
   getSubscriptionPlan,
   updatePlanStatus,
   updatePlan,
+  createPlan,
 } from "../../SuperAdminService"; // Adjust the path as needed
+import Notification from "../../../Notification/Notification";
 
 function PlanAndPricing() {
   const [plans, setPlans] = useState([]);
@@ -29,6 +31,7 @@ function PlanAndPricing() {
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [viewOpen, setViewOpen] = useState(false);
   const [editOpen, setEditOpen] = useState(false);
+  const [createOpen, setCreateOpen] = useState(false);
   const [selectedPlan, setSelectedPlan] = useState(null);
   const [status, setStatus] = useState("");
   const [editForm, setEditForm] = useState({
@@ -37,6 +40,20 @@ function PlanAndPricing() {
     plan_details: "",
     price: "",
     duration: "",
+  });
+  const [newPlan, setNewPlan] = useState({
+    plan_name: "",
+    slug_name: "",
+    plan_details: "",
+    price: "",
+    duration: "",
+  });
+  const [editErrors, setEditErrors] = useState({});
+  const [newPlanErrors, setNewPlanErrors] = useState({});
+  const [notification, setNotification] = useState({
+    open: false,
+    message: "",
+    severity: "success",
   });
 
   useEffect(() => {
@@ -74,7 +91,16 @@ function PlanAndPricing() {
       price: plan.price,
       duration: plan.duration,
     });
+    setEditErrors({});
     setEditOpen(true);
+  };
+
+  const handleCreateOpen = () => {
+    setCreateOpen(true);
+  };
+
+  const handleCreateClose = () => {
+    setCreateOpen(false);
   };
 
   const handleClose = () => {
@@ -82,6 +108,7 @@ function PlanAndPricing() {
     setConfirmOpen(false);
     setViewOpen(false);
     setEditOpen(false);
+    setCreateOpen(false);
     setSelectedPlan(null);
   };
 
@@ -93,15 +120,30 @@ function PlanAndPricing() {
     try {
       const updatedStatus = status === "Active" ? 1 : 0; // Correctly map status to 1 (Active) and 0 (Inactive)
       if (selectedPlan) {
-        await updatePlanStatus(selectedPlan.id, updatedStatus);
+        const response = await updatePlanStatus(selectedPlan.id, updatedStatus);
         // Refresh the plans after update
         const updatedPlans = await getSubscriptionPlan();
         setPlans(updatedPlans);
+        setNotification({
+          open: true,
+          message: response.message,
+          severity: "success",
+        });
         handleClose();
       }
     } catch (err) {
       setError(err.message);
     }
+  };
+
+  const validateForm = (form) => {
+    let errors = {};
+    if (!form.plan_name) errors.plan_name = "Plan name is required";
+    if (!form.slug_name) errors.slug_name = "Slug name is required";
+    if (!form.plan_details) errors.plan_details = "Plan details are required";
+    if (!form.price) errors.price = "Price is required";
+    if (!form.duration) errors.duration = "Duration is required";
+    return errors;
   };
 
   const handleEditChange = (e) => {
@@ -110,17 +152,69 @@ function PlanAndPricing() {
       ...editForm,
       [name]: value,
     });
+
+    // Clear the specific error when user types
+    setEditErrors({
+      ...editErrors,
+      [name]: "",
+    });
   };
 
   const handleEditSubmit = async () => {
+    const errors = validateForm(editForm);
+    if (Object.keys(errors).length) {
+      setEditErrors(errors);
+      return;
+    }
     try {
       if (selectedPlan) {
-        await updatePlan(selectedPlan.id, editForm);
+        const response = await updatePlan(selectedPlan.id, editForm);
         // Refresh the plans after update
         const updatedPlans = await getSubscriptionPlan();
         setPlans(updatedPlans);
+        setNotification({
+          open: true,
+          message: response.message,
+          severity: "success",
+        });
         handleClose();
       }
+    } catch (err) {
+      setError(err.message);
+    }
+  };
+
+  const handleCreateChange = (e) => {
+    const { name, value } = e.target;
+    setNewPlan({
+      ...newPlan,
+      [name]: value,
+    });
+
+    // Clear the specific error when user types
+    setNewPlanErrors({
+      ...newPlanErrors,
+      [name]: "",
+    });
+  };
+
+  const handleCreateSubmit = async () => {
+    const errors = validateForm(newPlan);
+    if (Object.keys(errors).length) {
+      setNewPlanErrors(errors);
+      return;
+    }
+    try {
+      const response = await createPlan(newPlan);
+      // Refresh the plans after creating a new one
+      const updatedPlans = await getSubscriptionPlan();
+      setPlans(updatedPlans);
+      setNotification({
+        open: true,
+        message: response.message,
+        severity: "success",
+      });
+      handleCreateClose();
     } catch (err) {
       setError(err.message);
     }
@@ -131,12 +225,19 @@ function PlanAndPricing() {
 
   return (
     <div className="pricing-table">
-      <Button variant="outlined">Create Plan</Button>
+      <Button
+        variant="contained"
+        color="success"
+        onClick={handleCreateOpen}
+        className="create-plan-btn"
+      >
+        Create Plan
+      </Button>
       <TableContainer component={Paper}>
         <Table sx={{ minWidth: 650 }} aria-label="simple table">
           <TableHead>
             <TableRow>
-              <TableCell>Sr. No</TableCell>
+              <TableCell>S No.</TableCell>
               <TableCell>Plan Name</TableCell>
               <TableCell>Duration (Days)</TableCell>
               <TableCell>Status</TableCell>
@@ -174,7 +275,7 @@ function PlanAndPricing() {
                   <Button
                     variant="outlined"
                     onClick={() => handleEditOpen(plan)}
-                    disabled={plan.plan_status === 1} // Disable button if status is Active
+                    disabled={plan.plan_status === 1}
                   >
                     Edit
                   </Button>
@@ -214,16 +315,14 @@ function PlanAndPricing() {
       </Dialog>
 
       {/* Confirmation Dialog */}
-      <Dialog open={confirmOpen} onClose={handleClose}>
+      <Dialog open={confirmOpen} onClose={() => setConfirmOpen(false)}>
         <DialogTitle>Confirm Status Update</DialogTitle>
         <DialogContent>
           Are you sure you want to update the status to {status}?
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleClose}>Cancel</Button>
-          <Button onClick={handleStatusChange} color="primary">
-            Yes
-          </Button>
+          <Button onClick={() => setConfirmOpen(false)}>Cancel</Button>
+          <Button onClick={handleStatusChange}>Confirm</Button>
         </DialogActions>
       </Dialog>
 
@@ -236,33 +335,34 @@ function PlanAndPricing() {
               <p>
                 <strong>Plan Name:</strong> {selectedPlan.plan_name}
               </p>
-              <p>
-                <strong>Details:</strong> {selectedPlan.plan_details}
-              </p>
+
               <p>
                 <strong>Price:</strong> ${selectedPlan.price}
               </p>
               <p>
                 <strong>Duration:</strong> {selectedPlan.duration} days
               </p>
-              <p>
+              {/* <p>
                 <strong>Start Date:</strong>{" "}
                 {new Date(selectedPlan.start_date).toLocaleDateString()}
               </p>
               <p>
                 <strong>End Date:</strong>{" "}
                 {new Date(selectedPlan.end_date).toLocaleDateString()}
-              </p>
+              </p> */}
               <p>
                 <strong>Status:</strong>{" "}
                 {selectedPlan.plan_status === 1 ? "Active" : "Inactive"}
               </p>
-              <p>
+              {/* <p>
                 <strong>Days Remaining:</strong> {selectedPlan.days_remaining}{" "}
                 days
-              </p>
-              <p>
+              </p> */}
+              {/* <p>
                 <strong>Time Remaining:</strong> {selectedPlan.time_remaining}
+              </p> */}
+              <p>
+                <strong>Details:</strong> {selectedPlan.plan_details}
               </p>
             </div>
           )}
@@ -285,9 +385,10 @@ function PlanAndPricing() {
                 label="Plan Name"
                 type="text"
                 fullWidth
-                variant="standard"
                 value={editForm.plan_name}
                 onChange={handleEditChange}
+                error={!!editErrors.plan_name}
+                helperText={editErrors.plan_name}
               />
               <TextField
                 margin="dense"
@@ -295,9 +396,10 @@ function PlanAndPricing() {
                 label="Slug Name"
                 type="text"
                 fullWidth
-                variant="standard"
                 value={editForm.slug_name}
                 onChange={handleEditChange}
+                error={!!editErrors.slug_name}
+                helperText={editErrors.slug_name}
               />
               <TextField
                 margin="dense"
@@ -305,9 +407,10 @@ function PlanAndPricing() {
                 label="Plan Details"
                 type="text"
                 fullWidth
-                variant="standard"
                 value={editForm.plan_details}
                 onChange={handleEditChange}
+                error={!!editErrors.plan_details}
+                helperText={editErrors.plan_details}
               />
               <TextField
                 margin="dense"
@@ -315,9 +418,10 @@ function PlanAndPricing() {
                 label="Price"
                 type="number"
                 fullWidth
-                variant="standard"
                 value={editForm.price}
                 onChange={handleEditChange}
+                error={!!editErrors.price}
+                helperText={editErrors.price}
               />
               <TextField
                 margin="dense"
@@ -325,9 +429,10 @@ function PlanAndPricing() {
                 label="Duration (Days)"
                 type="number"
                 fullWidth
-                variant="standard"
                 value={editForm.duration}
                 onChange={handleEditChange}
+                error={!!editErrors.duration}
+                helperText={editErrors.duration}
               />
             </div>
           )}
@@ -339,6 +444,82 @@ function PlanAndPricing() {
           </Button>
         </DialogActions>
       </Dialog>
+
+      {/* Create Plan Dialog */}
+      <Dialog open={createOpen} onClose={handleCreateClose}>
+        <DialogTitle>Create New Plan</DialogTitle>
+        <DialogContent>
+          <TextField
+            autoFocus
+            margin="dense"
+            name="plan_name"
+            label="Plan Name"
+            type="text"
+            fullWidth
+            value={newPlan.plan_name}
+            onChange={handleCreateChange}
+            error={!!newPlanErrors.plan_name}
+            helperText={newPlanErrors.plan_name}
+          />
+          <TextField
+            margin="dense"
+            name="slug_name"
+            label="Slug Name"
+            type="text"
+            fullWidth
+            value={newPlan.slug_name}
+            onChange={handleCreateChange}
+            error={!!newPlanErrors.slug_name}
+            helperText={newPlanErrors.slug_name}
+          />
+          <TextField
+            margin="dense"
+            name="plan_details"
+            label="Plan Details"
+            type="text"
+            fullWidth
+            value={newPlan.plan_details}
+            onChange={handleCreateChange}
+            error={!!newPlanErrors.plan_details}
+            helperText={newPlanErrors.plan_details}
+          />
+          <TextField
+            margin="dense"
+            name="price"
+            label="Price"
+            type="number"
+            fullWidth
+            value={newPlan.price}
+            onChange={handleCreateChange}
+            error={!!newPlanErrors.price}
+            helperText={newPlanErrors.price}
+          />
+          <TextField
+            margin="dense"
+            name="duration"
+            label="Duration (Days)"
+            type="number"
+            fullWidth
+            value={newPlan.duration}
+            onChange={handleCreateChange}
+            error={!!newPlanErrors.duration}
+            helperText={newPlanErrors.duration}
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCreateClose}>Cancel</Button>
+          <Button onClick={handleCreateSubmit} color="primary">
+            Create
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      <Notification
+        open={notification.open}
+        handleClose={() => setNotification({ ...notification, open: false })}
+        alertMessage={notification.message}
+        alertSeverity={notification.severity}
+      />
     </div>
   );
 }

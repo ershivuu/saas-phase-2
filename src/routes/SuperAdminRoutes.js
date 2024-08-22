@@ -9,40 +9,49 @@ import OfflinePayment from "../superAdmin/SuperAdminPages/OfflinePayment/Offline
 import PaymentHistory from "../superAdmin/SuperAdminPages/PaymentHistory/PaymentHistory.jsx";
 import LoginLogs from "../superAdmin/SuperAdminPages/LoginLogs/LoginLogs.jsx";
 import PlanAndPricing from "../superAdmin/SuperAdminPages/Plans/PlanAndPricing.jsx";
+import SuperAdminAuthGaurd from "../gaurd/SuperAdminAuthGaurd.js";
 
 const SuperAdminRoutes = [
-  <Route key="SuperDashboard" path="/super-admin" element={<SuperDashboard />}>
+  <Route
+    key="SuperDashboard"
+    path="/super-admin"
+    element={<SuperAdminAuthGaurd element={<SuperDashboard />} />}
+  >
     <Route
       key="SuperDash"
       path="super-dashboard"
-      element={<SuperDash />}
+      element={<SuperAdminAuthGaurd element={<SuperDash />} />}
     ></Route>
     <Route
       key="Management"
       path="company-management"
-      element={<Management />}
+      element={<SuperAdminAuthGaurd element={<Management />} />}
     ></Route>
     <Route
       key="PlanAndPricing"
       path="plan-and-pricing"
-      element={<PlanAndPricing />}
+      element={<SuperAdminAuthGaurd element={<PlanAndPricing />} />}
     ></Route>
     <Route
       key="ServiceList"
       path="service-list"
-      element={<ServiceList />}
+      element={<SuperAdminAuthGaurd element={<ServiceList />} />}
     ></Route>
     <Route
       key="OfflinePayment"
       path="offline-payments"
-      element={<OfflinePayment />}
+      element={<SuperAdminAuthGaurd element={<OfflinePayment />} />}
     ></Route>
     <Route
       key="PaymentHistory"
       path="payment-history"
-      element={<PaymentHistory />}
+      element={<SuperAdminAuthGaurd element={<PaymentHistory />} />}
     ></Route>
-    <Route key="LoginLogs" path="login-logs" element={<LoginLogs />}></Route>
+    <Route
+      key="LoginLogs"
+      path="login-logs"
+      element={<SuperAdminAuthGaurd element={<LoginLogs />} />}
+    ></Route>
   </Route>,
 ];
 

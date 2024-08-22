@@ -5,8 +5,9 @@ import Notification from "../../Notification/Notification";
 import { useNavigate } from "react-router-dom";
 import corusviewLogo from "../../assets/logos/corusview.png";
 import { loginSuperAdmin } from "../SuperAdminService";
-import "./SuperLogin.css"
+import "./SuperLogin.css";
 function SuperLogin() {
+  const logoutTime = 30; // set auto logout time in minutes ( max 60 min1)
   const [showPassword, setShowPassword] = useState(false);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -30,6 +31,13 @@ function SuperLogin() {
       if (response && response.data.token) {
         sessionStorage.setItem("Token", JSON.stringify(response.data.token));
         localStorage.setItem("Token", JSON.stringify(response.data.token));
+        const logoutTimeout = setTimeout(() => {
+          sessionStorage.removeItem("Token");
+          localStorage.removeItem("Token");
+          navigate(`/superadmin`);
+        }, logoutTime * 60 * 1000);
+
+        sessionStorage.setItem("LogoutTimeout", JSON.stringify(logoutTimeout));
         navigate(`/super-admin/super-dashboard`);
         setErrorNotification({
           open: true,

@@ -213,6 +213,13 @@ function CreateJd() {
             </TableRow>
           </TableHead>
           <TableBody>
+            {jobOpenings.length === 0 && (
+              <TableRow>
+                <TableCell colSpan={8}>
+                  No Job Description Available...
+                </TableCell>
+              </TableRow>
+            )}
             {jobOpenings
               .slice()
               .sort((a, b) => b.id - a.id)

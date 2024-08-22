@@ -180,20 +180,31 @@ function CreateCurrentOpening() {
   };
   const validateForm = (data) => {
     let errors = {};
-    if (!data.category_of_appointment) errors.category_of_appointment = "Category of appointment is required.";
-    if (!data.post_applied_for) errors.post_applied_for = "Post applied for is required.";
-    if (!data.sub_post_applied_for) errors.sub_post_applied_for = "Sub Post applied for is required.";
+    if (!data.category_of_appointment)
+      errors.category_of_appointment = "Category of appointment is required.";
+    if (!data.post_applied_for)
+      errors.post_applied_for = "Post applied for is required.";
+    if (!data.sub_post_applied_for)
+      errors.sub_post_applied_for = "Sub Post applied for is required.";
     if (!data.departments) errors.departments = "Department is required.";
-    if (!data.last_date_to_apply) errors.last_date_to_apply = "Last date to apply is required.";
-    if (!data.eligibility_criteria) errors.eligibility_criteria = "Eligibility criteria is required.";
-    if (!data.qualification_and_experience) errors.qualification_and_experience = "Qualification and Experince  is required.";
-    if (!data.highly_desirable) errors.highly_desirable = "Highly Desirable is required.";
-    if (!data.interview_date_1) errors.interview_date_1 = "Interview Date 1 is required.";
-    if (!data.interview_date_2) errors.interview_date_2 = "Interview Date 2 is required.";
-    if (!data.interview_date_3) errors.interview_date_3 = "Interview Date 3 is required.";
+    if (!data.last_date_to_apply)
+      errors.last_date_to_apply = "Last date to apply is required.";
+    if (!data.eligibility_criteria)
+      errors.eligibility_criteria = "Eligibility criteria is required.";
+    if (!data.qualification_and_experience)
+      errors.qualification_and_experience =
+        "Qualification and Experince  is required.";
+    if (!data.highly_desirable)
+      errors.highly_desirable = "Highly Desirable is required.";
+    if (!data.interview_date_1)
+      errors.interview_date_1 = "Interview Date 1 is required.";
+    if (!data.interview_date_2)
+      errors.interview_date_2 = "Interview Date 2 is required.";
+    if (!data.interview_date_3)
+      errors.interview_date_3 = "Interview Date 3 is required.";
     return errors;
   };
-  
+
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
 
@@ -210,11 +221,11 @@ function CreateCurrentOpening() {
 
   const handleCategoryChange = (e) => {
     const selectedCategoryName = e.target.value;
-      // Clear error for the category field
-  setFormErrors((prevErrors) => ({
-    ...prevErrors,
-    category_of_appointment: "",
-  }));
+    // Clear error for the category field
+    setFormErrors((prevErrors) => ({
+      ...prevErrors,
+      category_of_appointment: "",
+    }));
 
     const selectedCategory = categories.find(
       (category) => category.category_name === selectedCategoryName
@@ -233,13 +244,12 @@ function CreateCurrentOpening() {
   const handlePostChange = (e) => {
     const selectedPostName = e.target.value;
 
-        // Clear error for the post field
-  setFormErrors((prevErrors) => ({
-    ...prevErrors,
-    post_applied_for: "",
-  }));
+    // Clear error for the post field
+    setFormErrors((prevErrors) => ({
+      ...prevErrors,
+      post_applied_for: "",
+    }));
 
-  
     const selectedPost = posts.find(
       (post) => post.post_name === selectedPostName
     );
@@ -252,7 +262,6 @@ function CreateCurrentOpening() {
     });
   };
 
-  
   const handleSubmit = async () => {
     const errors = validateForm(formData);
     if (Object.keys(errors).length > 0) {
@@ -302,20 +311,30 @@ function CreateCurrentOpening() {
 
   const validateEditForm = (data) => {
     let errors = {};
-    if (!data.category_of_appointment) errors.category_of_appointment = "Category of appointment is required.";
-    if (!data.post_applied_for) errors.post_applied_for = "Post applied for is required.";
-    if (!data.sub_post_applied_for) errors.sub_post_applied_for = "Sub Post applied for is required.";
+    if (!data.category_of_appointment)
+      errors.category_of_appointment = "Category of appointment is required.";
+    if (!data.post_applied_for)
+      errors.post_applied_for = "Post applied for is required.";
+    if (!data.sub_post_applied_for)
+      errors.sub_post_applied_for = "Sub Post applied for is required.";
     if (!data.departments) errors.departments = "Department is required.";
-    if (!data.last_date_to_apply) errors.last_date_to_apply = "Last date to apply is required.";
-    if (!data.eligibility_criteria) errors.eligibility_criteria = "Eligibility criteria is required.";
-    if (!data.qualification_and_experience) errors.qualification_and_experience = "Qualification and Experience is required.";
-    if (!data.highly_desirable) errors.highly_desirable = "Highly Desirable is required.";
-    if (!data.interview_date_1) errors.interview_date_1 = "Interview Date 1 is required.";
-    if (!data.interview_date_2) errors.interview_date_2 = "Interview Date 2 is required.";
-    if (!data.interview_date_3) errors.interview_date_3 = "Interview Date 3 is required.";
+    if (!data.last_date_to_apply)
+      errors.last_date_to_apply = "Last date to apply is required.";
+    if (!data.eligibility_criteria)
+      errors.eligibility_criteria = "Eligibility criteria is required.";
+    if (!data.qualification_and_experience)
+      errors.qualification_and_experience =
+        "Qualification and Experience is required.";
+    if (!data.highly_desirable)
+      errors.highly_desirable = "Highly Desirable is required.";
+    if (!data.interview_date_1)
+      errors.interview_date_1 = "Interview Date 1 is required.";
+    if (!data.interview_date_2)
+      errors.interview_date_2 = "Interview Date 2 is required.";
+    if (!data.interview_date_3)
+      errors.interview_date_3 = "Interview Date 3 is required.";
     return errors;
   };
-
 
   const handleEditClick = (job) => {
     const selectedCategory = categories.find(
@@ -364,7 +383,6 @@ function CreateCurrentOpening() {
   };
 
   const handleEditSubmit = async () => {
-
     const errors = validateEditForm(editFormData);
     if (Object.keys(errors).length > 0) {
       setEditErrors(errors);
@@ -638,6 +656,13 @@ function CreateCurrentOpening() {
                   </TableRow>
                 </TableHead>
                 <TableBody>
+                  {jobOpenings.length === 0 && (
+                    <TableRow>
+                      <TableCell colSpan={8}>
+                        No Current Openings Available...
+                      </TableCell>
+                    </TableRow>
+                  )}
                   {jobOpenings
                     .slice()
                     .sort((a, b) => b.id - a.id)
@@ -817,7 +842,7 @@ function CreateCurrentOpening() {
               InputLabelProps={{ shrink: true }}
               value={formData.last_date_to_apply}
               onChange={handleChange}
-                error={!!formErrors.last_date_to_apply}
+              error={!!formErrors.last_date_to_apply}
               helperText={formErrors.last_date_to_apply}
             />
             <TextField
@@ -898,7 +923,6 @@ function CreateCurrentOpening() {
             </Button>
           </DialogActions>
         </Dialog>
-
 
         {/* Edit Job Opening  */}
         <Dialog open={editOpen} onClose={handleCloseEdit}>
