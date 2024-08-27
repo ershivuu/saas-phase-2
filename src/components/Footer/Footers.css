@@ -27,6 +27,10 @@
   color: rgba(255, 255, 255, 0.655);
   padding-top: 10px;
 }
+.footer-2 a {
+  color: rgba(255, 255, 255, 0.655);
+  text-decoration: none;
+}
 
 .f-white-logo img {
   width: 200px;
@@ -91,4 +95,12 @@
     margin-top: 20px;
     text-align: center;
   }
+}
+.register-admin-btn button {
+  background-color: transparent;
+  color: white;
+  border: 2px solid white;
+  font-size: 16px;
+  padding: 1px 5px;
+  border-radius: 10px;
 }

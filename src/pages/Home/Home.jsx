@@ -1,10 +1,12 @@
 import React, { useEffect, useState, Suspense } from "react";
-import "./Home.css";
 
+import "./Home.css";
+import { Link } from "react-router-dom";
 import {
   getBannerInfo,
   getSection5Data,
 } from "../../Admin/Services/FrontendServices";
+import { verifySlug, getUniqueSlug } from "../../slugs/getSlug";
 import Cards from "./Sections/Cards";
 import SectionTwo from "./Sections/SectionTwo";
 import SectionFour from "./Sections/SectionFour";
@@ -14,6 +16,11 @@ const Header = React.lazy(() => import("../../components/Header/Header"));
 const Footers = React.lazy(() => import("../../components/Footer/Footers"));
 
 function Home() {
+  const slug = getUniqueSlug();
+  useEffect(() => {
+    verifySlug();
+  }, []);
+
   const [loading, setLoading] = useState(true);
   const [bannerData, setBannerData] = useState({
     BannerContentText: "",
@@ -92,7 +99,7 @@ function Home() {
           <p id="uni-name">{bannerData.BannerHeaderText}</p>
           <p>{bannerData.BannerContentText}</p>
           <button type="button" id="join-medi-btn">
-            <a href="/current-opening">{bannerData.BannerButtonText}</a>
+            <Link to={`/${slug}/openings`}>{bannerData.BannerButtonText}</Link>
           </button>
         </div>
       </div>

@@ -94,7 +94,7 @@ function LoginLogs() {
             {Array.from(new Set(logs.map((log) => log.company_name))).map(
               (company) => (
                 <MenuItem key={company} value={company}>
-                  {company}
+                  <p style={{ textTransform: "capitalize" }}>{company}</p>
                 </MenuItem>
               )
             )}
@@ -117,9 +117,12 @@ function LoginLogs() {
               {filteredLogs.map((log, index) => (
                 <TableRow key={log.id}>
                   <TableCell>{index + 1}</TableCell>
-                  <TableCell>{log.company_name}</TableCell>
-                  {/* <TableCell>{log.last_login}</TableCell>
-                  <TableCell>{log.last_logout}</TableCell> */}
+                  <TableCell>
+                    <p style={{ textTransform: "capitalize" }}>
+                      {log.company_name}
+                    </p>
+                  </TableCell>
+
                   <TableCell>{formatDate(log.last_login)}</TableCell>
                   <TableCell>{formatDate(log.last_logout)}</TableCell>
                 </TableRow>

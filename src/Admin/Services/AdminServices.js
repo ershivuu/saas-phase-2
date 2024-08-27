@@ -960,7 +960,7 @@ export const registerAdmin = async (email, password, contact, company_name) => {
       contact,
       company_name,
     });
-    return response;
+    return response.data;
   } catch (error) {
     throw error;
   }
@@ -977,17 +977,17 @@ export const getAllVisitors = async () => {
       {
         headers: {
           Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json", 
+          "Content-Type": "application/json",
         },
       }
     );
-    return response.data.data; 
+    return response.data.data;
   } catch (error) {
     console.error(
       "Error fetching visitors:",
       error.response ? error.response.data : error.message
     );
-    throw error; 
+    throw error;
   }
 };
 export const deleteVisitor = async (id) => {
@@ -1092,5 +1092,52 @@ export const logoutAdmin = async () => {
   } catch (error) {
     console.error("Error logging out:", error);
     throw error;
+  }
+};
+
+export const getAdminHeader = async () => {
+  const token = getAdminToken();
+  if (!token) {
+    throw new Error("No authentication token found.");
+  }
+
+  try {
+    const response = await axios.get(`${NEW_ADMIN_BASE_URL}/admin/header`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return response.data;
+  } catch (error) {
+    console.error(
+      "Error fetching company data:",
+      error.response ? error.response.data : error.message
+    );
+    throw error;
+  }
+};
+
+export const sendHeaderData = async (formData) => {
+  const token = getAdminToken();
+  if (!token) {
+    throw new Error("No authentication token found.");
+  }
+
+  try {
+    const response = await axios.post(
+      `${NEW_ADMIN_BASE_URL}/admin/addHeader`,
+      formData,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "multipart/form-data",
+        },
+      }
+    );
+    return response.data;
+  } catch (error) {
+    throw new Error(
+      error.response?.data?.message || "Failed to send header data"
+    );
   }
 };

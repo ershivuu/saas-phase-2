@@ -72,7 +72,7 @@ const SuperSideBar = ({ isOpen, onToggle }) => {
     sessionStorage.removeItem("isLoggedIn");
     localStorage.removeItem("Token");
     localStorage.removeItem("isLoggedIn");
-    navigate("/superadmin");
+    navigate("/super/superadmin");
   };
   const handlePlanUpgrade = () => {
     navigate("/super-admin/plan-upgrade");

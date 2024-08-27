@@ -364,7 +364,9 @@ function Management() {
                   <img src={user} alt="" />
                 </div>
                 <div className="company-other-details">
-                  <p>Name: {company.company_name}</p>
+                  <p style={{ textTransform: "capitalize" }}>
+                    Name: {company.company_name}
+                  </p>
                   <p>Subdomain: {company.subdomain}</p>
                   <p>
                     Duration: <span>{company.subscription_plan.duration}</span>
@@ -374,13 +376,15 @@ function Management() {
                   </p>
                 </div>
                 <div className="del-buttons">
-                  <IconButton
-                    color="error"
-                    aria-label="delete"
-                    onClick={() => handleDeleteClick(company.id)}
-                  >
-                    <DeleteIcon />
-                  </IconButton>
+                  {company.company_name.toLowerCase() !== "corusview" && (
+                    <IconButton
+                      color="error"
+                      aria-label="delete"
+                      onClick={() => handleDeleteClick(company.id)}
+                    >
+                      <DeleteIcon />
+                    </IconButton>
+                  )}
                   <IconButton
                     color="primary"
                     aria-label="view"
@@ -394,7 +398,9 @@ function Management() {
                 <div>
                   {company.subscription_plan.name ? (
                     <>
-                      <p>{company.subscription_plan.name}</p>
+                      <p style={{ textTransform: "capitalize" }}>
+                        {company.subscription_plan.name}
+                      </p>
                       <p>Plan Name</p>
                       <div>
                         <p>

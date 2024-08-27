@@ -324,3 +324,24 @@ export const getExpiredCompany = async () => {
     throw error;
   }
 };
+export const deleteSubscriptionPlan = async (id) => {
+  const token = getAuthToken();
+  if (!token) {
+    throw new Error("No authentication token found.");
+  }
+  try {
+    const response = await axios.delete(
+      `${SUPER_ADMIN_BASE_URL}/subscription-plans/deleteSubscriptionPlan/${id}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    return response.data;
+  } catch (error) {
+    throw new Error(
+      error.response ? error.response.data.message : error.message
+    );
+  }
+};

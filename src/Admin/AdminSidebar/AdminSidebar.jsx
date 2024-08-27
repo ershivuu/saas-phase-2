@@ -33,6 +33,15 @@ import WorkHistoryIcon from "@mui/icons-material/WorkHistory";
 import FeaturedPlayListIcon from "@mui/icons-material/FeaturedPlayList";
 import CollectionsBookmarkIcon from "@mui/icons-material/CollectionsBookmark";
 const AdminSidebar = ({ isOpen, onToggle }) => {
+  const getUniqueSlug = () => {
+    let slug = localStorage.getItem("userSlug");
+    return slug;
+  };
+  const userSlug = getUniqueSlug();
+  const passedSlug = "/";
+
+  const slug = userSlug || passedSlug;
+
   const [mobileOpen, setMobileOpen] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [openDropdown, setOpenDropdown] = useState("");
@@ -77,7 +86,8 @@ const AdminSidebar = ({ isOpen, onToggle }) => {
       sessionStorage.removeItem("isLoggedIn");
       localStorage.removeItem("Token");
       localStorage.removeItem("isLoggedIn");
-      navigate("/admin");
+      // navigate("/admin");
+      navigate(slug ? `/${slug}/admin` : "/admin");
     }
   };
   const drawer = (

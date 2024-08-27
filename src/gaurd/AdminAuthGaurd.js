@@ -11,9 +11,10 @@ const AdminAuthGaurd = ({ element }) => {
     return token;
   };
   const token = getAdminToken();
-
+  console.log("getAdminToken", token);
   if (!token) {
-    navigate(`/admin`);
+    console.log("dvsdvwjehfb qe f", token);
+    navigate(`/shiv/admin`);
     sessionStorage.removeItem("token");
     localStorage.removeItem("token");
     return;

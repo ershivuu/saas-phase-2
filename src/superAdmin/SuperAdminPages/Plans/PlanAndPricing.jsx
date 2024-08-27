@@ -19,12 +19,14 @@ import {
 } from "@mui/material";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import EditIcon from "@mui/icons-material/Edit";
+import DeleteIcon from "@mui/icons-material/Delete";
 import {
   getSubscriptionPlan,
   updatePlanStatus,
   updatePlan,
   createPlan,
-} from "../../SuperAdminService"; // Adjust the path as needed
+  deleteSubscriptionPlan,
+} from "../../SuperAdminService";
 import Notification from "../../../Notification/Notification";
 
 function PlanAndPricing() {
@@ -37,6 +39,7 @@ function PlanAndPricing() {
   const [editOpen, setEditOpen] = useState(false);
   const [createOpen, setCreateOpen] = useState(false);
   const [selectedPlan, setSelectedPlan] = useState(null);
+  const [deleteOpen, setDeleteOpen] = useState(false); // New state for delete confirmation
   const [statusChangeInfo, setStatusChangeInfo] = useState(null); // New state to hold info for status change
   const [editForm, setEditForm] = useState({
     plan_name: "",
@@ -180,12 +183,36 @@ function PlanAndPricing() {
     if (!form.duration) errors.duration = "Duration is required";
     return errors;
   };
+  const handleDeleteOpen = (plan) => {
+    setSelectedPlan(plan);
+    setDeleteOpen(true);
+  };
 
+  const handleDeleteConfirm = async () => {
+    if (!selectedPlan) return;
+
+    try {
+      const response = await deleteSubscriptionPlan(selectedPlan.id);
+      const updatedPlans = await getSubscriptionPlan();
+      setPlans(updatedPlans);
+      setNotification({
+        open: true,
+        message: response.message,
+        severity: "success",
+      });
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setDeleteOpen(false);
+      setSelectedPlan(null);
+    }
+  };
   const handleClose = () => {
     setViewOpen(false);
     setEditOpen(false);
     setCreateOpen(false);
     setConfirmOpen(false);
+    setDeleteOpen(false);
   };
 
   const handleViewOpen = (plan) => {
@@ -235,7 +262,8 @@ function PlanAndPricing() {
               <TableCell>Duration (Days)</TableCell>
               <TableCell>Status</TableCell>
               <TableCell>View Details</TableCell>
-              <TableCell>Edit Plan</TableCell>
+              <TableCell>Edit </TableCell>
+              <TableCell>Delete</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -245,8 +273,12 @@ function PlanAndPricing() {
               .map((plan, index) => (
                 <TableRow key={plan.id}>
                   <TableCell>{index + 1}</TableCell>
-                  <TableCell>{plan.plan_name}</TableCell>
-                  <TableCell>{plan.duration} days</TableCell>
+                  <TableCell>
+                    <p style={{ textTransform: "capitalize" }}>
+                      {plan.plan_name}
+                    </p>
+                  </TableCell>
+                  <TableCell>{plan.duration} Days</TableCell>
                   <TableCell>
                     <Switch
                       checked={plan.plan_status === 1}
@@ -271,6 +303,16 @@ function PlanAndPricing() {
                       <EditIcon />
                     </IconButton>
                   </TableCell>
+                  <TableCell>
+                    <IconButton
+                      color="error"
+                      aria-label="delete"
+                      onClick={() => handleDeleteOpen(plan)}
+                      disabled={plan.plan_status === 1}
+                    >
+                      <DeleteIcon />
+                    </IconButton>
+                  </TableCell>
                 </TableRow>
               ))}
           </TableBody>
@@ -283,20 +325,20 @@ function PlanAndPricing() {
         <DialogContent>
           {selectedPlan && (
             <div>
-              <p>
+              <p style={{ textTransform: "capitalize" }}>
                 <strong>Plan Name:</strong> {selectedPlan.plan_name}
               </p>
               <p>
-                <strong>Price:</strong> ${selectedPlan.price}
+                <strong>Price:</strong> ₹{selectedPlan.price}
               </p>
               <p>
-                <strong>Duration:</strong> {selectedPlan.duration} days
+                <strong>Duration:</strong> {selectedPlan.duration} Days
               </p>
               <p>
-                <strong>Status:</strong>{" "}
+                <strong>Status:</strong>
                 {selectedPlan.plan_status === 1 ? "Active" : "Inactive"}
               </p>
-              <p>
+              <p style={{ textTransform: "capitalize" }}>
                 <strong>Details:</strong> {selectedPlan.plan_details}
               </p>
             </div>
@@ -458,7 +500,19 @@ function PlanAndPricing() {
           </Button>
         </DialogActions>
       </Dialog>
-
+      {/* Confirm Delete Dialog */}
+      <Dialog open={deleteOpen} onClose={() => setDeleteOpen(false)}>
+        <DialogTitle>Confirm Delete</DialogTitle>
+        <DialogContent>
+          <p>Are you sure you want to delete this plan?</p>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setDeleteOpen(false)}>Cancel</Button>
+          <Button onClick={handleDeleteConfirm} color="error">
+            Delete
+          </Button>
+        </DialogActions>
+      </Dialog>
       <Notification
         open={notification.open}
         onClose={() => setNotification({ ...notification, open: false })}

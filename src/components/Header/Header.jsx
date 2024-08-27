@@ -1,15 +1,18 @@
 import React, { useEffect, useState } from "react";
 import user from "../../assets/logos/user.png";
 import { Outlet, Link } from "react-router-dom";
-import axios from "axios";
 import "./Header.css";
 import { getHeaderInfo } from "../../Admin/Services/FrontendServices";
+import { verifySlug, getUniqueSlug } from "../../slugs/getSlug";
 
 function Header() {
+  const slugs = getUniqueSlug();
   const [ribbonContent, setRibbonContent] = useState("");
   const [ribbonBgCol, setRibbonBgCol] = useState("");
   const [imageUrl, setImageUrl] = useState("");
-
+  useEffect(() => {
+    verifySlug();
+  });
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -41,13 +44,13 @@ function Header() {
             style={{ marginTop: "-16px" }}
           >
             <div className="container-fluid">
-              <a className="navbar-brand" href="/">
+              <Link className="navbar-brand" to={`/${slugs}/`}>
                 <img
                   src={imageUrl}
                   className="University-Logo"
                   alt="University-Logo"
                 />
-              </a>
+              </Link>
               <button
                 className="navbar-toggler "
                 type="button"
@@ -64,7 +67,7 @@ function Header() {
                 <ul className="navbar-nav">
                   <li className="nav-item">
                     <Link
-                      to="/current-opening"
+                      to={`/${slugs}/openings`}
                       className="nav-link active"
                       aria-current="page"
                       target="_top"
@@ -74,7 +77,7 @@ function Header() {
                   </li>
                   <li className="nav-item">
                     <Link
-                      to="/job-profiles"
+                      to={`/${slugs}/job-profiles`}
                       className="nav-link active"
                       aria-current="page"
                       target="_top"
@@ -85,7 +88,7 @@ function Header() {
 
                   <li className="nav-item">
                     <Link
-                      to="/interview-schedule"
+                      to={`/${slugs}/interview-schedule`}
                       className="nav-link"
                       target="_top"
                     >
@@ -93,28 +96,44 @@ function Header() {
                     </Link>
                   </li>
                   <li className="nav-item">
-                    <Link to="/faq-section" className="nav-link" target="_top">
+                    <Link
+                      to={`/${slugs}/faq-section`}
+                      className="nav-link"
+                      target="_top"
+                    >
                       FAQ's
                     </Link>
                   </li>
                   <li className="nav-item">
-                    <Link to="/drop-cv" className="nav-link" target="_top">
+                    <Link
+                      to={`/${slugs}/drop-cv`}
+                      className="nav-link"
+                      target="_top"
+                    >
                       Drop CV
                     </Link>
                   </li>
                   <li className="nav-item">
-                    <Link to="/contact-us" className="nav-link" target="_top">
+                    <Link
+                      to={`/${slugs}/contact-us`}
+                      className="nav-link"
+                      target="_top"
+                    >
                       Contact Us
                     </Link>
                   </li>
                   <li className="nav-item">
-                    <Link to="/process" className="nav-link" target="_top">
+                    <Link
+                      to={`/${slugs}/process`}
+                      className="nav-link"
+                      target="_top"
+                    >
                       Process
                     </Link>
                   </li>
                   <li className="nav-item">
                     <Link
-                      to="/candidate-login"
+                      to={`/${slugs}/candidate-login`}
                       className="nav-link user-link"
                       target="_top"
                     >

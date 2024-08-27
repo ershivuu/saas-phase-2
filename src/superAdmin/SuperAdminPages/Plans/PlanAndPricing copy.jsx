@@ -9,12 +9,17 @@ import {
   Button,
   TableContainer,
   Paper,
+  TextField,
+  Switch,
   Dialog,
   DialogActions,
   DialogContent,
   DialogTitle,
-  TextField,
+  IconButton,
 } from "@mui/material";
+import VisibilityIcon from "@mui/icons-material/Visibility";
+import EditIcon from "@mui/icons-material/Edit";
+import DeleteIcon from "@mui/icons-material/Delete";
 import {
   getSubscriptionPlan,
   updatePlanStatus,
@@ -33,7 +38,7 @@ function PlanAndPricing() {
   const [editOpen, setEditOpen] = useState(false);
   const [createOpen, setCreateOpen] = useState(false);
   const [selectedPlan, setSelectedPlan] = useState(null);
-  const [status, setStatus] = useState("");
+  const [statusChangeInfo, setStatusChangeInfo] = useState(null); // New state to hold info for status change
   const [editForm, setEditForm] = useState({
     plan_name: "",
     slug_name: "",
@@ -71,79 +76,32 @@ function PlanAndPricing() {
     fetchPlans();
   }, []);
 
-  const handleClickOpen = (plan) => {
-    setSelectedPlan(plan);
-    setStatus(plan.plan_status === 1 ? "Active" : "Inactive"); // Correctly set the status based on the current plan status
-    setOpen(true);
-  };
-
-  const handleViewOpen = (plan) => {
-    setSelectedPlan(plan);
-    setViewOpen(true);
-  };
-
-  const handleEditOpen = (plan) => {
-    setSelectedPlan(plan);
-    setEditForm({
-      plan_name: plan.plan_name,
-      slug_name: plan.slug_name,
-      plan_details: plan.plan_details,
-      price: plan.price,
-      duration: plan.duration,
-    });
-    setEditErrors({});
-    setEditOpen(true);
-  };
-
-  const handleCreateOpen = () => {
-    setCreateOpen(true);
-  };
-
-  const handleCreateClose = () => {
-    setCreateOpen(false);
-  };
-
-  const handleClose = () => {
-    setOpen(false);
-    setConfirmOpen(false);
-    setViewOpen(false);
-    setEditOpen(false);
-    setCreateOpen(false);
-    setSelectedPlan(null);
-  };
-
-  const handleConfirmOpen = () => {
+  const handleStatusChangeRequest = (plan) => {
+    setStatusChangeInfo(plan);
     setConfirmOpen(true);
   };
 
-  const handleStatusChange = async () => {
+  const confirmStatusChange = async () => {
+    if (!statusChangeInfo) return;
+
+    const { id, plan_status } = statusChangeInfo;
+    const newStatus = plan_status === 1 ? "Inactive" : "Active";
     try {
-      const updatedStatus = status === "Active" ? 1 : 0; // Correctly map status to 1 (Active) and 0 (Inactive)
-      if (selectedPlan) {
-        const response = await updatePlanStatus(selectedPlan.id, updatedStatus);
-        // Refresh the plans after update
-        const updatedPlans = await getSubscriptionPlan();
-        setPlans(updatedPlans);
-        setNotification({
-          open: true,
-          message: response.message,
-          severity: "success",
-        });
-        handleClose();
-      }
+      const updatedStatus = newStatus === "Active" ? 1 : 0;
+      const response = await updatePlanStatus(id, updatedStatus);
+      const updatedPlans = await getSubscriptionPlan();
+      setPlans(updatedPlans);
+      setNotification({
+        open: true,
+        message: response.message,
+        severity: "success",
+      });
     } catch (err) {
       setError(err.message);
+    } finally {
+      setConfirmOpen(false);
+      setStatusChangeInfo(null);
     }
-  };
-
-  const validateForm = (form) => {
-    let errors = {};
-    if (!form.plan_name) errors.plan_name = "Plan name is required";
-    if (!form.slug_name) errors.slug_name = "Slug name is required";
-    if (!form.plan_details) errors.plan_details = "Plan details are required";
-    if (!form.price) errors.price = "Price is required";
-    if (!form.duration) errors.duration = "Duration is required";
-    return errors;
   };
 
   const handleEditChange = (e) => {
@@ -152,8 +110,6 @@ function PlanAndPricing() {
       ...editForm,
       [name]: value,
     });
-
-    // Clear the specific error when user types
     setEditErrors({
       ...editErrors,
       [name]: "",
@@ -169,7 +125,6 @@ function PlanAndPricing() {
     try {
       if (selectedPlan) {
         const response = await updatePlan(selectedPlan.id, editForm);
-        // Refresh the plans after update
         const updatedPlans = await getSubscriptionPlan();
         setPlans(updatedPlans);
         setNotification({
@@ -190,8 +145,6 @@ function PlanAndPricing() {
       ...newPlan,
       [name]: value,
     });
-
-    // Clear the specific error when user types
     setNewPlanErrors({
       ...newPlanErrors,
       [name]: "",
@@ -206,7 +159,6 @@ function PlanAndPricing() {
     }
     try {
       const response = await createPlan(newPlan);
-      // Refresh the plans after creating a new one
       const updatedPlans = await getSubscriptionPlan();
       setPlans(updatedPlans);
       setNotification({
@@ -218,6 +170,48 @@ function PlanAndPricing() {
     } catch (err) {
       setError(err.message);
     }
+  };
+
+  const validateForm = (form) => {
+    let errors = {};
+    if (!form.plan_name) errors.plan_name = "Plan name is required";
+    if (!form.slug_name) errors.slug_name = "Slug name is required";
+    if (!form.plan_details) errors.plan_details = "Plan details are required";
+    if (!form.price) errors.price = "Price is required";
+    if (!form.duration) errors.duration = "Duration is required";
+    return errors;
+  };
+
+  const handleClose = () => {
+    setViewOpen(false);
+    setEditOpen(false);
+    setCreateOpen(false);
+    setConfirmOpen(false);
+  };
+
+  const handleViewOpen = (plan) => {
+    setSelectedPlan(plan);
+    setViewOpen(true);
+  };
+
+  const handleEditOpen = (plan) => {
+    setSelectedPlan(plan);
+    setEditForm({
+      plan_name: plan.plan_name,
+      slug_name: plan.slug_name,
+      plan_details: plan.plan_details,
+      price: plan.price,
+      duration: plan.duration,
+    });
+    setEditOpen(true);
+  };
+
+  const handleCreateOpen = () => {
+    setCreateOpen(true);
+  };
+
+  const handleCreateClose = () => {
+    setCreateOpen(false);
   };
 
   if (loading) return <p>Loading...</p>;
@@ -242,89 +236,57 @@ function PlanAndPricing() {
               <TableCell>Duration (Days)</TableCell>
               <TableCell>Status</TableCell>
               <TableCell>View Details</TableCell>
-              <TableCell>Edit Plan</TableCell>
+              <TableCell>Edit </TableCell>
+              <TableCell>Delete</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
-            {plans.map((plan, index) => (
-              <TableRow key={plan.id}>
-                <TableCell>{index + 1}</TableCell>
-                <TableCell>{plan.plan_name}</TableCell>
-                <TableCell>{plan.duration} days</TableCell>
-                <TableCell>
-                  <Button>
-                    <span
-                      style={{
-                        color: plan.plan_status === 1 ? "green" : "red",
-                      }}
-                      onClick={() => handleClickOpen(plan)}
+            {plans
+              .slice()
+              .sort((a, b) => b.id - a.id)
+              .map((plan, index) => (
+                <TableRow key={plan.id}>
+                  <TableCell>{index + 1}</TableCell>
+                  <TableCell>{plan.plan_name}</TableCell>
+                  <TableCell>{plan.duration} days</TableCell>
+                  <TableCell>
+                    <Switch
+                      checked={plan.plan_status === 1}
+                      onChange={() => handleStatusChangeRequest(plan)}
+                      color="primary"
+                    />
+                  </TableCell>
+                  <TableCell>
+                    <IconButton
+                      color="primary"
+                      onClick={() => handleViewOpen(plan)}
                     >
-                      {plan.plan_status === 1 ? "Active" : "Inactive"}
-                    </span>
-                  </Button>
-                </TableCell>
-                <TableCell>
-                  <Button
-                    variant="outlined"
-                    onClick={() => handleViewOpen(plan)}
-                  >
-                    View
-                  </Button>
-                </TableCell>
-                <TableCell>
-                  <Button
-                    variant="outlined"
-                    onClick={() => handleEditOpen(plan)}
-                    disabled={plan.plan_status === 1}
-                  >
-                    Edit
-                  </Button>
-                </TableCell>
-              </TableRow>
-            ))}
+                      <VisibilityIcon />
+                    </IconButton>
+                  </TableCell>
+                  <TableCell>
+                    <IconButton
+                      color="primary"
+                      onClick={() => handleEditOpen(plan)}
+                      disabled={plan.plan_status === 1}
+                    >
+                      <EditIcon />
+                    </IconButton>
+                  </TableCell>
+                  <TableCell>
+                    <IconButton
+                      color="error"
+                      aria-label="delete"
+                      disabled={plan.plan_status === 1}
+                    >
+                      <DeleteIcon />
+                    </IconButton>
+                  </TableCell>
+                </TableRow>
+              ))}
           </TableBody>
         </Table>
       </TableContainer>
-
-      {/* Status Update Dialog */}
-      <Dialog open={open} onClose={handleClose}>
-        <DialogTitle>Update Status</DialogTitle>
-        <DialogContent>
-          <TextField
-            autoFocus
-            margin="dense"
-            label="Status"
-            type="text"
-            fullWidth
-            variant="standard"
-            value={status}
-            onChange={(e) => setStatus(e.target.value)}
-            select
-            SelectProps={{
-              native: true,
-            }}
-          >
-            <option value="Active">Active</option>
-            <option value="Inactive">Inactive</option>
-          </TextField>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleClose}>Cancel</Button>
-          <Button onClick={handleConfirmOpen}>Update</Button>
-        </DialogActions>
-      </Dialog>
-
-      {/* Confirmation Dialog */}
-      <Dialog open={confirmOpen} onClose={() => setConfirmOpen(false)}>
-        <DialogTitle>Confirm Status Update</DialogTitle>
-        <DialogContent>
-          Are you sure you want to update the status to {status}?
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={() => setConfirmOpen(false)}>Cancel</Button>
-          <Button onClick={handleStatusChange}>Confirm</Button>
-        </DialogActions>
-      </Dialog>
 
       {/* View Details Dialog */}
       <Dialog open={viewOpen} onClose={handleClose}>
@@ -335,32 +297,16 @@ function PlanAndPricing() {
               <p>
                 <strong>Plan Name:</strong> {selectedPlan.plan_name}
               </p>
-
               <p>
                 <strong>Price:</strong> ${selectedPlan.price}
               </p>
               <p>
                 <strong>Duration:</strong> {selectedPlan.duration} days
               </p>
-              {/* <p>
-                <strong>Start Date:</strong>{" "}
-                {new Date(selectedPlan.start_date).toLocaleDateString()}
-              </p>
-              <p>
-                <strong>End Date:</strong>{" "}
-                {new Date(selectedPlan.end_date).toLocaleDateString()}
-              </p> */}
               <p>
                 <strong>Status:</strong>{" "}
                 {selectedPlan.plan_status === 1 ? "Active" : "Inactive"}
               </p>
-              {/* <p>
-                <strong>Days Remaining:</strong> {selectedPlan.days_remaining}{" "}
-                days
-              </p> */}
-              {/* <p>
-                <strong>Time Remaining:</strong> {selectedPlan.time_remaining}
-              </p> */}
               <p>
                 <strong>Details:</strong> {selectedPlan.plan_details}
               </p>
@@ -439,15 +385,13 @@ function PlanAndPricing() {
         </DialogContent>
         <DialogActions>
           <Button onClick={handleClose}>Cancel</Button>
-          <Button onClick={handleEditSubmit} color="primary">
-            Save
-          </Button>
+          <Button onClick={handleEditSubmit}>Save</Button>
         </DialogActions>
       </Dialog>
 
       {/* Create Plan Dialog */}
       <Dialog open={createOpen} onClose={handleCreateClose}>
-        <DialogTitle>Create New Plan</DialogTitle>
+        <DialogTitle>Create Plan</DialogTitle>
         <DialogContent>
           <TextField
             autoFocus
@@ -508,17 +452,29 @@ function PlanAndPricing() {
         </DialogContent>
         <DialogActions>
           <Button onClick={handleCreateClose}>Cancel</Button>
-          <Button onClick={handleCreateSubmit} color="primary">
-            Create
+          <Button onClick={handleCreateSubmit}>Create</Button>
+        </DialogActions>
+      </Dialog>
+
+      {/* Confirm Status Change Dialog */}
+      <Dialog open={confirmOpen} onClose={() => setConfirmOpen(false)}>
+        <DialogTitle>Confirm Status Change</DialogTitle>
+        <DialogContent>
+          <p>Are you sure you want to change the status of this plan?</p>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setConfirmOpen(false)}>Cancel</Button>
+          <Button onClick={confirmStatusChange} color="primary">
+            Confirm
           </Button>
         </DialogActions>
       </Dialog>
 
       <Notification
         open={notification.open}
-        handleClose={() => setNotification({ ...notification, open: false })}
-        alertMessage={notification.message}
-        alertSeverity={notification.severity}
+        onClose={() => setNotification({ ...notification, open: false })}
+        message={notification.message}
+        severity={notification.severity}
       />
     </div>
   );

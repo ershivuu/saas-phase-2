@@ -3,13 +3,15 @@ import {
   Box,
   TextField,
   Button,
-  Container,
   Typography,
   InputAdornment,
   IconButton,
-  Card,
   CardContent,
   Divider,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
 } from "@mui/material";
 import { registerAdmin } from "../../Admin/Services/AdminServices"; // Adjust the import path
 import Notification from "../../Notification/Notification"; // Adjust the import path
@@ -17,13 +19,14 @@ import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import "./RegisterAdmin.css";
 import signupimg from "../../assets/images/signup.png";
+
 function RegisterAdmin() {
   const [formData, setFormData] = useState({
     name: "",
     email: "",
     contact: "",
     password: "",
-    confirmPassword: "", // New field for confirm password
+    confirmPassword: "",
   });
 
   const [errors, setErrors] = useState({
@@ -31,7 +34,7 @@ function RegisterAdmin() {
     email: "",
     contact: "",
     password: "",
-    confirmPassword: "", // New field for confirm password errors
+    confirmPassword: "",
   });
 
   const [notification, setNotification] = useState({
@@ -42,6 +45,9 @@ function RegisterAdmin() {
 
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false); // New state for confirm password visibility
+
+  const [dialogOpen, setDialogOpen] = useState(false); // State for dialog visibility
+  const [adminUrl, setAdminUrl] = useState(""); // State for storing admin URL
 
   const validate = () => {
     const newErrors = {};
@@ -109,12 +115,14 @@ function RegisterAdmin() {
         message: response.message || "Admin registered successfully!",
         severity: "success",
       });
+      setAdminUrl(response.admin_url || "");
+      setDialogOpen(true);
       setFormData({
         name: "",
         email: "",
         contact: "",
         password: "",
-        confirmPassword: "", // Clear the confirm password field
+        confirmPassword: "",
       });
     } catch (error) {
       setNotification({
@@ -134,11 +142,14 @@ function RegisterAdmin() {
 
   const handleClickShowPassword = () => {
     setShowPassword(!showPassword);
-    setShowConfirmPassword(!showConfirmPassword); // Toggle confirm password visibility as well
   };
 
   const handleMouseDownPassword = (event) => {
     event.preventDefault();
+  };
+
+  const handleCloseDialog = () => {
+    setDialogOpen(false);
   };
 
   return (
@@ -278,6 +289,27 @@ function RegisterAdmin() {
           />
         </div>
       </div>
+
+      {/* Dialog for displaying admin URL */}
+      <Dialog open={dialogOpen} onClose={handleCloseDialog}>
+        <DialogTitle>Registration Successful</DialogTitle>
+        <DialogContent>
+          <Typography variant="body1">
+            Your registration was successful!
+          </Typography>
+          <Typography variant="body2" color="textSecondary" sx={{ mt: 2 }}>
+            Redirection URL:
+            <a href={adminUrl} target="_blank" rel="noopener noreferrer">
+              {adminUrl}
+            </a>
+          </Typography>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseDialog} color="primary">
+            Close
+          </Button>
+        </DialogActions>
+      </Dialog>
     </>
   );
 }

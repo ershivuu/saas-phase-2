@@ -113,11 +113,16 @@ const OfflinePayment = () => {
                   ) : errorCompanies ? (
                     <MenuItem disabled>{errorCompanies}</MenuItem>
                   ) : (
-                    companyList.map((company) => (
-                      <MenuItem key={company.id} value={company.id}>
-                        {company.name}
-                      </MenuItem>
-                    ))
+                    companyList
+                      .slice()
+                      .sort((a, b) => b.id - a.id)
+                      .map((company) => (
+                        <MenuItem key={company.id} value={company.id}>
+                          <p style={{ textTransform: "capitalize" }}>
+                            {company.name}
+                          </p>
+                        </MenuItem>
+                      ))
                   )}
                 </Select>
               </FormControl>
@@ -139,11 +144,16 @@ const OfflinePayment = () => {
                   ) : errorPlans ? (
                     <MenuItem disabled>{errorPlans}</MenuItem>
                   ) : (
-                    plans.map((plan) => (
-                      <MenuItem key={plan.id} value={plan.id}>
-                        {plan.plan_name}
-                      </MenuItem>
-                    ))
+                    plans
+                      .slice()
+                      .sort((a, b) => b.id - a.id)
+                      .map((plan) => (
+                        <MenuItem key={plan.id} value={plan.id}>
+                          <p style={{ textTransform: "capitalize" }}>
+                            {plan.plan_name}
+                          </p>
+                        </MenuItem>
+                      ))
                   )}
                 </Select>
               </FormControl>

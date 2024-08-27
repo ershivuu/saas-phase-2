@@ -1,15 +1,15 @@
 import React, { useState, useEffect } from "react";
 import "./Footers.css";
-import whitelogo from "../../assets/logos/med-logo-white.png";
-import facebook from "../../assets/logos/facebook.png";
-import instagram from "../../assets/logos/instagram.png";
-import twitter from "../../assets/logos/twitter.png";
-import youtube from "../../assets/logos/youtube.png";
-import linkedin from "../../assets/logos/linkedin.png";
+
+import { verifySlug, getUniqueSlug } from "../../slugs/getSlug";
 import { getFooter } from "../../Admin/Services/FrontendServices";
 import { Link } from "react-router-dom";
 
 function Footers() {
+  const slug = getUniqueSlug();
+  useEffect(() => {
+    verifySlug();
+  }, []);
   const [footerData, setFooterData] = useState({
     id: "",
     footer_col: "",
@@ -97,28 +97,22 @@ function Footers() {
                   />
                 </a>
               </div>
-              <div>
-                <Link to="/registeradmin">
-                  {" "}
-                  <button>Register Admin</button>
-                </Link>
-              </div>
-              {/* <div>
-              <a href="/" target="_blank">
-                <img
-                  src={twitter}
-                  style={{ width: "20px", height: "20px" }}
-                  alt=""
-                />
-              </a>
-            </div> */}
+              {slug === "corusview" && (
+                <div className="register-admin-btn">
+                  <Link to={`/${slug}/register`} target="_blank">
+                    <button>Register</button>
+                  </Link>
+                </div>
+              )}
             </div>
           </div>
         </div>
       </div>
       <div className="footer-2">
         <div>
-          <p>Designed and Developed By Corusview </p>
+          <a href="https://www.corusview.com/" target="_blank">
+            <p>Designed and Developed By Corusview </p>
+          </a>
         </div>
         <div>
           <p>Privacy Policy | Terms of Use</p>

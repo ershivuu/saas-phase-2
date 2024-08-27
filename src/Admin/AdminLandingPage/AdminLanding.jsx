@@ -159,8 +159,10 @@ function AdminLanding() {
               Name:
               {adminData.subscription_plan.plan_name || " Buy Subscription"}
             </p>
-            <p>Duration: {adminData.subscription_plan.duration || " NULL"}</p>
-            <p>Price: {adminData.subscription_plan.price || " NULL"}</p>
+            <p>
+              Duration: {adminData.subscription_plan.duration || " NULL"} Days
+            </p>
+            <p>Price: ₹ {adminData.subscription_plan.price || " NULL"}</p>
             <p>
               Start Date:
               {adminData.start_date
