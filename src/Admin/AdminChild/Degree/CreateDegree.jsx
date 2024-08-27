@@ -27,7 +27,7 @@ import {
   createDegree,
   updateDegree,
   deleteDegree,
-} from "../../Services/AdminServices"; // Adjust the path as needed
+} from "../../Services/AdminServices"; 
 import Notification from "../../../Notification/Notification";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
@@ -154,7 +154,7 @@ function CreateDegree() {
           degreeName,
           selectedExamType
         );
-        const data = await getDegree(); // Refresh the list of degrees
+        const data = await getDegree(); 
         setDegrees(data);
         handleCloseEditDialog();
         setNotification({
@@ -180,7 +180,7 @@ function CreateDegree() {
     try {
       if (degreeToDelete) {
         const response = await deleteDegree(degreeToDelete.id);
-        const data = await getDegree(); // Refresh the list of degrees
+        const data = await getDegree(); 
         setDegrees(data);
         handleCloseDeleteDialog();
         setNotification({

@@ -56,7 +56,7 @@ const OfflinePayment = () => {
         const fetchedCompanies = await getExpiredCompany();
         setCompanyList(
           fetchedCompanies.map((company) => ({
-            id: company.id, // Adjust according to your data
+            id: company.id, 
             name: company.company_name,
           }))
         );
